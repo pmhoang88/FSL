@@ -594,7 +594,8 @@ function showObj_(r) {
     total: num_(r['Tổng tiền']), note: String(r['Ghi chú'] || ''), color: String(r['Màu'] || ''),
     cust: String(r['Mã KH'] || ''), discount: num_(r['Chiết khấu %']), discStatus: String(r['Trạng thái CK'] || ''), creator: String(r['Người tạo'] || ''),
     city: String(r['Thành phố'] || ''), wh: String(r['Kho xuất'] || WH.HN),
-    dayEnd: d2s_(r['Ngày diễn cuối']) || d2s_(r['Ngày diễn']), promo: String(r['Mã ưu đãi'] || '')
+    dayEnd: d2s_(r['Ngày diễn cuối']) || d2s_(r['Ngày diễn']), promo: String(r['Mã ưu đãi'] || ''),
+    progress: String(r['Tiến độ %'] === '' || r['Tiến độ %'] == null ? '' : r['Tiến độ %']), nextStep: String(r['Việc tiếp theo'] || '')
   };
 }
 function lineObj_(r) {
@@ -924,7 +925,7 @@ function apiSetPrice(model, price) {
 var WH = { HN: 'Kho Hà Nội', HCM: 'Kho TP.HCM' };
 var WH_CITY = {}; WH_CITY[WH.HN] = 'Hà Nội'; WH_CITY[WH.HCM] = 'TP.HCM';
 var DOMESTIC_CITY = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Đà Lạt'];
-var STAFF_ROLES = ['Kỹ thuật âm thanh', 'Kỹ thuật ánh sáng', 'Setup âm thanh ánh sáng', 'Kỹ thuật trưởng', 'Kỹ thuật hệ thống', 'Kỹ thuật kho', 'Khác'];
+var STAFF_ROLES = ['Kỹ thuật âm thanh', 'Kỹ thuật ánh sáng', 'Setup âm thanh ánh sáng', 'Kỹ thuật trưởng', 'Kỹ thuật hệ thống', 'Kỹ thuật kho', 'Sales', 'Khác'];
 var TRANS_METHODS = ['Xe tải', 'Máy bay', 'Tự mang'];
 var TRANS_ST = ['Chờ gửi', 'Đang vận chuyển', 'Đã đến', 'Hủy'];
 var FLIGHT_CUTOFF = '20:00';
@@ -1146,6 +1147,24 @@ function dmy_(s) { s = String(s || ''); return s ? s.slice(8, 10) + '/' + s.slic
 /** Cấp Giám đốc trở lên (hoặc chủ sheet / trình chạy nội bộ) */
 function isTopCtx_() { return !CTX || !!CTX.owner || (num_(CTX.level) > 0 && num_(CTX.level) <= 2); }
 function isCeoCtx_() { return !CTX || !!CTX.owner || num_(CTX.level) === 1; }
+/** Cấp sales trở lên (Giám đốc, Phó TGĐ, Giám đốc Sale, Sales Manager…) được cập nhật tiến độ */
+function canSalesCtx_() { return isTopCtx_() || SALES_ROLES.indexOf(String((CTX && CTX.role) || '')) >= 0; }
+/** Tiến độ tự suy ra từ trạng thái nếu chưa nhập tay */
+var PROGRESS_BY_ST = { 'Báo giá': 10, 'On Hold': 10, 'Đã xác nhận': 30, 'Đang soạn hàng': 50, 'Đang ở show': 75, 'Đã nhập kho': 100, 'Hủy': 0 };
+function apiSaveProgress(rec) {
+  return withLock_(function () {
+    if (!canSalesCtx_()) throw new Error('Chỉ cấp Sales trở lên được cập nhật tiến độ');
+    rec = rec || {};
+    var t = readTable_('SHOW');
+    var row = live_(t).filter(function (r) { return String(r['Mã show']) === String(rec.code); })[0];
+    if (!row) throw new Error('Không tìm thấy show');
+    var p = rec.progress === '' || rec.progress == null ? '' : Math.max(0, Math.min(100, Math.round(num_(rec.progress))));
+    row['Tiến độ %'] = p;
+    row['Việc tiếp theo'] = String(rec.nextStep || '');
+    saveTable_(t);
+    return { code: rec.code, progress: p };
+  });
+}
 function cfgNum_(k, d) { var v = cfgGet_(k); return (v === '' || v === undefined || v === null) ? d : num_(v); }
 function maStagePro_() { return String(cfgGet_('MA_STAGEPRO') || MA_STAGEPRO_MAC_DINH).trim().toUpperCase(); }
 function isForeign_(city) { return !!city && DOMESTIC_CITY.indexOf(city) < 0; }
@@ -1462,10 +1481,21 @@ function seedDemo_() {
     lines: [].concat(L('Q225DS', 1, { r: 1 }, MADI)) });
 
   // ---- nhân sự (theo danh sách FSL), phân công, vận chuyển ----
-  [['NV-001','Thiết','Kỹ thuật âm thanh',WH.HN,'PGĐ Kỹ thuật – Âm thanh'],['NV-002','Sơn','Kỹ thuật ánh sáng',WH.HN,'PGĐ Kỹ thuật – Ánh sáng'],
-   ['NV-003','Minh','Kỹ thuật trưởng',WH.HN,'Kỹ thuật trưởng'],['NV-004','Hoàng','Kỹ thuật hệ thống',WH.HN,'Kỹ thuật hệ thống'],
-   ['NV-005','Mạnh','Setup âm thanh ánh sáng',WH.HN,'Setup'],['NV-006','Hiếu','Setup âm thanh ánh sáng',WH.HN,'Setup']].forEach(function (x) {
+  [['NV-001','Thiết','Kỹ thuật âm thanh',WH.HN,'PGĐ Kỹ thuật – Âm thanh · báo cáo CEO'],['NV-002','Sơn','Kỹ thuật ánh sáng',WH.HN,'PGĐ Kỹ thuật – Ánh sáng · báo cáo CEO'],
+   ['NV-003','Minh','Kỹ thuật trưởng',WH.HN,'Kỹ thuật trưởng · báo cáo PGĐ Âm thanh (Thiết)'],['NV-004','Hoàng','Kỹ thuật hệ thống',WH.HN,'Kỹ thuật hệ thống · tài khoản quản trị'],
+   ['NV-005','Mạnh','Setup âm thanh ánh sáng',WH.HN,'Setup AV · báo cáo Kỹ thuật trưởng (Minh)'],['NV-006','Hiếu','Setup âm thanh ánh sáng',WH.HN,'Setup AV · báo cáo Kỹ thuật trưởng (Minh)'],
+   ['NV-007','Phương Anh','Sales',WH.HN,'Giám đốc Sales · báo cáo CEO'],['NV-008','Thuý','Sales',WH.HN,'Sales Manager · báo cáo Giám đốc Sales (Phương Anh)']].forEach(function (x) {
     apiSaveStaff({ name: x[1], role: x[2], wh: x[3], note: x[4] });
+  });
+  // phân công giả định: mỗi show có kỹ thuật trưởng + PGĐ âm thanh + PGĐ ánh sáng, setup AV xuất kho
+  live_(readTable_('SHOW')).filter(function (r) { return ['Hủy', 'Báo giá'].indexOf(String(r['Trạng thái'])) < 0; }).forEach(function (r) {
+    var code = String(r['Mã show']), out = d2s_(r['Ngày xuất kho']), day = d2s_(r['Ngày diễn']), place = String(r['Địa điểm'] || '');
+    if (!out || !day) return;
+    apiSaveAssign({ show: code, staff: 'NV-005', date: out, from: '08:00', to: '18:00', task: 'Setup AV / xếp hàng', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-006', date: out, from: '08:00', to: '18:00', task: 'Setup AV / xếp hàng', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-003', date: day, from: '14:00', to: '23:00', task: 'Kỹ thuật trưởng – điều phối show', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-001', date: day, from: '14:00', to: '23:00', task: 'Âm thanh (PGĐ)', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-002', date: day, from: '14:00', to: '23:00', task: 'Ánh sáng (PGĐ)', place: place });
   });
   apiSaveAssign({ show: 'SH-2610-001', staff: 'NV-005', date: '2026-10-09', from: '08:00', to: '18:00', task: 'Soundcheck / rehearsal', place: 'Nhà hát Hòa Bình' });
   apiSaveAssign({ show: 'SH-2610-002', staff: 'NV-005', date: '2026-10-11', from: '08:00', to: '18:00', task: 'Tuning & setup', place: 'Global City' });
@@ -1484,7 +1514,13 @@ function seedDemo_() {
 }
 
 /** [Mã, Hãng, Dòng, Họ, Tên, Loại, Part No., Mô tả, kg, Giá/ngày, Cho thuê riêng, Tham số popup, Ảnh URL, Mã ảnh] */
+/** Giá thuê/ngày (VNĐ) theo yêu cầu bản 6 – mã nào không có trong bảng thì giữ giá cũ */
+var PRICE_V6 = { J8: 4500000, J12: 4500000, JSUB: 4500000, GSL8: 8000000, GSL12: 8000000, SLSUB: 8000000, SLGSUB: 8000000, KSL8: 6000000, XSL8: 4500000, V8: 3000000,
+  Q338: 60000000, Q338P: 75000000, Q225DSP: 50000000, Q225DS: 40000000, Q225P: 35000000, Q225: 30000000, 'SDR-OP': 55000000, 'SDR-MADI': 55000000 };
 function demoCatalog_() {
+  return demoCatalogBase_().map(function (c) { if (PRICE_V6[c[0]] !== undefined) c[9] = PRICE_V6[c[0]]; return c; });
+}
+function demoCatalogBase_() {
   var DB = 'd&b audiotechnik', DG = 'DiGiCo', GEN = 'Phụ kiện chung';
   var dg = 'https://digico.biz/wp-content/uploads/';
   return [

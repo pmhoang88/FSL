@@ -316,6 +316,13 @@ html[data-theme="dark"] .ov{background:rgba(2,6,23,.7)}
 .rk svg{display:block}
 .legend span svg{vertical-align:-2px;margin-right:2px}
 @media (max-width:700px){ .kpis[style*="repeat(4"]{grid-template-columns:repeat(2,minmax(0,1fr))!important} }
+.rk-av{position:relative;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:9px;color:#fff;font-weight:800;font-size:12.5px;flex:none;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.rk-av.big{width:46px;height:46px;font-size:15px;border-radius:11px}
+.rk-ic{position:absolute;right:-6px;top:-6px;width:19px;height:19px;border-radius:6px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;line-height:0;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.rk-ic svg{width:13px;height:13px}
+.orow{display:flex;align-items:center;gap:10px}
+.otx{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left}
+#langBtn{min-width:44px;font-weight:800}
 </style>
 </head>
 <body class="mode-offline">
@@ -334,6 +341,7 @@ html[data-theme="dark"] .ov{background:rgba(2,6,23,.7)}
     <button class="btn sm noprint" onclick="reload()">⟳ Làm mới</button>
     <div class="offbar noprint"><button class="btn sm" onclick="offBackup()">💾 Sao lưu</button><button class="btn sm" onclick="offRestorePick()">📂 Khôi phục</button><button class="btn sm" onclick="offResetAsk()">↺ Dữ liệu mẫu</button><input type="file" id="offFile" accept=".json,application/json" style="display:none" onchange="offRestore(this)"></div>
     <button class="btn sm noprint" onclick="cycleZoom()" title="Đổi cỡ chữ (cho người khó nhìn)">Aa</button>
+    <button class="btn sm noprint" id="langBtn" onclick="toggleLang()" title="Ngôn ngữ / Language">EN</button>
     <button class="btn sm noprint" id="themeBtn" onclick="toggleTheme()" title="Đổi giao diện sáng / tối">🌙 Tối</button>
     <button class="btn sm noprint" id="btnClose" onclick="closeApp()">✕ Đóng</button>
   </header>
@@ -1072,7 +1080,8 @@ function showObj_(r) {
     total: num_(r['Tổng tiền']), note: String(r['Ghi chú'] || ''), color: String(r['Màu'] || ''),
     cust: String(r['Mã KH'] || ''), discount: num_(r['Chiết khấu %']), discStatus: String(r['Trạng thái CK'] || ''), creator: String(r['Người tạo'] || ''),
     city: String(r['Thành phố'] || ''), wh: String(r['Kho xuất'] || WH.HN),
-    dayEnd: d2s_(r['Ngày diễn cuối']) || d2s_(r['Ngày diễn']), promo: String(r['Mã ưu đãi'] || '')
+    dayEnd: d2s_(r['Ngày diễn cuối']) || d2s_(r['Ngày diễn']), promo: String(r['Mã ưu đãi'] || ''),
+    progress: String(r['Tiến độ %'] === '' || r['Tiến độ %'] == null ? '' : r['Tiến độ %']), nextStep: String(r['Việc tiếp theo'] || '')
   };
 }
 function lineObj_(r) {
@@ -1402,7 +1411,7 @@ function apiSetPrice(model, price) {
 var WH = { HN: 'Kho Hà Nội', HCM: 'Kho TP.HCM' };
 var WH_CITY = {}; WH_CITY[WH.HN] = 'Hà Nội'; WH_CITY[WH.HCM] = 'TP.HCM';
 var DOMESTIC_CITY = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Đà Lạt'];
-var STAFF_ROLES = ['Kỹ thuật âm thanh', 'Kỹ thuật ánh sáng', 'Setup âm thanh ánh sáng', 'Kỹ thuật trưởng', 'Kỹ thuật hệ thống', 'Kỹ thuật kho', 'Khác'];
+var STAFF_ROLES = ['Kỹ thuật âm thanh', 'Kỹ thuật ánh sáng', 'Setup âm thanh ánh sáng', 'Kỹ thuật trưởng', 'Kỹ thuật hệ thống', 'Kỹ thuật kho', 'Sales', 'Khác'];
 var TRANS_METHODS = ['Xe tải', 'Máy bay', 'Tự mang'];
 var TRANS_ST = ['Chờ gửi', 'Đang vận chuyển', 'Đã đến', 'Hủy'];
 var FLIGHT_CUTOFF = '20:00';
@@ -1624,6 +1633,24 @@ function dmy_(s) { s = String(s || ''); return s ? s.slice(8, 10) + '/' + s.slic
 /** Cấp Giám đốc trở lên (hoặc chủ sheet / trình chạy nội bộ) */
 function isTopCtx_() { return !CTX || !!CTX.owner || (num_(CTX.level) > 0 && num_(CTX.level) <= 2); }
 function isCeoCtx_() { return !CTX || !!CTX.owner || num_(CTX.level) === 1; }
+/** Cấp sales trở lên (Giám đốc, Phó TGĐ, Giám đốc Sale, Sales Manager…) được cập nhật tiến độ */
+function canSalesCtx_() { return isTopCtx_() || SALES_ROLES.indexOf(String((CTX && CTX.role) || '')) >= 0; }
+/** Tiến độ tự suy ra từ trạng thái nếu chưa nhập tay */
+var PROGRESS_BY_ST = { 'Báo giá': 10, 'On Hold': 10, 'Đã xác nhận': 30, 'Đang soạn hàng': 50, 'Đang ở show': 75, 'Đã nhập kho': 100, 'Hủy': 0 };
+function apiSaveProgress(rec) {
+  return withLock_(function () {
+    if (!canSalesCtx_()) throw new Error('Chỉ cấp Sales trở lên được cập nhật tiến độ');
+    rec = rec || {};
+    var t = readTable_('SHOW');
+    var row = live_(t).filter(function (r) { return String(r['Mã show']) === String(rec.code); })[0];
+    if (!row) throw new Error('Không tìm thấy show');
+    var p = rec.progress === '' || rec.progress == null ? '' : Math.max(0, Math.min(100, Math.round(num_(rec.progress))));
+    row['Tiến độ %'] = p;
+    row['Việc tiếp theo'] = String(rec.nextStep || '');
+    saveTable_(t);
+    return { code: rec.code, progress: p };
+  });
+}
 function cfgNum_(k, d) { var v = cfgGet_(k); return (v === '' || v === undefined || v === null) ? d : num_(v); }
 function maStagePro_() { return String(cfgGet_('MA_STAGEPRO') || MA_STAGEPRO_MAC_DINH).trim().toUpperCase(); }
 function isForeign_(city) { return !!city && DOMESTIC_CITY.indexOf(city) < 0; }
@@ -1940,10 +1967,21 @@ function seedDemo_() {
     lines: [].concat(L('Q225DS', 1, { r: 1 }, MADI)) });
 
   // ---- nhân sự (theo danh sách FSL), phân công, vận chuyển ----
-  [['NV-001','Thiết','Kỹ thuật âm thanh',WH.HN,'PGĐ Kỹ thuật – Âm thanh'],['NV-002','Sơn','Kỹ thuật ánh sáng',WH.HN,'PGĐ Kỹ thuật – Ánh sáng'],
-   ['NV-003','Minh','Kỹ thuật trưởng',WH.HN,'Kỹ thuật trưởng'],['NV-004','Hoàng','Kỹ thuật hệ thống',WH.HN,'Kỹ thuật hệ thống'],
-   ['NV-005','Mạnh','Setup âm thanh ánh sáng',WH.HN,'Setup'],['NV-006','Hiếu','Setup âm thanh ánh sáng',WH.HN,'Setup']].forEach(function (x) {
+  [['NV-001','Thiết','Kỹ thuật âm thanh',WH.HN,'PGĐ Kỹ thuật – Âm thanh · báo cáo CEO'],['NV-002','Sơn','Kỹ thuật ánh sáng',WH.HN,'PGĐ Kỹ thuật – Ánh sáng · báo cáo CEO'],
+   ['NV-003','Minh','Kỹ thuật trưởng',WH.HN,'Kỹ thuật trưởng · báo cáo PGĐ Âm thanh (Thiết)'],['NV-004','Hoàng','Kỹ thuật hệ thống',WH.HN,'Kỹ thuật hệ thống · tài khoản quản trị'],
+   ['NV-005','Mạnh','Setup âm thanh ánh sáng',WH.HN,'Setup AV · báo cáo Kỹ thuật trưởng (Minh)'],['NV-006','Hiếu','Setup âm thanh ánh sáng',WH.HN,'Setup AV · báo cáo Kỹ thuật trưởng (Minh)'],
+   ['NV-007','Phương Anh','Sales',WH.HN,'Giám đốc Sales · báo cáo CEO'],['NV-008','Thuý','Sales',WH.HN,'Sales Manager · báo cáo Giám đốc Sales (Phương Anh)']].forEach(function (x) {
     apiSaveStaff({ name: x[1], role: x[2], wh: x[3], note: x[4] });
+  });
+  // phân công giả định: mỗi show có kỹ thuật trưởng + PGĐ âm thanh + PGĐ ánh sáng, setup AV xuất kho
+  live_(readTable_('SHOW')).filter(function (r) { return ['Hủy', 'Báo giá'].indexOf(String(r['Trạng thái'])) < 0; }).forEach(function (r) {
+    var code = String(r['Mã show']), out = d2s_(r['Ngày xuất kho']), day = d2s_(r['Ngày diễn']), place = String(r['Địa điểm'] || '');
+    if (!out || !day) return;
+    apiSaveAssign({ show: code, staff: 'NV-005', date: out, from: '08:00', to: '18:00', task: 'Setup AV / xếp hàng', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-006', date: out, from: '08:00', to: '18:00', task: 'Setup AV / xếp hàng', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-003', date: day, from: '14:00', to: '23:00', task: 'Kỹ thuật trưởng – điều phối show', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-001', date: day, from: '14:00', to: '23:00', task: 'Âm thanh (PGĐ)', place: place });
+    apiSaveAssign({ show: code, staff: 'NV-002', date: day, from: '14:00', to: '23:00', task: 'Ánh sáng (PGĐ)', place: place });
   });
   apiSaveAssign({ show: 'SH-2610-001', staff: 'NV-005', date: '2026-10-09', from: '08:00', to: '18:00', task: 'Soundcheck / rehearsal', place: 'Nhà hát Hòa Bình' });
   apiSaveAssign({ show: 'SH-2610-002', staff: 'NV-005', date: '2026-10-11', from: '08:00', to: '18:00', task: 'Tuning & setup', place: 'Global City' });
@@ -1962,7 +2000,13 @@ function seedDemo_() {
 }
 
 /** [Mã, Hãng, Dòng, Họ, Tên, Loại, Part No., Mô tả, kg, Giá/ngày, Cho thuê riêng, Tham số popup, Ảnh URL, Mã ảnh] */
+/** Giá thuê/ngày (VNĐ) theo yêu cầu bản 6 – mã nào không có trong bảng thì giữ giá cũ */
+var PRICE_V6 = { J8: 4500000, J12: 4500000, JSUB: 4500000, GSL8: 8000000, GSL12: 8000000, SLSUB: 8000000, SLGSUB: 8000000, KSL8: 6000000, XSL8: 4500000, V8: 3000000,
+  Q338: 60000000, Q338P: 75000000, Q225DSP: 50000000, Q225DS: 40000000, Q225P: 35000000, Q225: 30000000, 'SDR-OP': 55000000, 'SDR-MADI': 55000000 };
 function demoCatalog_() {
+  return demoCatalogBase_().map(function (c) { if (PRICE_V6[c[0]] !== undefined) c[9] = PRICE_V6[c[0]]; return c; });
+}
+function demoCatalogBase_() {
   var DB = 'd&b audiotechnik', DG = 'DiGiCo', GEN = 'Phụ kiện chung';
   var dg = 'https://digico.biz/wp-content/uploads/';
   return [
@@ -2332,13 +2376,13 @@ function seedUsers_() {
   var rows = [
     U('dvhung', 'CEO Hùng (cập nhật họ tên)', 'CEO', '', 'Hoạt động', '15a7d846218d0d4a', '345d5669387252052c804d480f2008ccf2f8661ee3cbd23c588c46d39093a419', 'Tài khoản CEO – nên đổi mật khẩu sau lần đăng nhập đầu', 'CEO'),
     U('admin', 'Phạm Minh Hoàng', 'Quản trị', '', 'Hoạt động', '3369c5d790da6ee7', 'e1ed677e4ddd027793d2fa902c629e635479d7184304acd86ca1f2b4c47d113a', 'Quản trị hệ thống – nên đổi mật khẩu sau lần đăng nhập đầu', 'Kỹ thuật hệ thống'),
-    U('phuonganh', 'Phương Anh', 'Giám đốc Sale', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Giám đốc Sales'),
-    U('thuy', 'Thuý', 'Sales Manager', 'phuonganh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Sales Manager'),
-    U('son', 'Sơn', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'PGĐ Kỹ thuật · Ánh sáng'),
-    U('thiet', 'Thiết', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'PGĐ Kỹ thuật · Âm thanh'),
-    U('minh', 'Minh', 'Kỹ thuật trưởng', 'thiet', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Kỹ thuật trưởng'),
-    U('manh', 'Mạnh', 'Kỹ thuật', 'minh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Setup'),
-    U('hieu', 'Hiếu', 'Kỹ thuật', 'minh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Setup'),
+    U('phuonganh', 'Phương Anh', 'Giám đốc Sale', 'dvhung', 'Hoạt động', '7763780cbfa32537', '26ea40f227aa43fd165e94f7cf24224cf1c0c3de09af39a7f31796cb6248281e', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Giám đốc Sales'),
+    U('thuy', 'Thuý', 'Sales Manager', 'phuonganh', 'Hoạt động', '34940aaef656ee98', '425c469e42168d14e976e30d8be5e18109d1dfcc597d9dd90c7d74f396ac50af', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Sales Manager'),
+    U('son', 'Sơn', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Hoạt động', '631610dcf8ea789c', '9abd940f6cc160a200936bd9c8c57bd15cc10ce0c4ab69ab5ef5c8c2fd976c12', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'PGĐ Kỹ thuật · Ánh sáng'),
+    U('thiet', 'Thiết', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Hoạt động', '09672406bacbede4', 'daa20ee6043e4cbc0330e3e9e9d5989c847869a8ce66aff1f420487e3dbd6fa2', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'PGĐ Kỹ thuật · Âm thanh'),
+    U('minh', 'Minh', 'Kỹ thuật trưởng', 'thiet', 'Hoạt động', 'c881054fecca9ef0', '70f31dc0edaff837055332ac0a7d189489c507ee2aa5fe338c0546e0f3a19502', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Kỹ thuật trưởng'),
+    U('manh', 'Mạnh', 'Kỹ thuật', 'minh', 'Hoạt động', '4e02f0d063ecb6c9', '085fffd00c0e61e8f6d31079681cb730752c1c804f38569b87b328ef4727febc', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Setup AV'),
+    U('hieu', 'Hiếu', 'Kỹ thuật', 'minh', 'Hoạt động', '48944763440a9e18', '9da03206ec42f283b57fbbdd9c2f406d43c65977f1d79d5811ab69b22f5bcdd4', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Setup AV'),
     U('ptgd.mau', 'Vị trí trống – Phó tổng giám đốc', 'Phó tổng giám đốc', 'dvhung', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu, đổi tên khi có người', 'Phó TGĐ (trống)'),
     U('gdkt.mau', 'Vị trí trống – Giám đốc Kỹ Thuật', 'Giám đốc Kỹ Thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu', 'GĐ Kỹ thuật (trống)'),
     U('ktt.mau', 'Vị trí trống – Kế toán trưởng', 'Kế toán trưởng', 'ptgd.mau', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu', 'Kế toán trưởng (trống)')
@@ -2365,7 +2409,7 @@ function seedCustomers_() {
       'Thói quen sinh hoạt': 'Rất kỹ về rider kỹ thuật, thích xem simulation ArrayCalc trước', 'Giá mặc cả (% hay xin giảm)': 5, 'Make up giá?': 'Không',
       'Phụ trách KH': 'admin', 'Ghi chú': 'Dữ liệu GIẢ ĐỊNH', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t })
     ,
-    K({ 'Mã KH': 'KH-005', 'Họ tên': 'Minh Tấn', 'Công ty': '', 'Ghi chú': 'KHÁCH QUEN – đối tác tin cậy', 'Phụ trách KH': 'admin', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t }),
+    K({ 'Mã KH': 'KH-005', 'Họ tên': 'Minh Tấn', 'Công ty': '', 'Chức vụ': 'Khách quen', 'Ghi chú': 'KHÁCH QUEN – đối tác tin cậy. Chưa có: SĐT, công ty, MST, giá mặc cả – cần bổ sung', 'Phụ trách KH': 'phuonganh', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t }),
     K({ 'Mã KH': 'KH-004', 'Họ tên': 'Stage Professional (StagePro)', 'Công ty': 'Stage Professional', 'Ghi chú': 'CÔNG TY PHÂN PHỐI – hỗ trợ theo mã ưu đãi STAGEPRO (giảm 100%, chỉ CEO nhập mã)', 'Phụ trách KH': 'dvhung', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t })
   ];
   sh_('CUST').getRange(2, 1, rows.length, COLS.CUST.length).setValues(rows);
@@ -2489,7 +2533,7 @@ function isLocked_() { return sysGet_('LOCK') === '1'; }
 /* ------------------------------ bộ điều phối duy nhất ------------------------------ */
 var PUBLIC_ACTIONS = { apiLogin: 1, apiRegister: 1, apiVisit: 1, apiPublicInfo: 1, apiPing: 1 };
 var ACTIONS = {
-  apiBootstrap: { w: false }, apiSync: { w: false }, apiLogout: { w: true },
+  apiBootstrap: { w: false }, apiSync: { w: false }, apiLogout: { w: true }, apiSaveProgress: { w: true },
   apiSaveShow: { p: 'TAO_SHOW', w: true }, apiDeleteShow: { p: 'TAO_SHOW', w: true },
   apiAssign: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckout: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckin: { p: 'XUAT_NHAP_KHO', w: true },
   apiSetAssetStatus: { p: 'XUAT_NHAP_KHO', w: true }, apiSavePng: { w: false },
@@ -3196,6 +3240,7 @@ function applyZoom(z){ document.body.style.zoom = z; }
 function cycleZoom(){ var i = ZOOMS.indexOf(readZoom()); var z = ZOOMS[(i + 1) % ZOOMS.length]; try { localStorage.setItem('qltb-zoom', String(z)); } catch (e) {} applyZoom(z); toast('Cỡ chữ: ' + Math.round(z * 100) + '%'); }
 applyZoom(readZoom());
 
+
 function $(s){ return document.querySelector(s); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function money(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN') + ' ' + ((B && B.cfg.DON_VI_TIEN) || 'đ'); }
@@ -3299,7 +3344,7 @@ function buildLines(model, qty, params, choices){
 
 /* ---------------------------- khung ---------------------------- */
 function tabsList(){
-  var t = [['org','🏢','Sơ đồ tổ chức'],['week','📅','Lịch thiết bị tuần'],['stock','📦','Kho thiết bị'],['show','🎪','Show & đặt thiết bị'],['ops','📤','Xuất / Nhập kho'],['transport','🚚','Vận chuyển'],['staff','👷','Nhân sự'],['slip','🧾','Phiếu / Báo giá']];
+  var t = [['org','🏢','Sơ đồ tổ chức'],['week','📅','Lịch thiết bị tuần'],['stock','📦','Kho thiết bị'],['show','🎪','Show & đặt thiết bị'],['ops','📤','Xuất / Nhập kho'],['transport','🚚','Vận chuyển'],['staff','👷','Nhân sự'],['slip','🧾','Phiếu / Báo giá'],['tien','🚦','Tiến độ show']];
   if (can('XEM_KHACH_HANG')) t.push(['cust','👥','Khách hàng']);
   var n = myPending().length; t.push(['disc','💸','Duyệt chiết khấu' + (n ? '<span class="tabbadge">'+n+'</span>' : '')]);
   t.push(['log','🕘','Nhật ký kho']);
@@ -3311,7 +3356,7 @@ function tabsList(){
 function renderTabs(){
   if (MODE === 'sidebar') { $('#tabs').innerHTML = ''; return; }
   var T = tabsList(); if (!T.some(function(t){ return t[0] === S.tab; })) S.tab = 'org';
-  $('#tabs').innerHTML = T.map(function(t){ return '<button class="tab '+(S.tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+' '+t[2]+'</button>'; }).join('');
+  $('#tabs').innerHTML = T.map(function(t){ return '<button class="tab '+(S.tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+' '+tx(t[2])+'</button>'; }).join(''); translateAll();
 }
 function go(t){ S.tab = t; renderTabs(); render(); }
 function renderKpis(){
@@ -3335,7 +3380,7 @@ function render(){
   renderKpis();
   var v = $('#view');
   if (MODE === 'sidebar') { v.innerHTML = vSidebar(); return; }
-  v.innerHTML = feedCard() + ({org:vOrg, week:vWeek, stock:vStock, show:vShow, ops:vOps, transport:vTransport, staff:vStaff, slip:vSlip, log:vLog, cust:vCust, disc:vDisc, users:vUsers, sys:vSys, stats:vStats}[S.tab] || vOrg)();
+  v.innerHTML = feedCard() + ({org:vOrg, week:vWeek, stock:vStock, show:vShow, ops:vOps, transport:vTransport, staff:vStaff, slip:vSlip, log:vLog, cust:vCust, disc:vDisc, users:vUsers, sys:vSys, stats:vStats, tien:vProg}[S.tab] || vOrg)();
 }
 function reload(keep){
   if (MODE === 'offline' && !window.ENGINE.session()) { showLogin(); return Promise.resolve(); }
@@ -3889,7 +3934,7 @@ function openShowPop(code){
     '<div><div class="mute" style="font-size:11.5px">🏭 Kho xuất</div><b>'+esc(whOf(s))+'</b></div>' +
     '<div><div class="mute" style="font-size:11.5px">🗓️ Xuất / diễn / nhập</div><b>'+fd(s.out)+' → ★ '+fd(s.day)+' → '+fd(s.back)+'</b></div>' +
     '<div><div class="mute" style="font-size:11.5px">💼 Phụ trách · người tạo</div><b>'+esc(s.pic||'—')+'</b> <span class="mute">· '+esc(s.creator||'—')+'</span></div>' +
-    '<div><div class="mute" style="font-size:11.5px">💸 Chiết khấu</div><b>'+(s.discount||0)+'%</b> <span class="mute">· '+esc(s.discStatus||'không')+'</span> <a style="cursor:pointer;font-size:11.5px" onclick="openShow(\''+esc(code)+'\')">mở mục chiết khấu →</a></div>' +
+    '<div style="grid-column:1/-1">' + discBlock(s) + '</div>' +
     '<div><div class="mute" style="font-size:11.5px">💰 Tổng tiền (đã gồm CK, VAT)</div><b style="font-size:15px;'+(big?'color:#b91c1c':'')+'">'+money(s.total)+'</b></div>' +
     '</div>' + (s.note ? '<div class="note i" style="margin-top:8px">📝 '+esc(s.note)+'</div>' : '') +
     trNote(s) +
@@ -4053,8 +4098,8 @@ function vStaffMain(){
   var sf = S.stForm || {}, af = S.asForm || {};
   var h = '<div class="two"><div class="card"><div class="card-h"><h2>👷 NHÂN SỰ</h2><span class="mute">Kỹ thuật âm thanh · ánh sáng · setup AV · kho</span></div><div class="card-b">' +
     '<div class="chips" style="margin-bottom:10px">' + B.whList.map(function(w){ return '<span class="pill">'+esc(w.name)+': <b>'+B.staff.filter(function(x){ return x.wh === w.name; }).length+'</b> người</span>'; }).join(' ') + '</div>' +
-    '<div style="overflow:auto"><table class="t"><thead><tr><th>Mã</th><th>Họ tên</th><th>Vai trò</th><th>Kho làm việc</th><th class="num">Số lần phân công</th><th></th></tr></thead><tbody>' +
-    B.staff.map(function(x){ return '<tr><td class="code">'+esc(x.code)+'</td><td><b>'+esc(x.name)+'</b>'+(x.phone?'<div class="mute" style="font-size:11px">'+esc(x.phone)+'</div>':'')+'</td><td>'+esc(x.role)+'</td><td>'+esc(x.wh)+'</td><td class="num">'+B.assigns.filter(function(a){ return a.staff === x.code; }).length+'</td><td>'+(canS?'<button class="btn sm" onclick="S.stForm={code:\''+esc(x.code)+'\',name:\''+esc(x.name)+'\',role:\''+esc(x.role)+'\',wh:\''+esc(x.wh)+'\',phone:\''+esc(x.phone)+'\',note:\''+esc(x.note)+'\'};render()">Sửa</button> <button class="btn sm bad" onclick="stDel(\''+esc(x.code)+'\')">Xóa</button>':'')+'</td></tr>'; }).join('') +
+    staffFilterBar() + '<div style="overflow:auto"><table class="t"><thead><tr><th>Mã</th><th>Họ tên</th><th>Vai trò</th><th>Kho làm việc</th><th class="num">Số lần phân công</th><th></th></tr></thead><tbody>' +
+    staffFilt().map(function(x){ return '<tr><td class="code">'+esc(x.code)+'</td><td><b>'+esc(x.name)+'</b>'+(x.phone?'<div class="mute" style="font-size:11px">'+esc(x.phone)+'</div>':'')+'</td><td>'+esc(x.role)+'</td><td>'+esc(x.wh)+'</td><td class="num">'+B.assigns.filter(function(a){ return a.staff === x.code; }).length+'</td><td>'+(canS?'<button class="btn sm" onclick="S.stForm={code:\''+esc(x.code)+'\',name:\''+esc(x.name)+'\',role:\''+esc(x.role)+'\',wh:\''+esc(x.wh)+'\',phone:\''+esc(x.phone)+'\',note:\''+esc(x.note)+'\'};render()">Sửa</button> <button class="btn sm bad" onclick="stDel(\''+esc(x.code)+'\')">Xóa</button>':'')+'</td></tr>'; }).join('') +
     (B.staff.length ? '' : '<tr><td colspan="6"><div class="empty">Chưa có nhân sự.</div></td></tr>') + '</tbody></table></div>';
   if (canS) {
     var r = sf.role || (B.staffRoles[0] || ''), w = sf.wh || (B.whList[0] || {}).name;
@@ -4261,7 +4306,7 @@ function vOrg(){
   var sortU = function(x, y){ return x.level - y.level || x.role.localeCompare(y.role); };
   var node = function(u){
     var me = u.username === a.me.username, inactive = u.status !== 'Hoạt động';
-    var h = '<li><div class="onode'+(me?' me':'')+(inactive?' off':'')+'" style="--lc:'+lvColor(u.level)+'" onclick="openUser(\''+esc(u.username)+'\')">'+rankAv(u,true)+'<b>'+esc(u.name)+'</b><span class="orole">'+esc(u.role)+'</span>'+(u.title && u.title!==u.role ? '<span class="mute" style="font-size:10.5px">'+esc(u.title)+'</span>' : '')+'<span class="mute" style="font-size:11px">@'+esc(u.username)+' · CK ≤ '+u.max+'%</span>'+(inactive?userBadge(u.status):'')+(me?'<span class="st" style="background:#ede9fe;color:#5b21b6">Bạn</span>':'')+'</div>';
+    var h = '<li><div class="onode'+(me?' me':'')+(inactive?' off':'')+'" style="--lc:'+lvColor(u.level)+'" onclick="openUser(\''+esc(u.username)+'\')"><div class="orow">'+rankAv(u,true)+'<div class="otx"><b>'+esc(u.name)+'</b><span class="orole">'+esc(u.role)+'</span>'+(u.title && u.title!==u.role ? '<span class="mute" style="font-size:10.5px">'+esc(u.title)+'</span>' : '')+'<span class="mute" style="font-size:11px">@'+esc(u.username)+' · CK ≤ '+u.max+'%</span>'+(inactive?userBadge(u.status):'')+(me?'<span class="st" style="background:#ede9fe;color:#5b21b6">Bạn</span>':'')+'</div></div></div>';
     var ch = (kids[u.username] || []).sort(sortU);
     if (ch.length) h += '<ul>' + ch.map(node).join('') + '</ul>';
     return h + '</li>';
@@ -4522,7 +4567,7 @@ function vStats(){
     var r = st.res, t = r.total || {};
     h += '<div class="mute" style="margin:10px 0;font-size:12px">Khoảng: ' + fd(r.from) + ' → ' + fd(r.to) + ' · doanh thu = tiền hàng sau chiết khấu, chưa VAT</div>';
     h += '<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">' + [['💰', t.revenue, 'Doanh thu'], ['🧾', t.expense, 'Chi phí'], ['⚠️', t.penalty, 'Tiền phạt'], ['📈', t.profit, 'Lợi nhuận']].map(function(k){ return '<div class="kpi"><div class="ic">' + k[0] + '</div><div><b>' + money(k[1] || 0) + '</b><small>' + k[2] + '</small></div></div>'; }).join('') + '</div>';
-    h += '<div style="overflow:auto"><table class="t"><thead><tr><th>Kỳ</th><th class="num">Doanh thu</th><th class="num">Chi phí</th><th class="num">Tiền phạt</th><th class="num">Lợi nhuận</th></tr></thead><tbody>' +
+    h += statChart(r.rows) + '<div style="overflow:auto"><table class="t"><thead><tr><th>Kỳ</th><th class="num">Doanh thu</th><th class="num">Chi phí</th><th class="num">Tiền phạt</th><th class="num">Lợi nhuận</th></tr></thead><tbody>' +
       r.rows.map(function(x){ return '<tr><td><b>' + esc(x.label) + '</b></td><td class="num">' + money(x.revenue) + '</td><td class="num">' + money(x.expense) + '</td><td class="num">' + money(x.penalty) + '</td><td class="num"><b style="color:' + (x.profit < 0 ? '#b91c1c' : '#166534') + '">' + money(x.profit) + '</b></td></tr>'; }).join('') + '</tbody></table></div>';
   }
   return h + '</div></div>';
@@ -4589,9 +4634,134 @@ function rankSvg(t, c){
 }
 function rankAv(u, big){
   var c = lvColor(u.level), t = rankTier(u);
-  return '<span class="rk-wrap"><span class="av2' + (big ? ' big' : '') + '" style="background:' + c + '">' + esc(initials2(u.name)) + '</span><span class="rk" title="Cấp ' + t + '">' + rankSvg(t, c) + '</span></span>';
+  return '<span class="rk-av'+(big?' big':'')+'" style="background:'+c+'" title="Cấp '+t+'">' + esc(initials2(u.name)) + '<span class="rk-ic">' + rankSvg(t, c) + '</span></span>';
 }
 
+
+/* ======================== 🌐 NGÔN NGỮ VI / EN (phủ: menu, tab, nút đầu trang, thống kê, tiến độ) ======================== */
+var LANG = (function(){ try { return localStorage.getItem('qltb-lang') === 'en' ? 'en' : 'vi'; } catch (e) { return 'vi'; } })();
+var DICT_EN = {
+  'Sơ đồ tổ chức':'Org chart', 'Lịch thiết bị tuần':'Weekly calendar', 'Kho thiết bị':'Equipment stock', 'Show & đặt thiết bị':'Shows & booking',
+  'Xuất / Nhập kho':'Stock out / in', 'Vận chuyển':'Transport', 'Nhân sự':'Staff', 'Phiếu / Báo giá':'Slips / quotes', 'Khách hàng':'Customers',
+  'Duyệt chiết khấu':'Discount approval', 'Nhật ký kho':'Stock log', 'Người dùng':'Users', 'Hệ thống':'System', 'Thống kê':'Statistics',
+  'Tiến độ show':'Show progress', 'Làm mới':'Refresh', 'Sao lưu':'Backup', 'Khôi phục':'Restore', 'Dữ liệu mẫu':'Sample data', 'Đóng':'Close',
+  'Lưu':'Save', 'Tổng tiền':'Total', 'Doanh thu':'Revenue', 'Chi phí':'Expenses', 'Tiền phạt':'Penalties', 'Lợi nhuận':'Profit',
+  'Tuần':'Week', 'Tháng':'Month', 'Quý':'Quarter', 'Nửa năm':'Half-year', 'Năm':'Year', 'Tùy chọn':'Custom', 'Tính lại':'Recalculate'
+};
+function tx(s){ return LANG === 'en' && DICT_EN[s] ? DICT_EN[s] : s; }
+function translateAll(){
+  var langBtn = document.getElementById('langBtn'); if (langBtn) langBtn.textContent = LANG === 'en' ? 'VI' : 'EN';
+  document.documentElement.setAttribute('lang', LANG === 'en' ? 'en' : 'vi');
+  document.querySelectorAll('.top button, .offbar button').forEach(function(b){
+    if (b.id === 'themeBtn' || b.id === 'langBtn') return;
+    if (!b.dataset.vi) b.dataset.vi = b.textContent;
+    var txt = b.dataset.vi, sp = txt.indexOf(' ');
+    var pre = sp > 0 ? txt.slice(0, sp + 1) : '', rest = sp > 0 ? txt.slice(sp + 1) : txt;
+    b.textContent = pre + tx(rest);
+  });
+}
+function toggleLang(){ LANG = LANG === 'en' ? 'vi' : 'en'; try { localStorage.setItem('qltb-lang', LANG); } catch (e) {} renderTabs(); render(); translateAll(); }
+
+/* ======================== 🚦 TIẾN ĐỘ SHOW ======================== */
+var PROGRESS_FE = { 'Báo giá':10, 'On Hold':10, 'Đã xác nhận':30, 'Đang soạn hàng':50, 'Đang ở show':75, 'Đã nhập kho':100, 'Hủy':0 };
+function progOf(s){ return (s.progress !== '' && s.progress != null) ? Number(s.progress) : (PROGRESS_FE[s.status] != null ? PROGRESS_FE[s.status] : 0); }
+function canSalesFe(){ var me = A().me || {}; return !!(me.owner || (Number(me.level) > 0 && Number(me.level) <= 2) || (B.salesRoles || ['Giám đốc Sale','Sales Manager']).indexOf(me.role) >= 0); }
+S.pg = { q: '', st: '', pic: '' };
+function vProg(){
+  var P = S.pg, canE = canSalesFe();
+  var list = B.shows.filter(function(s){ return s.status !== 'Hủy'; }).sort(function(a, b){ return a.out < b.out ? -1 : 1; });
+  var pics = uniq(B.shows.map(function(s){ return s.pic || ''; }).filter(String));
+  var q = P.q.toLowerCase();
+  list = list.filter(function(s){ return (!P.st || s.status === P.st) && (!P.pic || s.pic === P.pic) && (!q || (s.code + ' ' + s.name + ' ' + s.venue).toLowerCase().indexOf(q) >= 0); });
+  var h = '<div class="card"><div class="card-h"><h2>🚦 TIẾN ĐỘ SHOW</h2><span class="mute">'+list.length+' show · mọi người xem · '+(canE ? 'bạn được cập nhật (cấp Sales trở lên)' : 'chỉ cấp Sales trở lên được cập nhật')+'</span></div><div class="card-b">';
+  h += '<div class="row" style="flex-wrap:wrap;gap:8px"><input class="inp" style="width:200px" placeholder="🔎 Tìm show…" value="'+esc(P.q)+'" oninput="S.pg.q=this.value;render()">' +
+    '<select class="inp" onchange="S.pg.st=this.value;render()"><option value="">Mọi trạng thái</option>'+B.SHOW_ST.map(function(x){ return '<option '+(P.st===x?'selected':'')+'>'+esc(x)+'</option>'; }).join('')+'</select>' +
+    '<select class="inp" onchange="S.pg.pic=this.value;render()"><option value="">Mọi phụ trách</option>'+pics.map(function(x){ return '<option '+(P.pic===x?'selected':'')+'>'+esc(x)+'</option>'; }).join('')+'</select></div>';
+  h += '<div style="overflow:auto;margin-top:10px"><table class="t"><thead><tr><th>Show</th><th>Xuất → diễn → nhập</th><th>Trạng thái</th><th style="min-width:150px">Tiến độ</th><th>Việc tiếp theo</th>' + (canE ? '<th>Cập nhật</th>' : '') + '</tr></thead><tbody>';
+  if (!list.length) h += '<tr><td colspan="6"><div class="empty">Không có show khớp bộ lọc.</div></td></tr>';
+  list.forEach(function(s){
+    var p = progOf(s), id = s.code.replace(/[^A-Za-z0-9]/g, '_');
+    h += '<tr><td><b>'+esc(s.name)+'</b><div class="code">'+esc(s.code)+' · '+esc(s.pic||'—')+'</div></td><td class="mute" style="font-size:11.5px;white-space:nowrap">'+fds(s.out)+' → ★ '+fds(s.day)+' → '+fds(s.back)+'</td>' +
+      '<td>'+showBadge(s.status)+'</td><td><div style="background:var(--line);border-radius:6px;height:10px;overflow:hidden"><div style="width:'+p+'%;height:100%;background:linear-gradient(90deg,#7c3aed,#0ea5e9)"></div></div><b style="font-size:12px">'+p+'%</b>'+((s.progress===''||s.progress==null)?' <span class="mute" style="font-size:10.5px">(theo trạng thái)</span>':'')+'</td>' +
+      '<td style="font-size:12px;max-width:260px">'+esc(s.nextStep || '—')+'</td>';
+    if (canE) h += '<td style="white-space:nowrap"><input class="inp" id="pg_p_'+id+'" type="number" min="0" max="100" style="width:70px" value="'+((s.progress===''||s.progress==null)?'':s.progress)+'" placeholder="%"> <input class="inp" id="pg_n_'+id+'" style="width:150px" value="'+esc(s.nextStep||'')+'" placeholder="Việc tiếp theo"> <button class="btn sm pri" onclick="saveProg(\''+esc(s.code)+'\')">💾</button></td>';
+    h += '</tr>';
+  });
+  return h + '</tbody></table></div></div></div>';
+}
+function saveProg(code){
+  var id = code.replace(/[^A-Za-z0-9]/g, '_');
+  var p = $('#pg_p_' + id).value, n = $('#pg_n_' + id).value;
+  busy(true);
+  call('apiSaveProgress', { code: code, progress: p === '' ? '' : Number(p), nextStep: n }).then(function(){ toast('✅ Đã cập nhật tiến độ ' + esc(code), 'ok'); return reload(); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+
+/* ======================== 💸 CHIẾT KHẤU & CHÍNH SÁCH (trong popup show) ======================== */
+function discBlock(s){
+  var pol = s.policy || { pct: 0, label: '' }, manual = Number(s.discount || 0), auto = Number(pol.pct || 0), eff = Math.max(manual, auto);
+  var st = s.discStatus ? '<span class="pill" style="font-size:11px">'+esc(s.discStatus)+'</span>' : '';
+  return '<div class="note" style="background:#faf5ff;border-color:#d8b4fe;color:var(--ink)"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><b>💸 Chiết khấu & chính sách</b>'+st+'</div>' +
+    '<div class="form" style="margin-top:8px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' +
+    '<div><div class="mute" style="font-size:11px">Chiết khấu thủ công (đã duyệt)</div><b>'+manual+'%</b></div>' +
+    '<div><div class="mute" style="font-size:11px">Chính sách tự động</div><b>'+auto+'%</b>'+(pol.label?'<div class="mute" style="font-size:11px">'+esc(pol.label)+'</div>':'')+'</div>' +
+    '<div><div class="mute" style="font-size:11px">Áp dụng (cao hơn trong hai)</div><b style="color:#7c3aed;font-size:15px">'+eff+'%</b></div>' +
+    '<div><div class="mute" style="font-size:11px">Mã ưu đãi</div><b>'+esc(s.promo || '—')+'</b></div></div>' +
+    '<div style="margin-top:8px"><a style="cursor:pointer;font-size:12px;text-decoration:underline" onclick="closeModal();openShow(\''+esc(s.code)+'\')">Mở mục chiết khấu để chỉnh / xin duyệt →</a></div></div>';
+}
+
+/* ======================== 📊 BIỂU ĐỒ THỐNG KÊ (SVG thuần) ======================== */
+function statChart(rows){
+  if (!rows || !rows.length) return '';
+  var W = 640, H = 260, PL = 56, PR = 12, PT = 16, PB = 40;
+  var vals = []; rows.forEach(function(r){ vals.push(r.revenue, r.expense + r.penalty, r.profit); });
+  var hi = Math.max(0, Math.max.apply(null, vals)), lo = Math.min(0, Math.min.apply(null, vals));
+  if (hi === lo) hi = lo + 1;
+  var Y = function(v){ return PT + (hi - v) / (hi - lo) * (H - PT - PB); };
+  var n = rows.length, gw = (W - PL - PR) / n, bw = Math.max(5, Math.min(24, gw / 3.4));
+  var g = '';
+  for (var k = 0; k <= 4; k++) { var v = lo + (hi - lo) * k / 4, yy = Y(v);
+    g += '<line x1="'+PL+'" x2="'+(W-PR)+'" y1="'+yy+'" y2="'+yy+'" stroke="var(--line)" stroke-width="1"/><text x="'+(PL-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="10" fill="var(--mute)">'+Math.round(v/1e6)+'tr</text>'; }
+  var zero = Y(0);
+  var bars = rows.map(function(r, i){
+    var cx = PL + i * gw + gw / 2, ex = r.expense + r.penalty;
+    var b1 = '<rect x="'+(cx-bw-2)+'" y="'+Math.min(Y(r.revenue), zero)+'" width="'+bw+'" height="'+Math.abs(zero-Y(r.revenue))+'" rx="3" fill="#7c3aed"><title>Doanh thu: '+money(r.revenue)+'</title></rect>';
+    var b2 = '<rect x="'+(cx+2)+'" y="'+Math.min(Y(ex), zero)+'" width="'+bw+'" height="'+Math.abs(zero-Y(ex))+'" rx="3" fill="#f97316"><title>Chi phí + tiền phạt: '+money(ex)+'</title></rect>';
+    var lbl = '<text x="'+cx+'" y="'+(H-PB+14)+'" text-anchor="middle" font-size="10" fill="var(--mute)">'+esc(String(r.label).slice(0, 12))+'</text>';
+    return b1 + b2 + lbl;
+  }).join('');
+  var pts = rows.map(function(r, i){ return (PL + i * gw + gw / 2) + ',' + Y(r.profit); }).join(' ');
+  var dots = rows.map(function(r, i){ return '<circle cx="'+(PL+i*gw+gw/2)+'" cy="'+Y(r.profit)+'" r="3.5" fill="#10b981"><title>Lợi nhuận: '+money(r.profit)+'</title></circle>'; }).join('');
+  var line = n > 1 ? '<polyline points="'+pts+'" fill="none" stroke="#10b981" stroke-width="2.2"/>' : '';
+  return '<div style="padding:6px 0 4px"><div class="legend" style="margin-bottom:4px"><span><i style="background:#7c3aed"></i>Doanh thu</span><span><i style="background:#f97316"></i>Chi phí + tiền phạt</span><span><i style="background:#10b981"></i>Lợi nhuận (đường)</span></div>' +
+    '<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Biểu đồ thống kê" style="max-width:100%;height:auto">'+g+bars+line+dots+'</svg></div>';
+}
+
+/* ======================== 👷 BỘ LỌC NHÂN SỰ ======================== */
+S.stF = { q: '', dept: '', wh: '' };
+function deptOf(role){
+  var r = String(role || '');
+  if (/âm thanh/i.test(r)) return 'Âm thanh';
+  if (/ánh sáng/i.test(r)) return 'Ánh sáng';
+  if (/setup/i.test(r)) return 'Setup AV';
+  if (/kho/i.test(r)) return 'Kho';
+  if (/sales/i.test(r)) return 'Sales';
+  if (/kỹ thuật/i.test(r)) return 'Kỹ thuật chung';
+  return 'Khác';
+}
+function staffFilt(){
+  var F = S.stF, q = F.q.toLowerCase();
+  return B.staff.filter(function(x){
+    return (!F.dept || deptOf(x.role) === F.dept) && (!F.wh || x.wh === F.wh) && (!q || (x.name + ' ' + x.code + ' ' + x.role + ' ' + (x.note || '')).toLowerCase().indexOf(q) >= 0);
+  });
+}
+function staffFilterBar(){
+  var depts = uniq(B.staff.map(function(x){ return deptOf(x.role); })), F = S.stF;
+  return '<div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:10px"><input class="inp" style="width:170px" placeholder="🔎 Tên, mã, vai trò…" value="'+esc(F.q)+'" oninput="S.stF.q=this.value;render()">' +
+    '<select class="inp" onchange="S.stF.dept=this.value;render()"><option value="">Mọi bộ phận</option>'+depts.map(function(d){ return '<option '+(F.dept===d?'selected':'')+' value="'+esc(d)+'">'+esc(d)+'</option>'; }).join('')+'</select>' +
+    '<select class="inp" onchange="S.stF.wh=this.value;render()"><option value="">Mọi kho / địa điểm</option>'+B.whList.map(function(w){ return '<option '+(F.wh===w.name?'selected':'')+' value="'+esc(w.name)+'">'+esc(w.name)+'</option>'; }).join('')+'</select>' +
+    '<span class="mute" style="font-size:12px">'+staffFilt().length+' / '+B.staff.length+' người</span></div>';
+}
 
 /* ---------- 🛡️ hệ thống: truy cập, IP, nhật ký, khóa ---------- */
 function vSys(){

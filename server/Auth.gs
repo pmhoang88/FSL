@@ -60,13 +60,13 @@ function seedUsers_() {
   var rows = [
     U('dvhung', 'CEO Hùng (cập nhật họ tên)', 'CEO', '', 'Hoạt động', '15a7d846218d0d4a', '345d5669387252052c804d480f2008ccf2f8661ee3cbd23c588c46d39093a419', 'Tài khoản CEO – nên đổi mật khẩu sau lần đăng nhập đầu', 'CEO'),
     U('admin', 'Phạm Minh Hoàng', 'Quản trị', '', 'Hoạt động', '3369c5d790da6ee7', 'e1ed677e4ddd027793d2fa902c629e635479d7184304acd86ca1f2b4c47d113a', 'Quản trị hệ thống – nên đổi mật khẩu sau lần đăng nhập đầu', 'Kỹ thuật hệ thống'),
-    U('phuonganh', 'Phương Anh', 'Giám đốc Sale', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Giám đốc Sales'),
-    U('thuy', 'Thuý', 'Sales Manager', 'phuonganh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Sales Manager'),
-    U('son', 'Sơn', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'PGĐ Kỹ thuật · Ánh sáng'),
-    U('thiet', 'Thiết', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'PGĐ Kỹ thuật · Âm thanh'),
-    U('minh', 'Minh', 'Kỹ thuật trưởng', 'thiet', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Kỹ thuật trưởng'),
-    U('manh', 'Mạnh', 'Kỹ thuật', 'minh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Setup'),
-    U('hieu', 'Hiếu', 'Kỹ thuật', 'minh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Setup'),
+    U('phuonganh', 'Phương Anh', 'Giám đốc Sale', 'dvhung', 'Hoạt động', '7763780cbfa32537', '26ea40f227aa43fd165e94f7cf24224cf1c0c3de09af39a7f31796cb6248281e', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Giám đốc Sales'),
+    U('thuy', 'Thuý', 'Sales Manager', 'phuonganh', 'Hoạt động', '34940aaef656ee98', '425c469e42168d14e976e30d8be5e18109d1dfcc597d9dd90c7d74f396ac50af', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Sales Manager'),
+    U('son', 'Sơn', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Hoạt động', '631610dcf8ea789c', '9abd940f6cc160a200936bd9c8c57bd15cc10ce0c4ab69ab5ef5c8c2fd976c12', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'PGĐ Kỹ thuật · Ánh sáng'),
+    U('thiet', 'Thiết', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Hoạt động', '09672406bacbede4', 'daa20ee6043e4cbc0330e3e9e9d5989c847869a8ce66aff1f420487e3dbd6fa2', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'PGĐ Kỹ thuật · Âm thanh'),
+    U('minh', 'Minh', 'Kỹ thuật trưởng', 'thiet', 'Hoạt động', 'c881054fecca9ef0', '70f31dc0edaff837055332ac0a7d189489c507ee2aa5fe338c0546e0f3a19502', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Kỹ thuật trưởng'),
+    U('manh', 'Mạnh', 'Kỹ thuật', 'minh', 'Hoạt động', '4e02f0d063ecb6c9', '085fffd00c0e61e8f6d31079681cb730752c1c804f38569b87b328ef4727febc', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Setup AV'),
+    U('hieu', 'Hiếu', 'Kỹ thuật', 'minh', 'Hoạt động', '48944763440a9e18', '9da03206ec42f283b57fbbdd9c2f406d43c65977f1d79d5811ab69b22f5bcdd4', 'Mật khẩu mặc định 123456 – đổi sau khi đăng nhập', 'Setup AV'),
     U('ptgd.mau', 'Vị trí trống – Phó tổng giám đốc', 'Phó tổng giám đốc', 'dvhung', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu, đổi tên khi có người', 'Phó TGĐ (trống)'),
     U('gdkt.mau', 'Vị trí trống – Giám đốc Kỹ Thuật', 'Giám đốc Kỹ Thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu', 'GĐ Kỹ thuật (trống)'),
     U('ktt.mau', 'Vị trí trống – Kế toán trưởng', 'Kế toán trưởng', 'ptgd.mau', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu', 'Kế toán trưởng (trống)')
@@ -93,7 +93,7 @@ function seedCustomers_() {
       'Thói quen sinh hoạt': 'Rất kỹ về rider kỹ thuật, thích xem simulation ArrayCalc trước', 'Giá mặc cả (% hay xin giảm)': 5, 'Make up giá?': 'Không',
       'Phụ trách KH': 'admin', 'Ghi chú': 'Dữ liệu GIẢ ĐỊNH', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t })
     ,
-    K({ 'Mã KH': 'KH-005', 'Họ tên': 'Minh Tấn', 'Công ty': '', 'Ghi chú': 'KHÁCH QUEN – đối tác tin cậy', 'Phụ trách KH': 'admin', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t }),
+    K({ 'Mã KH': 'KH-005', 'Họ tên': 'Minh Tấn', 'Công ty': '', 'Chức vụ': 'Khách quen', 'Ghi chú': 'KHÁCH QUEN – đối tác tin cậy. Chưa có: SĐT, công ty, MST, giá mặc cả – cần bổ sung', 'Phụ trách KH': 'phuonganh', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t }),
     K({ 'Mã KH': 'KH-004', 'Họ tên': 'Stage Professional (StagePro)', 'Công ty': 'Stage Professional', 'Ghi chú': 'CÔNG TY PHÂN PHỐI – hỗ trợ theo mã ưu đãi STAGEPRO (giảm 100%, chỉ CEO nhập mã)', 'Phụ trách KH': 'dvhung', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t })
   ];
   sh_('CUST').getRange(2, 1, rows.length, COLS.CUST.length).setValues(rows);
@@ -217,7 +217,7 @@ function isLocked_() { return sysGet_('LOCK') === '1'; }
 /* ------------------------------ bộ điều phối duy nhất ------------------------------ */
 var PUBLIC_ACTIONS = { apiLogin: 1, apiRegister: 1, apiVisit: 1, apiPublicInfo: 1, apiPing: 1 };
 var ACTIONS = {
-  apiBootstrap: { w: false }, apiSync: { w: false }, apiLogout: { w: true },
+  apiBootstrap: { w: false }, apiSync: { w: false }, apiLogout: { w: true }, apiSaveProgress: { w: true },
   apiSaveShow: { p: 'TAO_SHOW', w: true }, apiDeleteShow: { p: 'TAO_SHOW', w: true },
   apiAssign: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckout: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckin: { p: 'XUAT_NHAP_KHO', w: true },
   apiSetAssetStatus: { p: 'XUAT_NHAP_KHO', w: true }, apiSavePng: { w: false },
