@@ -7,7 +7,6 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-title" content="QLTB PRO">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
 <meta name="format-detection" content="telephone=no">
 <meta charset="utf-8">
@@ -205,6 +204,40 @@ table.t tr.main td{border-top:2px solid #ede9fe}
 .slip .sig div{min-height:90px}
 .slip .sig i{display:block;color:var(--mute);font-size:11px;margin-top:4px}
 .stamp{display:inline-block;border:2px solid #16a34a;color:#16a34a;border-radius:8px;padding:3px 10px;font-weight:800;transform:rotate(-6deg);margin-top:16px}
+/* đăng nhập, tổ chức, khách hàng, duyệt CK */
+#login{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px;overflow:auto;background:radial-gradient(900px 500px at 10% 0%,#ddd6fe,transparent 60%),radial-gradient(800px 500px at 100% 100%,#bae6fd,transparent 55%),#f3f4fb}
+.lg-card{width:min(440px,100%);background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 70px -30px rgba(30,27,75,.45);padding:22px}
+.lg-top{display:flex;gap:12px;align-items:center;margin-bottom:6px}.lg-top h2{margin:0;font-size:18px;font-weight:800}
+.lg-form{display:flex;flex-direction:column;gap:10px}.lg-form label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--mute)}
+.lg-srv{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px;font-size:12.5px}.lg-srv summary{cursor:pointer}
+.av2{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;color:#fff;font-weight:800;font-size:10.5px;flex:none}
+.av2.big{width:40px;height:40px;font-size:14px}
+.mep{cursor:pointer;gap:6px;padding:3px 10px 3px 3px}
+.tree-wrap{overflow:auto;padding:18px 10px 24px;-webkit-overflow-scrolling:touch}
+.tree{display:inline-block;min-width:100%}
+.tree ul{padding-top:22px;position:relative;display:flex;justify-content:center;margin:0;padding-left:0}
+.tree>ul{padding-top:0}
+.tree li{list-style:none;text-align:center;position:relative;padding:22px 6px 0}
+.tree li::before,.tree li::after{content:'';position:absolute;top:0;right:50%;border-top:2px solid #c4b5fd;width:50%;height:22px}
+.tree li::after{right:auto;left:50%;border-left:2px solid #c4b5fd}
+.tree li:only-child::after,.tree li:only-child::before{display:none}
+.tree li:only-child{padding-top:0}
+.tree>ul>li{padding-top:0}.tree>ul>li::before,.tree>ul>li::after{display:none}
+.tree li:first-child::before,.tree li:last-child::after{border:0 none}
+.tree li:last-child::before{border-right:2px solid #c4b5fd;border-radius:0 8px 0 0}
+.tree li:first-child::after{border-radius:8px 0 0 0}
+.tree ul ul::before{content:'';position:absolute;top:0;left:50%;border-left:2px solid #c4b5fd;width:0;height:22px}
+.onode{display:inline-flex;flex-direction:column;align-items:center;gap:3px;border:1px solid var(--line);border-top:4px solid var(--lc);background:#fff;border-radius:14px;padding:10px 12px;min-width:150px;max-width:190px;box-shadow:var(--sh);cursor:pointer}
+.onode:hover{border-color:#a78bfa}.onode.me{box-shadow:0 0 0 3px #ede9fe,var(--sh)}.onode.off{opacity:.55}
+.onode b{font-size:12.5px;line-height:1.25}.orole{font-size:11px;font-weight:700;color:var(--lc)}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin-bottom:16px}
+.dcard{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#fff;display:flex;flex-direction:column;gap:4px}
+.dcard.urg{border-color:#fca5a5;box-shadow:0 0 0 3px #fee2e2}
+.hist{white-space:pre-wrap;font-size:11.5px;background:var(--soft);border-radius:8px;padding:8px;margin:6px 0 0;font-family:inherit}
+h4.sec{margin:6px 0 8px;font-size:13px}
+.disc-box{border-top:1px solid var(--line);background:#fcfbff}
+.tabbadge{background:#ef4444;color:#fff;border-radius:999px;font-size:10.5px;padding:1px 6px;margin-left:2px}
+
 /* toast/loading */
 #toast{position:fixed;left:18px;bottom:18px;display:flex;flex-direction:column;gap:8px;z-index:90}
 .tst{background:#0f172a;color:#fff;border-radius:12px;padding:10px 14px;font-weight:600;box-shadow:0 10px 30px -10px #000;max-width:380px;animation:pop .2s}
@@ -234,6 +267,7 @@ table.t tr.main td{border-top:2px solid #ede9fe}
   .kpi{padding:8px 8px 7px;gap:0;border-radius:12px}.kpi b{font-size:16px}.kpi .ic{display:none}.kpi small{font-size:10.5px;margin-top:3px;line-height:1.25}
   .logo{width:34px;height:34px;font-size:17px;border-radius:11px}.brand{flex:1;min-width:0}
   .mode-offline .brand .sub .pill{display:none}
+  .brand h1{font-size:13px!important}.brand .sub,.co{display:none!important}.top .pill,.top .btn.sm{font-size:11px;padding:3px 8px}.av2{width:22px;height:22px}
   .md-h .pill{display:none}.md-h h3{font-size:14px}.lp-l .ph{height:140px!important}
   .slist{max-height:none}.sitem{padding:9px 10px 9px 13px}
   .wk table{min-width:900px}.wk th.mh{width:150px}.wk td.m .ph{display:none}.mrow b{font-size:11.5px}
@@ -263,7 +297,9 @@ table.t tr.main td{border-top:2px solid #ede9fe}
     </div>
     <div class="sp"></div>
     <div class="co noprint" id="co"></div>
-    <span class="pill noprint" id="syncPill">🔗 Đang kết nối Sheet…</span>
+    <span class="pill noprint" id="ipPill">🌐 IP: …</span>
+    <span id="mePill" class="noprint"></span>
+    <span class="pill noprint" id="syncPill" onclick="if(window.ENGINE&&window.ENGINE.server())syncNow()" style="cursor:pointer">🔗 Đang kết nối…</span>
     <button class="btn sm noprint" onclick="reload()">⟳ Làm mới</button>
     <div class="offbar noprint"><button class="btn sm" onclick="offBackup()">💾 Sao lưu</button><button class="btn sm" onclick="offRestorePick()">📂 Khôi phục</button><button class="btn sm" onclick="offResetAsk()">↺ Dữ liệu mẫu</button><input type="file" id="offFile" accept=".json,application/json" style="display:none" onchange="offRestore(this)"></div>
     <button class="btn sm noprint" id="btnClose" onclick="closeApp()">✕ Đóng</button>
@@ -277,7 +313,10 @@ table.t tr.main td{border-top:2px solid #ede9fe}
 <div id="loading"><div class="spin"></div></div>
 
 
-<script>/* ===== BẢN OFFLINE: mô phỏng Google Sheets ngay trong trình duyệt ===== */
+<script>/* Địa chỉ máy chủ mặc định (URL Ứng dụng web Apps Script, đuôi /exec). Để trống = chỉ chạy trên máy. Có thể đổi trong app: ⚙ Máy chủ */
+window.QLTB_SERVER = '';
+</script>
+<script>/* ===== BẢN APP/OFFLINE: mô phỏng Google Sheets ngay trong trình duyệt ===== */
 /* Mock tối giản của Apps Script (SpreadsheetApp, Utilities, ...) để chạy Code.gs trong trình duyệt / Node */
 (function (G) {
   function chain(target) {
@@ -361,11 +400,40 @@ table.t tr.main td{border-top:2px solid #ede9fe}
   };
   G.__book = book;
   G.Session = { getScriptTimeZone: function () { return 'Asia/Ho_Chi_Minh'; }, getActiveUser: function () { return { getEmail: function () { return ''; } }; } };
-  G.LockService = { getDocumentLock: function () { return { waitLock: function () {}, releaseLock: function () {} }; } };
+  G.LockService = { getDocumentLock: function () { return { waitLock: function () {}, releaseLock: function () {} }; }, getScriptLock: function () { return { waitLock: function () {}, releaseLock: function () {} }; } };
+  G.ContentService = { MimeType: { JSON: 'json' }, createTextOutput: function (s) { return { s: s, setMimeType: function () { return this; }, getContent: function () { return s; } }; } };
+
+  function sha256bytes(str) {
+    var utf8 = unescape(encodeURIComponent(str)), bytes = [];
+    for (var i = 0; i < utf8.length; i++) bytes.push(utf8.charCodeAt(i));
+    var K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    var H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    var l = bytes.length * 8; bytes.push(0x80); while (bytes.length % 64 !== 56) bytes.push(0);
+    var hi = Math.floor(l / 0x100000000); for (var s = 3; s >= 0; s--) bytes.push((hi >>> (s * 8)) & 255); for (s = 3; s >= 0; s--) bytes.push((l >>> (s * 8)) & 255);
+    var w = new Array(64), r = function (x, n) { return (x >>> n) | (x << (32 - n)); };
+    for (var o = 0; o < bytes.length; o += 64) {
+      for (var t = 0; t < 16; t++) w[t] = (bytes[o + t * 4] << 24) | (bytes[o + t * 4 + 1] << 16) | (bytes[o + t * 4 + 2] << 8) | bytes[o + t * 4 + 3];
+      for (t = 16; t < 64; t++) { var s0 = r(w[t-15],7) ^ r(w[t-15],18) ^ (w[t-15] >>> 3), s1 = r(w[t-2],17) ^ r(w[t-2],19) ^ (w[t-2] >>> 10); w[t] = (w[t-16] + s0 + w[t-7] + s1) | 0; }
+      var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+      for (t = 0; t < 64; t++) {
+        var S1 = r(e,6) ^ r(e,11) ^ r(e,25), ch = (e & f) ^ (~e & g), t1 = (h + S1 + ch + K[t] + w[t]) | 0;
+        var S0 = r(a,2) ^ r(a,13) ^ r(a,22), mj = (a & b) ^ (a & c) ^ (b & c), t2 = (S0 + mj) | 0;
+        h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0; H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+    }
+    var out = []; H.forEach(function (x) { for (var s = 3; s >= 0; s--) { var v = (x >>> (s * 8)) & 255; out.push(v > 127 ? v - 256 : v); } });
+    return out;
+  }
+  G.__sha256bytes = sha256bytes;
   G.Utilities = {
+    DigestAlgorithm: { SHA_256: 'SHA_256' }, Charset: { UTF_8: 'UTF_8' },
+    computeDigest: function (alg, s) { return sha256bytes(String(s)); },
+    getUuid: function () { var h = ''; var cr = (typeof crypto !== 'undefined' && crypto.getRandomValues) ? crypto.getRandomValues(new Uint8Array(16)) : null; for (var i = 0; i < 16; i++) { var v = cr ? cr[i] : Math.floor(Math.random() * 256); h += (v < 16 ? '0' : '') + v.toString(16); } return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20); },
     formatDate: function (d, tz, fmt) {
       var p = function (n) { return ('0' + n).slice(-2); };
-      return fmt.replace('yyyy', d.getFullYear()).replace('MM', p(d.getMonth() + 1)).replace('dd', p(d.getDate())).replace('HH', p(d.getHours())).replace('mm', p(d.getMinutes()));
+      var map = { yyyy: d.getFullYear(), yy: String(d.getFullYear()).slice(-2), MM: p(d.getMonth() + 1), dd: p(d.getDate()), HH: p(d.getHours()), mm: p(d.getMinutes()), ss: p(d.getSeconds()) };
+      return fmt.replace(/yyyy|yy|MM|dd|HH|mm|ss/g, function (t) { return map[t]; });
     },
     parseDate: function (s) { var a = s.match(/(\d+)-(\d+)-(\d+) (\d+):(\d+)/); return new Date(+a[1], +a[2] - 1, +a[3], +a[4], +a[5]); },
     base64Decode: function () { return []; }, newBlob: function () { return {}; }
@@ -394,12 +462,14 @@ var APP = {
   NAME: 'QUẢN LÝ THIẾT BỊ PRO',
   MENU: '⚡ QUẢN LÝ THIẾT BỊ PRO',
   SUB: 'Âm thanh · Ánh sáng · Cho thuê show',
-  VERSION: '1.0 (10/2026)'
+  VERSION: '2.0 (10/2026)'
 };
 
 var SH = {
   CFG: 'Cấu hình', CAT: 'Danh mục', ASSET: 'Thiết bị', RULE: 'Liên kết',
-  SHOW: 'Show', LINE: 'Chi tiết show', LOG: 'Nhật ký', TEST: 'Kịch bản test', GUIDE: 'Hướng dẫn'
+  SHOW: 'Show', LINE: 'Chi tiết show', LOG: 'Nhật ký', TEST: 'Kịch bản test', GUIDE: 'Hướng dẫn',
+  ROLE: 'Chức vụ', USER: 'Người dùng', CUST: 'Khách hàng', DISC: 'Duyệt chiết khấu',
+  VISIT: 'Truy cập', AUDIT: 'Nhật ký hệ thống', SYS: '_Hệ thống'
 };
 
 var COLS = {
@@ -412,12 +482,26 @@ var COLS = {
   RULE:  ['Model/Họ chính', 'Nhóm', 'Câu hỏi', 'Lựa chọn', 'Mặc định', 'Model kèm', 'Công thức SL',
           'Yêu cầu cấu hình', 'Ghi chú'],
   SHOW:  ['Mã show', 'Tên show', 'Khách hàng', 'Địa điểm', 'Loại', 'Ngày xuất kho', 'Ngày diễn',
-          'Ngày nhập kho', 'Số ngày tính tiền', 'Trạng thái', 'Phụ trách', 'Tổng tiền', 'Ghi chú', 'Màu'],
+          'Ngày nhập kho', 'Số ngày tính tiền', 'Trạng thái', 'Phụ trách', 'Tổng tiền', 'Ghi chú', 'Màu',
+          'Mã KH', 'Chiết khấu %', 'Trạng thái CK', 'Người tạo'],
   LINE:  ['Mã show', 'STT', 'Mã model', 'Tên thiết bị', 'Loại', 'SL', 'Nguồn', 'Nhóm liên kết', 'Yêu cầu',
           'Đơn giá', 'Số ngày', 'Thành tiền', 'Mã TB đã gán', 'Ghi chú'],
   LOG:   ['Thời gian', 'Mã show', 'Mã TB', 'Từ', 'Sang', 'Người', 'Ghi chú'],
   TEST:  ['STT', 'Phần', 'Thao tác', 'Kết quả mong đợi', 'Đạt', 'Ghi chú'],
-  GUIDE: ['Mục', 'Nội dung']
+  GUIDE: ['Mục', 'Nội dung'],
+  ROLE:  ['Chức vụ', 'Cấp', 'Chiết khấu tối đa %', 'Báo cáo cho', 'TAO_SHOW', 'XUAT_NHAP_KHO', 'SUA_DANH_MUC',
+          'XEM_KHACH_HANG', 'SUA_KHACH_HANG', 'XEM_TAI_CHINH', 'QUAN_TRI_USER', 'KHOA_HE_THONG', 'XEM_NHAT_KY_HT', 'Ghi chú'],
+  USER:  ['Username', 'Họ tên', 'Chức vụ', 'Cấp trên', 'Điện thoại', 'Email', 'Trạng thái', 'Ban đến ngày', 'Lý do khóa/ban',
+          'Ngày tạo', 'Người tạo', 'Ngày sửa thông tin', 'Ngày đổi quyền', 'Ngày khóa/ban', 'Đăng nhập cuối', 'IP cuối', 'Ghi chú', 'Salt', 'Hash'],
+  CUST:  ['Mã KH', 'Họ tên', 'Điện thoại', 'Công ty', 'Chức vụ', 'Cấp trên của KH', 'Cấp dưới của KH', 'Nơi làm trước đây', 'Địa chỉ',
+          'Thói quen sinh hoạt', 'Giá mặc cả (% hay xin giảm)', 'Make up giá?', 'Ghi chú giá', 'Tên công ty xuất HĐ', 'MST', 'Địa chỉ xuất HĐ',
+          'Email nhận HĐ', 'Tiền hồi %', 'Tiền hồi (số tiền)', 'Mùa cao điểm (ghi tay)', 'Phụ trách KH', 'Ghi chú', 'Ngày tạo', 'Người tạo', 'Ngày sửa',
+          'Số show đã book', 'Show thành công', 'Ngày book gần nhất'],
+  DISC:  ['Mã yêu cầu', 'Mã show', 'Người xin', 'Chức vụ người xin', 'CK xin %', 'Lý do', 'Gấp', 'Đang chờ', 'Trạng thái',
+          'CK được duyệt %', 'Người duyệt', 'Lịch sử', 'Tạo lúc', 'Cập nhật lúc', 'IP'],
+  VISIT: ['Thời gian', 'IP', 'Username', 'Thiết bị', 'Trang'],
+  AUDIT: ['Thời gian', 'Username', 'Chức vụ', 'IP', 'Thao tác', 'Chi tiết', 'Thiết bị'],
+  SYS:   ['Khóa', 'Giá trị', 'Hết hạn']
 };
 
 /** Trạng thái từng thiết bị (đổi chữ ở đây nếu muốn) */
@@ -454,6 +538,8 @@ function onOpen() {
     .addSeparator()
     .addItem('📤 Xuất dữ liệu cho bản offline (file JSON → Drive)', 'exportBackupToDrive')
     .addItem('📥 Nhập dữ liệu từ bản offline (file JSON)', 'openImportDialog')
+    .addSeparator()
+    .addItem('🌐 Hướng dẫn mở máy chủ cho app điện thoại', 'showServerGuide')
     .addToUi();
 }
 
@@ -540,6 +626,7 @@ function saveTable_(t) {
   if (t.oldCount > rows.length) t.sh.getRange(2 + rows.length, 1, t.oldCount - rows.length, lc).clearContent();
   t.oldCount = rows.length;
   if (rows.length && (t.key === 'LINE' || t.key === 'SHOW')) applyMoneyFormulas_(t.key, rows.length);
+  if (rows.length && t.key === 'CUST') applyCustFormulas_(rows.length);
 }
 
 /** Thành tiền / Tổng tiền là CÔNG THỨC để ai mở sheet cũng bấm vào kiểm tra được */
@@ -550,8 +637,8 @@ function applyMoneyFormulas_(key, n) {
     for (var r = 2; r < 2 + n; r++) out.push(['=IF(' + L('SL') + r + '="","",' + L('SL') + r + '*' + L('Đơn giá') + r + '*' + L('Số ngày') + r + ')']);
     sh_('LINE').getRange(2, idx_('LINE', 'Thành tiền'), n, 1).setFormulas(out);
   } else {
-    var A = colLetter_(idx_('SHOW', 'Mã show')), ln = "'" + SH.LINE + "'!", cf = "'" + SH.CFG + "'!";
-    for (var k = 2; k < 2 + n; k++) out.push(['=IF(' + A + k + '="","",ROUND(SUMIF(' + ln + '$' + L('Mã show') + ':$' + L('Mã show') + ',' + A + k + ',' + ln + '$' + L('Thành tiền') + ':$' + L('Thành tiền') + ')*(1+IFERROR(VLOOKUP("VAT_%",' + cf + '$A:$B,2,FALSE),0)/100),0))']);
+    var A = colLetter_(idx_('SHOW', 'Mã show')), D = colLetter_(idx_('SHOW', 'Chiết khấu %')), ln = "'" + SH.LINE + "'!", cf = "'" + SH.CFG + "'!";
+    for (var k = 2; k < 2 + n; k++) out.push(['=IF(' + A + k + '="","",ROUND(SUMIF(' + ln + '$' + L('Mã show') + ':$' + L('Mã show') + ',' + A + k + ',' + ln + '$' + L('Thành tiền') + ':$' + L('Thành tiền') + ')*(1-N(' + D + k + ')/100)*(1+IFERROR(VLOOKUP("VAT_%",' + cf + '$A:$B,2,FALSE),0)/100),0))']);
     sh_('SHOW').getRange(2, idx_('SHOW', 'Tổng tiền'), n, 1).setFormulas(out);
   }
 }
@@ -602,8 +689,9 @@ function reseedDemo() {
 
 function setupStructure_() {
   var ss = ss_();
-  var order = ['GUIDE', 'CFG', 'CAT', 'ASSET', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST'];
-  var tabColor = { GUIDE: '#64748b', CFG: '#64748b', CAT: '#16a34a', ASSET: '#0ea5e9', RULE: '#f59e0b', SHOW: '#7c3aed', LINE: '#a855f7', LOG: '#94a3b8', TEST: '#e11d48' };
+  var order = ['GUIDE', 'CFG', 'CAT', 'ASSET', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'CUST', 'DISC', 'USER', 'ROLE', 'VISIT', 'AUDIT', 'SYS'];
+  var tabColor = { GUIDE: '#64748b', CFG: '#64748b', CAT: '#16a34a', ASSET: '#0ea5e9', RULE: '#f59e0b', SHOW: '#7c3aed', LINE: '#a855f7', LOG: '#94a3b8', TEST: '#e11d48',
+    CUST: '#0891b2', DISC: '#db2777', USER: '#1e293b', ROLE: '#1e293b', VISIT: '#475569', AUDIT: '#475569', SYS: '#000000' };
   order.forEach(function (key, i) {
     var sh = ss.getSheetByName(SH[key]);
     if (!sh) sh = ss.insertSheet(SH[key], Math.min(i, ss.getSheets().length));
@@ -613,7 +701,7 @@ function setupStructure_() {
     if (cur.join('') === '') cur = [];
     COLS[key].forEach(function (h) { if (cur.indexOf(h) < 0) cur.push(h); });
     if (sh.getMaxColumns() < cur.length) sh.insertColumnsAfter(sh.getMaxColumns(), cur.length - sh.getMaxColumns());
-    if (sh.getMaxRows() < 1200 && key !== 'CFG' && key !== 'GUIDE' && key !== 'TEST') sh.insertRowsAfter(sh.getMaxRows(), 1200 - sh.getMaxRows());
+    if (sh.getMaxRows() < 1200 && ['CFG', 'GUIDE', 'TEST', 'ROLE', 'SYS'].indexOf(key) < 0) sh.insertRowsAfter(sh.getMaxRows(), 1200 - sh.getMaxRows());
     sh.getRange(1, 1, 1, cur.length).setValues([cur])
       .setBackground(HEADER_BG).setFontColor('#ffffff').setFontWeight('bold')
       .setHorizontalAlignment('center').setVerticalAlignment('middle').setWrap(true);
@@ -628,6 +716,9 @@ function setupStructure_() {
     if ((n === 'Sheet1' || n === 'Trang tính1') && s.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(s);
   });
   if (sh_('CFG').getLastRow() < 2) seedConfig_();
+  if (sh_('ROLE').getLastRow() < 2) seedRoles_();
+  if (sh_('USER').getLastRow() < 2) seedUsers_();
+  try { sh_('SYS').hideSheet(); } catch (e) {}
 }
 
 function formatSheet_(key, sh, headers) {
@@ -640,7 +731,14 @@ function formatSheet_(key, sh, headers) {
     LINE: [110, 50, 100, 250, 120, 60, 140, 120, 100, 110, 70, 130, 320, 200],
     LOG: [140, 110, 110, 130, 130, 180, 280],
     TEST: [50, 150, 520, 460, 60, 260],
-    GUIDE: [220, 900]
+    GUIDE: [220, 900],
+    ROLE: [190, 50, 90, 170, 90, 110, 110, 120, 120, 110, 110, 110, 120, 260],
+    USER: [110, 180, 170, 110, 110, 160, 110, 105, 200, 130, 100, 130, 130, 130, 130, 120, 220, 60, 60],
+    CUST: [80, 170, 110, 200, 130, 150, 150, 170, 220, 220, 110, 90, 200, 200, 110, 220, 170, 80, 120, 130, 110, 220, 120, 100, 120, 90, 90, 110],
+    DISC: [110, 110, 110, 150, 70, 220, 60, 120, 110, 90, 110, 360, 130, 130, 110],
+    VISIT: [140, 130, 110, 320, 120],
+    AUDIT: [140, 110, 150, 130, 170, 480, 260],
+    SYS: [220, 400, 140]
   }[key] || [];
   W.forEach(function (w, i) { sh.setColumnWidth(i + 1, w); });
   var c = function (h) { return headers.indexOf(h) + 1; };
@@ -683,7 +781,22 @@ function formatSheet_(key, sh, headers) {
     ['Đơn giá', 'Thành tiền'].forEach(function (h) { sh.getRange(2, c(h), n, 1).setNumberFormat('#,##0'); });
     sh.getRange(2, c('Mã TB đã gán'), n, 1).setWrap(true);
   }
-  if (key === 'LOG') sh.getRange(2, 1, n, 1).setNumberFormat('dd/MM/yyyy HH:mm');
+  if (key === 'LOG' || key === 'VISIT' || key === 'AUDIT') sh.getRange(2, 1, n, 1).setNumberFormat('dd/MM/yyyy HH:mm');
+  if (key === 'ROLE') sh.getRange(2, 5, 30, 9).setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build());
+  if (key === 'USER') {
+    dv(c('Trạng thái'), USER_ST);
+    ['Ngày tạo', 'Ngày sửa thông tin', 'Ngày đổi quyền', 'Ngày khóa/ban', 'Đăng nhập cuối'].forEach(function (h) { sh.getRange(2, c(h), n, 1).setNumberFormat('dd/MM/yyyy HH:mm'); });
+    sh.getRange(2, c('Ban đến ngày'), n, 1).setNumberFormat('dd/MM/yyyy');
+    var urg = sh.getRange(2, c('Trạng thái'), n, 1);
+    var uc = { 'Hoạt động': '#dcfce7', 'Chờ duyệt': '#fef3c7', 'Tạm khóa': '#e2e8f0', 'Ban': '#fee2e2' };
+    Object.keys(uc).forEach(function (s) { rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(s).setBackground(uc[s]).setBold(true).setRanges([urg]).build()); });
+  }
+  if (key === 'CUST') {
+    ['Tiền hồi (số tiền)'].forEach(function (h) { sh.getRange(2, c(h), n, 1).setNumberFormat('#,##0'); });
+    sh.getRange(2, c('Ngày book gần nhất'), n, 1).setNumberFormat('dd/MM/yyyy');
+  }
+  if (key === 'DISC') { dv(c('Trạng thái'), ['Chờ duyệt', 'Đã duyệt', 'Từ chối', 'Đã hủy']); sh.getRange(2, c('Lịch sử'), n, 1).setWrap(true); }
+  if (key === 'SHOW') sh.getRange(2, c('Chiết khấu %'), n, 1).setNumberFormat('0.##');
   if (key === 'TEST') { sh.getRange(2, c('Đạt'), 60, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build()); sh.getRange(2, 1, 60, headers.length).setWrap(true).setVerticalAlignment('top'); }
   if (key === 'GUIDE') sh.getRange(1, 1, 80, 2).setWrap(true).setVerticalAlignment('top');
   if (rules.length) sh.setConditionalFormatRules(rules);
@@ -746,12 +859,13 @@ function uploadImagesToDrive() {
 }
 
 /* ================= ĐỒNG BỘ VỚI BẢN OFFLINE (file .json) ================= */
-var BACKUP_KEYS = ['CFG', 'CAT', 'ASSET', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE'];
+var BACKUP_KEYS = ['CFG', 'CAT', 'ASSET', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'ROLE', 'USER', 'CUST', 'DISC', 'VISIT', 'AUDIT', 'SYS'];
+var BUSINESS_KEYS = ['CFG', 'CAT', 'ASSET', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'CUST', 'DISC'];
 
 /** Toàn bộ dữ liệu 9 sheet → chuỗi JSON (ngày giờ lưu dạng {"$d": mili-giây}) */
-function exportBackup_() {
-  var out = { app: 'QLTB PRO', v: 1, at: new Date().getTime(), sheets: [] };
-  BACKUP_KEYS.forEach(function (k) {
+function exportBackup_(keys) {
+  var out = { app: 'QLTB PRO', v: 2, at: new Date().getTime(), sheets: [] };
+  (keys || BACKUP_KEYS).forEach(function (k) {
     var sh = sh_(k); if (!sh) return;
     var lr = sh.getLastRow(), lc = Math.max(sh.getLastColumn(), COLS[k].length);
     var d = lr ? sh.getRange(1, 1, lr, lc).getValues() : [COLS[k]];
@@ -762,12 +876,12 @@ function exportBackup_() {
 }
 
 /** Ghi dữ liệu từ file sao lưu vào sheet (ghép theo TÊN CỘT, thay toàn bộ dữ liệu cũ) */
-function apiImportBackup(text, silent) {
+function apiImportBackup(text, silent, keys) {
   var data = JSON.parse(text);
   if (!data || data.app !== 'QLTB PRO' || !data.sheets) throw new Error('Không phải file sao lưu của QUẢN LÝ THIẾT BỊ PRO');
   var res = {};
   withLock_(function () {
-    BACKUP_KEYS.forEach(function (k) {
+    (keys || BACKUP_KEYS).forEach(function (k) {
       var src = data.sheets.filter(function (s) { return s.n === SH[k]; })[0];
       var sh = sh_(k); if (!src || !sh || !src.d || !src.d.length) return;
       var sh0 = src.d[0].map(String);
@@ -784,6 +898,7 @@ function apiImportBackup(text, silent) {
       if (out.length) sh.getRange(2, 1, out.length, head.length).setValues(out);
       res[SH[k]] = out.length;
       if (out.length && (k === 'LINE' || k === 'SHOW')) applyMoneyFormulas_(k, out.length);
+      if (out.length && k === 'CUST') applyCustFormulas_(out.length);
     });
     if (sh_('CAT').getLastRow() > 1) refreshCatalogFormulas();
   });
@@ -791,12 +906,14 @@ function apiImportBackup(text, silent) {
   return res;
 }
 
+function apiImportBackupBusiness(text) { return apiImportBackup(text, false, BUSINESS_KEYS); }
+
 function exportBackupToDrive() {
   var name = 'QLTB PRO – Sao lưu';
   var it = DriveApp.getFoldersByName(name);
   var folder = it.hasNext() ? it.next() : DriveApp.createFolder(name);
   var fname = 'QLTB-PRO-' + Utilities.formatDate(new Date(), tz_(), 'yyyyMMdd-HHmm') + '.json';
-  var f = folder.createFile(fname, exportBackup_(), 'application/json');
+  var f = folder.createFile(fname, exportBackup_(BUSINESS_KEYS), 'application/json');
   var html = '<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6">✅ Đã lưu <b>' + fname + '</b> vào thư mục Drive "' + name + '".<br><br>' +
     '<a href="' + f.getUrl() + '" target="_blank">Mở file trên Drive</a> → tải về điện thoại/máy tính → mở <b>QLTB-PRO-offline.html</b> → bấm <b>📂 Khôi phục</b> → chọn file này.</div>';
   SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutput(html).setWidth(460).setHeight(200), '📤 Xuất dữ liệu cho bản offline');
@@ -808,7 +925,7 @@ function openImportDialog() {
     '<input type="file" id="f" accept=".json,application/json"><br><br><button id="b" onclick="go()" style="padding:8px 16px;background:#6d28d9;color:#fff;border:0;border-radius:8px;font-weight:bold">Nhập dữ liệu</button> <span id="m"></span>' +
     '<script>function go(){var f=document.getElementById("f").files[0];if(!f){return;}document.getElementById("b").disabled=true;document.getElementById("m").textContent="Đang nhập…";' +
     'var r=new FileReader();r.onload=function(){google.script.run.withSuccessHandler(function(x){document.getElementById("m").textContent="✅ Xong: "+Object.keys(x).map(function(k){return k+" "+x[k];}).join(", ");})' +
-    '.withFailureHandler(function(e){document.getElementById("m").textContent="❌ "+e.message;document.getElementById("b").disabled=false;}).apiImportBackup(String(r.result));};r.readAsText(f);}<\/script></div>';
+    '.withFailureHandler(function(e){document.getElementById("m").textContent="❌ "+e.message;document.getElementById("b").disabled=false;}).apiImportBackupBusiness(String(r.result));};r.readAsText(f);}<\/script></div>';
   SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutput(html).setWidth(520).setHeight(260), '📥 Nhập dữ liệu từ bản offline');
 }
 
@@ -841,7 +958,7 @@ function apiBootstrap() {
   var lines = live_(readTable_('LINE')).map(lineObj_).filter(function (l) { return l.show; });
   var vat = num_(cfg['VAT_%']), sum = {};
   lines.forEach(function (l) { sum[l.show] = (sum[l.show] || 0) + l.amount; });
-  shows.forEach(function (s) { s.total = Math.round((sum[s.code] || 0) * (1 + vat / 100)); });
+  shows.forEach(function (s) { s.subtotal = sum[s.code] || 0; s.total = Math.round(s.subtotal * (1 - s.discount / 100) * (1 + vat / 100)); });
   var logs = live_(readTable_('LOG')).slice(-60).reverse().map(function (r) {
     return { t: dt2s_(r['Thời gian']), show: String(r['Mã show']), tag: String(r['Mã TB']), from: String(r['Từ']), to: String(r['Sang']), who: String(r['Người']), note: String(r['Ghi chú']) };
   });
@@ -853,7 +970,8 @@ function apiBootstrap() {
     app: APP, cfg: cfg, catalog: cat, assets: assets, rules: rules, shows: shows, lines: lines, logs: logs, img: img,
     ST: ST, ST_LIST: ST_LIST, ST_COLOR: ST_COLOR, SHOW_ST: SHOW_ST, SHOW_HOLD: SHOW_HOLD, SHOW_TYPES: SHOW_TYPES,
     SHOW_COLORS: SHOW_COLORS, MAIN_TYPES: MAIN_TYPES, user: user_(), sheetUrl: ss_().getUrl(),
-    today: Utilities.formatDate(new Date(), tz_(), 'yyyy-MM-dd')
+    today: Utilities.formatDate(new Date(), tz_(), 'yyyy-MM-dd'),
+    auth: authBootstrap_()
   };
 }
 
@@ -862,7 +980,8 @@ function showObj_(r) {
     code: String(r['Mã show'] || ''), name: String(r['Tên show'] || ''), client: String(r['Khách hàng'] || ''), venue: String(r['Địa điểm'] || ''),
     type: String(r['Loại'] || ''), out: d2s_(r['Ngày xuất kho']), day: d2s_(r['Ngày diễn']), back: d2s_(r['Ngày nhập kho']),
     days: num_(r['Số ngày tính tiền']), status: String(r['Trạng thái'] || 'Báo giá'), pic: String(r['Phụ trách'] || ''),
-    total: num_(r['Tổng tiền']), note: String(r['Ghi chú'] || ''), color: String(r['Màu'] || '')
+    total: num_(r['Tổng tiền']), note: String(r['Ghi chú'] || ''), color: String(r['Màu'] || ''),
+    cust: String(r['Mã KH'] || ''), discount: num_(r['Chiết khấu %']), discStatus: String(r['Trạng thái CK'] || ''), creator: String(r['Người tạo'] || '')
   };
 }
 function lineObj_(r) {
@@ -917,10 +1036,12 @@ function apiSaveShow(payload) {
     if (released.length) releaseAssets_(assetT, released, s.code, logs, 'Bỏ khỏi đơn / hủy show');
 
     var vat = num_(cfgGet_('VAT_%'));
+    var disc = discountOnSave_(row, s);
     Object.assign(row, {
       'Mã show': s.code, 'Tên show': s.name || '', 'Khách hàng': s.client || '', 'Địa điểm': s.venue || '', 'Loại': s.type || '',
       'Ngày xuất kho': s2d_(s.out), 'Ngày diễn': s2d_(s.day || s.out), 'Ngày nhập kho': s2d_(s.back || s.out), 'Số ngày tính tiền': days,
-      'Trạng thái': s.status || 'Báo giá', 'Phụ trách': s.pic || '', 'Tổng tiền': Math.round(total * (1 + vat / 100)), 'Ghi chú': s.note || '', 'Màu': color
+      'Trạng thái': s.status || 'Báo giá', 'Phụ trách': s.pic || '', 'Tổng tiền': Math.round(total * (1 - disc.pct / 100) * (1 + vat / 100)), 'Ghi chú': s.note || '', 'Màu': color,
+      'Mã KH': s.cust || '', 'Chiết khấu %': disc.pct, 'Trạng thái CK': disc.status, 'Người tạo': row['Người tạo'] || (CTX ? CTX.username : user_())
     });
     saveTable_(showT); saveTable_(lineT); if (released.length) saveTable_(assetT);
     appendRows_('LOG', logs.concat([{ 'Thời gian': new Date(), 'Mã show': s.code, 'Mã TB': '', 'Từ': '', 'Sang': s.status, 'Người': user_(), 'Ghi chú': (isNew ? 'Tạo show' : 'Cập nhật show') + ' – ' + newLines.length + ' dòng thiết bị' }]));
@@ -1164,7 +1285,7 @@ function seedConfig_() {
 }
 
 function seedDemo_() {
-  ['CAT', 'ASSET', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE'].forEach(function (k) {
+  ['CAT', 'ASSET', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'CUST', 'DISC'].forEach(function (k) {
     var sh = sh_(k); if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, Math.max(sh.getLastColumn(), COLS[k].length)).clearContent();
   });
   if (sh_('CFG').getLastRow() < 2) seedConfig_();
@@ -1182,13 +1303,14 @@ function seedDemo_() {
   sh_('ASSET').getRange(2, 1, assets.length, COLS.ASSET.length).setValues(assets);
 
   // ---- tạo show bằng chính bộ máy liên kết (giống bấm trong popup) ----
+  seedCustomers_();
   var catObj = cat.map(function (c) { return { code: c[0], family: c[3], params: c[11] }; });
   var ruleObj = rules.map(function (r) { return { key: r[0], group: r[1], opt: r[3], def: r[4] === true, comp: r[5], f: r[6], req: r[7] }; });
   var L = function (model, qty, params, choices) { return buildLines_(model, qty, params || {}, choices || {}, catObj, ruleObj); };
 
   var s1 = apiSaveShow({
     show: { name: 'Hội nghị khách hàng – Riverside (giả định)', client: 'Công ty ABC (giả định)', venue: 'White Palace Phạm Văn Đồng, TP.HCM',
-      type: 'Sự kiện / Hội nghị', out: '2026-10-08', day: '2026-10-09', back: '2026-10-11', days: 4, status: 'Đã xác nhận', pic: 'Hoàng',
+      type: 'Sự kiện / Hội nghị', out: '2026-10-08', day: '2026-10-09', back: '2026-10-11', days: 4, status: 'Đã xác nhận', pic: 'Hoàng', cust: 'KH-002', discount: 10,
       note: 'Show mẫu đang diễn ra – dùng để test Nhập kho', color: '#0ea5e9' },
     lines: [].concat(
       L('J12', 6, { h: 2 }, { 'Lắp đặt': 'Treo – J Flying frame' }),
@@ -1201,7 +1323,7 @@ function seedDemo_() {
 
   apiSaveShow({
     show: { name: 'Concert ngoài trời – SVĐ Quân khu 7 (giả định)', client: 'Công ty Sự kiện XYZ (giả định)', venue: 'Sân vận động Quân khu 7, TP.HCM',
-      type: 'Concert (cc)', out: '2026-10-13', day: '2026-10-17', back: '2026-10-18', days: 6, status: 'Đã xác nhận', pic: 'Hoàng',
+      type: 'Concert (cc)', out: '2026-10-13', day: '2026-10-17', back: '2026-10-18', days: 6, status: 'Đã xác nhận', pic: 'Hoàng', cust: 'KH-001',
       note: 'SHOW CHẠY THỬ: 8×J8 frontfill, 2×12 GSL8 main, 24 SL-GSUB, D80 đồng bộ, Quantum 338 Pulse + Optocore. Tuning 14/10, soundcheck 15/10, rehearsal 16/10, show 17/10.', color: '#7c3aed' },
     lines: [].concat(
       L('J8', 8),
@@ -1426,6 +1548,11 @@ function demoTest_() {
   add('D. Vận hành', 'Quay lại tab Xuất / Nhập → SH-2610-002 → 🚚 Xuất kho.', 'Toàn bộ thiết bị → Đang ở show; sheet Thiết bị đổi màu tím; KPI cập nhật.');
   add('D. Vận hành', 'Sau show: 📥 Nhập kho SH-2610-002, đánh dấu 1 GSL8 "Hỏng", 1 cáp MC4 "Chưa về".', 'Show vẫn ở "Đang ở show" với ghi chú còn 1 thiết bị chưa về; Bảo trì = 3.');
   add('E. Tùy biến', 'Sheet Liên kết: thêm 1 dòng cho Họ "GSL", Nhóm "Cáp loa", Lựa chọn mới, Model kèm Z5347, Công thức "CEIL(n/6)".', 'Mở lại popup GSL → nhóm "Cáp loa" có thêm lựa chọn mới. Không cần sửa code.');
+  add('F. Tài khoản', 'Mở app → đăng nhập dvhung (CEO). Vào tab Người dùng: reset mật khẩu + mở khóa ptgd.mau; tạo user sale1 (Giám đốc Sale).', 'Sơ đồ tổ chức hiện CEO → Giám đốc → Phó TGĐ → các phòng ban; admin hiện ở hàng "ngang hàng CEO".');
+  add('F. Tài khoản', 'Đăng nhập sale1 → mở show → Chiết khấu 25% → Lưu show. Đổi thành 35% → 📨 Xin duyệt cấp trên.', '25% áp ngay (trong quyền 30%). 35% thành yêu cầu chờ Phó TGĐ duyệt; show ghi "Chờ duyệt 35%".');
+  add('F. Tài khoản', 'Đăng nhập ptgd.mau → tab Duyệt chiết khấu → Duyệt 35%. Thử yêu cầu 60%: Phó TGĐ bấm Duyệt sẽ báo vượt quyền → Chuyển lên cấp trên.', 'Yêu cầu chuyển lên CEO; CEO duyệt được đến 100% (FOC). Lịch sử ghi từng bước.');
+  add('F. Tài khoản', 'CEO: tab Hệ thống → Khóa hệ thống bằng mật khẩu. Đăng nhập sale1.', 'Bị yêu cầu mật khẩu mở khóa; CEO/admin vẫn vào bình thường. Nhật ký hệ thống ghi thời gian, user, IP, thao tác.');
+  add('F. Tài khoản', 'CEO: Ban 1 user 2 ngày; xóa 1 user; reset mật khẩu.', 'User bị ban không đăng nhập được đến hết hạn; cột Ngày khóa/ban, Ngày sửa thông tin cập nhật.');
   add('E. Tùy biến', 'Sheet Danh mục: thêm model mới (vd. thiết bị ánh sáng) + thêm các mã ở sheet Thiết bị.', 'Thẻ mới xuất hiện ở tab Kho; nếu "Cho thuê riêng" = Có thì xuất hiện trong danh sách chọn của show.');
   return T;
 }
@@ -1441,8 +1568,679 @@ function demoGuide_() {
     ['7. Bộ thiết bị (cha–con)', 'Cột "Thuộc bộ" ở sheet Thiết bị: D80 và DS10 nằm trong rack. Rack đi show thì D80/DS10 bên trong tự đổi trạng thái theo.'],
     ['8. Đổi sang việc khác', 'Giữ nguyên cấu trúc 9 sheet. Thay dữ liệu Danh mục / Thiết bị / Liên kết (vd. đèn moving head → kèm bộ treo, dây DMX, dây nguồn). Muốn đổi tên trạng thái hoặc màu: sửa khối CẤU HÌNH đầu Code.gs.'],
     ['9. Bản offline (iPhone/máy tính)', 'File QLTB-PRO-offline.html chạy không cần mạng, dữ liệu lưu trong trình duyệt của máy đó. Đưa dữ liệu qua lại: ở bản offline bấm 💾 Sao lưu → ở Google Sheet: menu → 📥 Nhập dữ liệu từ bản offline. Chiều ngược lại: menu → 📤 Xuất dữ liệu cho bản offline → ở bản offline bấm 📂 Khôi phục. Mỗi lần nhập là THAY toàn bộ dữ liệu, nên chỉ sửa ở một nơi rồi chuyển qua.'],
-    ['10. Lưu ý dữ liệu', 'Đơn giá thuê, số lượng tồn kho, độ dài cáp (.xxx), số loa/J Wheelboard là GIẢ ĐỊNH để chạy thử. Thông số loa/ampli/rigging theo brochure d&b J-Series (07/2020) và SL-Series GSL; DiGiCo theo brochure Quantum 338 và digico.biz (Pulse, Quantum 225 DS).']
+    ['10. Tài khoản & phân quyền', 'Sheet "Người dùng" (mật khẩu chỉ lưu dạng băm), "Chức vụ" (cấp, chiết khấu tối đa, quyền ✓), "Duyệt chiết khấu", "Truy cập" (IP), "Nhật ký hệ thống". Mở popup từ Google Sheet = quyền Quản trị (chủ sheet). App điện thoại phải đăng nhập.'],
+    ['11. Máy chủ cho app', 'Triển khai → Ứng dụng web (Thực thi: Tôi; Truy cập: Bất kỳ ai) → dán URL /exec vào app (⚙ Máy chủ). App làm việc offline, có mạng tự gửi thao tác lên Sheet và tải dữ liệu mới về.'],
+    ['12. Lưu ý dữ liệu', 'Đơn giá thuê, số lượng tồn kho, độ dài cáp (.xxx), số loa/J Wheelboard là GIẢ ĐỊNH để chạy thử. Thông số loa/ampli/rigging theo brochure d&b J-Series (07/2020) và SL-Series GSL; DiGiCo theo brochure Quantum 338 và digico.biz (Pulse, Quantum 225 DS).']
   ];
+}
+</script>
+<script>/******************************************************************************
+ * Auth.gs – Đăng nhập · Phân quyền · Sơ đồ tổ chức · Khách hàng · Duyệt chiết khấu
+ *           Đếm truy cập + IP · Nhật ký hệ thống · Khóa hệ thống · Máy chủ cho app điện thoại
+ * Dán file này vào Apps Script cùng với Code.gs, Images.gs, App.html.
+ * Mật khẩu chỉ lưu dạng băm (SHA-256 + salt), không lưu chữ thường.
+ ******************************************************************************/
+
+var USER_ST = ['Hoạt động', 'Chờ duyệt', 'Tạm khóa', 'Ban'];
+var PERMS = ['TAO_SHOW', 'XUAT_NHAP_KHO', 'SUA_DANH_MUC', 'XEM_KHACH_HANG', 'SUA_KHACH_HANG', 'XEM_TAI_CHINH', 'QUAN_TRI_USER', 'KHOA_HE_THONG', 'XEM_NHAT_KY_HT'];
+var PERM_LABEL = {
+  TAO_SHOW: 'Tạo/sửa show, báo giá', XUAT_NHAP_KHO: 'Soạn hàng, xuất/nhập kho', SUA_DANH_MUC: 'Sửa danh mục thiết bị',
+  XEM_KHACH_HANG: 'Xem khách hàng', SUA_KHACH_HANG: 'Thêm/sửa khách hàng', XEM_TAI_CHINH: 'Xem giá mặc cả, make up, tiền hồi',
+  QUAN_TRI_USER: 'Quản trị user', KHOA_HE_THONG: 'Khóa hệ thống', XEM_NHAT_KY_HT: 'Xem nhật ký hệ thống & truy cập'
+};
+var FIN_FIELDS = ['Giá mặc cả (% hay xin giảm)', 'Make up giá?', 'Ghi chú giá', 'Tiền hồi %', 'Tiền hồi (số tiền)'];
+var HIGH = '★ CẤP CAO (Phó TGĐ trở lên)';
+var SESSION_DAYS = 30;
+var CTX = null;   // người đang thao tác (gán bởi dispatch_)
+
+/* ------------------------------ băm mật khẩu ------------------------------ */
+function sha256Hex_(s) {
+  var b = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s), Utilities.Charset.UTF_8);
+  return b.map(function (x) { var v = (x + 256) % 256; return (v < 16 ? '0' : '') + v.toString(16); }).join('');
+}
+function hashPw_(salt, pw) {
+  var h = sha256Hex_(salt + pw);
+  for (var i = 0; i < 499; i++) h = sha256Hex_(h);
+  return h;
+}
+function newSalt_() { return Utilities.getUuid().replace(/-/g, '').slice(0, 16); }
+function newToken_() { return Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8); }
+function now_() { return new Date(); }
+
+/* ------------------------------ dữ liệu mẫu ------------------------------- */
+function seedRoles_() {
+  var T = true, F = false;
+  var rows = [
+    ['CEO', 1, 100, '', T, T, T, T, T, T, T, T, T, 'Cao nhất. Được làm đến 100% (Free of Charge) trong trường hợp đặc biệt. Khóa hệ thống.'],
+    ['Quản trị', 1, 100, '', T, T, T, T, T, T, T, T, T, 'Ngang hàng CEO để quản trị hệ thống.'],
+    ['Giám đốc', 2, 40, 'CEO', T, T, T, T, T, T, F, F, T, ''],
+    ['Phó tổng giám đốc', 3, 40, 'Giám đốc', T, T, T, T, T, T, F, F, T, 'Duyệt yêu cầu GẤP từ mọi phòng ban.'],
+    ['Giám đốc Kỹ Thuật', 4, 25, 'Phó tổng giám đốc', T, T, T, T, F, F, F, F, F, 'Trưởng phòng kỹ thuật – tối đa 25%.'],
+    ['Phó giám đốc Kỹ Thuật', 4, 25, 'Phó tổng giám đốc', T, T, T, T, F, F, F, F, F, 'Phó phòng kỹ thuật – tối đa 25%.'],
+    ['Giám đốc Sale', 4, 30, 'Phó tổng giám đốc', T, F, F, T, T, T, F, F, F, ''],
+    ['Kế toán trưởng', 4, 15, 'Phó tổng giám đốc', T, F, F, T, F, T, F, F, F, ''],
+    ['Quản lý Kho', 4, 15, 'Phó tổng giám đốc', T, T, T, F, F, F, F, F, F, ''],
+    ['Trưởng phòng sửa chữa', 4, 15, 'Phó tổng giám đốc', T, T, F, F, F, F, F, F, F, ''],
+    ['Kỹ thuật', 4, 15, 'Phó tổng giám đốc', T, T, F, F, F, F, F, F, F, '']
+  ];
+  sh_('ROLE').getRange(2, 1, rows.length, COLS.ROLE.length).setValues(rows);
+}
+
+function seedUsers_() {
+  var t = now_();
+  var U = function (u, name, role, mgr, st, salt, hash, note) {
+    return [u, name, role, mgr, '', '', st, '', '', t, 'Khởi tạo', t, t, '', '', '', note || '', salt || '', hash || ''];
+  };
+  var rows = [
+    U('dvhung', 'CEO Hùng (cập nhật họ tên)', 'CEO', '', 'Hoạt động', '15a7d846218d0d4a', '345d5669387252052c804d480f2008ccf2f8661ee3cbd23c588c46d39093a419', 'Tài khoản CEO – nên đổi mật khẩu sau lần đăng nhập đầu'),
+    U('admin', 'Phạm Minh Hoàng', 'Quản trị', '', 'Hoạt động', '3369c5d790da6ee7', 'e1ed677e4ddd027793d2fa902c629e635479d7184304acd86ca1f2b4c47d113a', 'Quản trị hệ thống – nên đổi mật khẩu sau lần đăng nhập đầu'),
+    U('gd.mau', 'Nguyễn Văn A (mẫu)', 'Giám đốc', 'dvhung', 'Tạm khóa', '', '', 'Tài khoản MẪU – reset mật khẩu + mở khóa để dùng, hoặc xóa'),
+    U('ptgd.mau', 'Trần Thị B (mẫu)', 'Phó tổng giám đốc', 'gd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
+    U('gdkt.mau', 'Lê Văn C (mẫu)', 'Giám đốc Kỹ Thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
+    U('pgdkt.mau', 'Phạm Văn D (mẫu)', 'Phó giám đốc Kỹ Thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
+    U('gdsale.mau', 'Hoàng Thị E (mẫu)', 'Giám đốc Sale', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
+    U('ktt.mau', 'Võ Thị F (mẫu)', 'Kế toán trưởng', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
+    U('kho.mau', 'Đỗ Văn G (mẫu)', 'Quản lý Kho', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
+    U('suachua.mau', 'Bùi Văn H (mẫu)', 'Trưởng phòng sửa chữa', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
+    U('kythuat.mau', 'Đặng Văn I (mẫu)', 'Kỹ thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU')
+  ];
+  sh_('USER').getRange(2, 1, rows.length, COLS.USER.length).setValues(rows);
+}
+
+function seedCustomers_() {
+  var t = now_(), who = CTX ? CTX.username : 'Khởi tạo';
+  var K = function (o) { return COLS.CUST.map(function (h) { return o[h] === undefined ? '' : o[h]; }); };
+  var rows = [
+    K({ 'Mã KH': 'KH-001', 'Họ tên': 'Trần Minh Khoa (giả định)', 'Điện thoại': '0900 000 001', 'Công ty': 'Công ty Sự kiện XYZ (giả định)', 'Chức vụ': 'Giám đốc dự án',
+      'Cấp trên của KH': 'Ông Lâm – Tổng giám đốc XYZ', 'Cấp dưới của KH': 'Chị Mai – điều phối kỹ thuật', 'Nơi làm trước đây': 'Agency ABC Media (2018–2022)', 'Địa chỉ': 'Q.1, TP.HCM',
+      'Thói quen sinh hoạt': 'Hẹn cà phê sáng 7h–8h; không nhận cuộc gọi sau 21h; thích chốt việc qua Zalo', 'Giá mặc cả (% hay xin giảm)': 12, 'Make up giá?': 'Có',
+      'Ghi chú giá': 'Thường báo lại giá cho chủ đầu tư cao hơn 10–15%', 'Tên công ty xuất HĐ': 'CÔNG TY TNHH SỰ KIỆN XYZ (giả định)', 'MST': '0300000001',
+      'Địa chỉ xuất HĐ': 'Q.1, TP.HCM (giả định)', 'Email nhận HĐ': 'ketoan@xyz.example', 'Tiền hồi %': 5, 'Tiền hồi (số tiền)': 0, 'Mùa cao điểm (ghi tay)': 'Tháng 10 – Tết',
+      'Phụ trách KH': 'admin', 'Ghi chú': 'Dữ liệu GIẢ ĐỊNH để chạy thử', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t }),
+    K({ 'Mã KH': 'KH-002', 'Họ tên': 'Nguyễn Thu Hà (giả định)', 'Điện thoại': '0900 000 002', 'Công ty': 'Công ty ABC (giả định)', 'Chức vụ': 'Trưởng phòng Marketing',
+      'Cấp trên của KH': 'Giám đốc khối thương mại', 'Cấp dưới của KH': '', 'Nơi làm trước đây': 'Tập đoàn DEF', 'Địa chỉ': 'TP. Thủ Đức',
+      'Thói quen sinh hoạt': 'Làm việc buổi chiều; cần báo giá PDF gửi email', 'Giá mặc cả (% hay xin giảm)': 8, 'Make up giá?': 'Không',
+      'Tên công ty xuất HĐ': 'CÔNG TY CỔ PHẦN ABC (giả định)', 'MST': '0300000002', 'Email nhận HĐ': 'invoice@abc.example', 'Tiền hồi %': 0, 'Tiền hồi (số tiền)': 2000000,
+      'Mùa cao điểm (ghi tay)': 'Hội nghị cuối năm (T11–T12)', 'Phụ trách KH': 'admin', 'Ghi chú': 'Dữ liệu GIẢ ĐỊNH', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t }),
+    K({ 'Mã KH': 'KH-003', 'Họ tên': 'Lê Quốc Bảo (giả định)', 'Điện thoại': '0900 000 003', 'Công ty': 'Nhà hát/Venue GHI (giả định)', 'Chức vụ': 'Trưởng kỹ thuật',
+      'Thói quen sinh hoạt': 'Rất kỹ về rider kỹ thuật, thích xem simulation ArrayCalc trước', 'Giá mặc cả (% hay xin giảm)': 5, 'Make up giá?': 'Không',
+      'Phụ trách KH': 'admin', 'Ghi chú': 'Dữ liệu GIẢ ĐỊNH', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t })
+  ];
+  sh_('CUST').getRange(2, 1, rows.length, COLS.CUST.length).setValues(rows);
+  applyCustFormulas_(rows.length);
+}
+
+function applyCustFormulas_(n) {
+  if (!n) return;
+  var S = function (h) { return "'" + SH.SHOW + "'!$" + colLetter_(idx_('SHOW', h)) + ':$' + colLetter_(idx_('SHOW', h)); };
+  var A = colLetter_(idx_('CUST', 'Mã KH')), out = [];
+  for (var r = 2; r < 2 + n; r++) {
+    var k = A + r;
+    out.push([
+      '=IF(' + k + '="","",COUNTIF(' + S('Mã KH') + ',' + k + '))',
+      '=IF(' + k + '="","",COUNTIFS(' + S('Mã KH') + ',' + k + ',' + S('Trạng thái') + ',"Đã nhập kho"))',
+      '=IF(' + k + '="","",IF(COUNTIF(' + S('Mã KH') + ',' + k + ')=0,"",MAXIFS(' + S('Ngày diễn') + ',' + S('Mã KH') + ',' + k + ')))'
+    ]);
+  }
+  sh_('CUST').getRange(2, idx_('CUST', 'Số show đã book'), n, 3).setFormulas(out);
+}
+
+/* ------------------------------ tra cứu ------------------------------ */
+function roles_() {
+  var m = {};
+  live_(readTable_('ROLE')).forEach(function (r) {
+    var name = String(r['Chức vụ'] || ''); if (!name) return;
+    var p = {}; PERMS.forEach(function (k) { p[k] = bool_(r[k]); });
+    m[name] = { name: name, level: num_(r['Cấp']) || 9, max: num_(r['Chiết khấu tối đa %']), reportsTo: String(r['Báo cáo cho'] || ''), perms: p, note: String(r['Ghi chú'] || '') };
+  });
+  return m;
+}
+function userStatus_(r) {
+  var st = String(r['Trạng thái'] || 'Hoạt động');
+  if (st === 'Ban') {
+    var until = r['Ban đến ngày'];
+    var d = Object.prototype.toString.call(until) === '[object Date]' ? until : (until ? s2d_(d2s_(until)) : null);
+    if (d && d.getTime() < now_().getTime()) return 'Hoạt động';
+  }
+  return st;
+}
+function userPub_(r, roles) {
+  var ro = roles[String(r['Chức vụ'])] || { level: 9, max: 0 };
+  return {
+    username: String(r['Username']), name: String(r['Họ tên'] || ''), role: String(r['Chức vụ'] || ''), manager: String(r['Cấp trên'] || ''),
+    phone: String(r['Điện thoại'] || ''), email: String(r['Email'] || ''), status: userStatus_(r), banUntil: d2s_(r['Ban đến ngày']),
+    reason: String(r['Lý do khóa/ban'] || ''), created: dt2s_(r['Ngày tạo']), createdBy: String(r['Người tạo'] || ''),
+    editedInfo: dt2s_(r['Ngày sửa thông tin']), editedRole: dt2s_(r['Ngày đổi quyền']), editedBan: dt2s_(r['Ngày khóa/ban']),
+    lastLogin: dt2s_(r['Đăng nhập cuối']), lastIp: String(r['IP cuối'] || ''), note: String(r['Ghi chú'] || ''),
+    level: ro.level, max: ro.max, hasPw: !!r['Hash']
+  };
+}
+function findUser_(t, username) {
+  var u = String(username || '').trim().toLowerCase();
+  return live_(t).filter(function (r) { return String(r['Username']).toLowerCase() === u; })[0];
+}
+function managerOf_(username, users, roles) {
+  var me = users.filter(function (u) { return u.username === username; })[0]; if (!me) return '';
+  var active = function (u) { return u && u.status === 'Hoạt động'; };
+  if (me.manager) {
+    var m = users.filter(function (u) { return u.username === me.manager; })[0];
+    if (active(m)) return m.username;
+  }
+  var r = roles[me.role];
+  if (r && r.level <= 1) return '';
+  var target = r && r.reportsTo;
+  while (target) {
+    var cand = users.filter(function (u) { return u.role === target && active(u) && u.username !== username; })[0];
+    if (cand) return cand.username;
+    target = roles[target] && roles[target].reportsTo;
+  }
+  var ceo = users.filter(function (u) { return u.role === 'CEO' && active(u) && u.username !== username; })[0];
+  return ceo ? ceo.username : '';
+}
+function orgParent_(username, users, roles) {
+  var me = users.filter(function (u) { return u.username === username; })[0]; if (!me) return '';
+  var r = roles[me.role]; if (r && r.level <= 1) return '';
+  if (me.manager && users.some(function (u) { return u.username === me.manager; })) return me.manager;
+  var target = r && r.reportsTo;
+  while (target) {
+    var cand = users.filter(function (u) { return u.role === target && u.username !== username; })[0];
+    if (cand) return cand.username;
+    target = roles[target] && roles[target].reportsTo;
+  }
+  var ceo = users.filter(function (u) { return u.role === 'CEO' && u.username !== username; })[0];
+  return ceo ? ceo.username : '';
+}
+function ctxFromUser_(r, roles, ip, device) {
+  var ro = roles[String(r['Chức vụ'])] || { level: 9, max: 0, perms: {} };
+  return { username: String(r['Username']), name: String(r['Họ tên']), role: String(r['Chức vụ']), level: ro.level, max: ro.max,
+    perms: ro.perms || {}, ip: ip || '', device: device || '' };
+}
+function ownerCtx_(ip, device) {
+  var p = {}; PERMS.forEach(function (k) { p[k] = true; });
+  var e = ''; try { e = Session.getActiveUser().getEmail(); } catch (err) {}
+  return { username: e || 'chu-sheet', name: 'Chủ Google Sheet' + (e ? ' (' + e + ')' : ''), role: 'Quản trị', level: 1, max: 100, perms: p, ip: ip || '', device: device || 'Google Sheet', owner: true };
+}
+function can_(perm) { return !CTX || CTX.owner || !!(CTX.perms && CTX.perms[perm]); }
+function need_(perm) { if (!can_(perm)) throw new Error('Bạn không có quyền: ' + (PERM_LABEL[perm] || perm)); }
+
+/* ------------------------------ _Hệ thống (khóa, phiên) ------------------------------ */
+function sysAll_() {
+  var t = readTable_('SYS'), m = {};
+  live_(t).forEach(function (r) { m[String(r['Khóa'])] = r; });
+  return { t: t, m: m };
+}
+function sysGet_(k) { var r = sysAll_().m[k]; return r ? String(r['Giá trị']) : ''; }
+function sysSet_(k, v, exp) {
+  var s = sysAll_(), r = s.m[k];
+  if (!r) { r = {}; s.t.rows.push(r); }
+  r['Khóa'] = k; r['Giá trị'] = v; r['Hết hạn'] = exp || '';
+  saveTable_(s.t);
+}
+function sysDel_(pred) {
+  var s = sysAll_(), n = 0;
+  live_(s.t).forEach(function (r) { if (pred(String(r['Khóa']), r)) { r._deleted = true; n++; } });
+  if (n) saveTable_(s.t);
+  return n;
+}
+function isLocked_() { return sysGet_('LOCK') === '1'; }
+
+/* ------------------------------ bộ điều phối duy nhất ------------------------------ */
+var PUBLIC_ACTIONS = { apiLogin: 1, apiRegister: 1, apiVisit: 1, apiPublicInfo: 1, apiPing: 1 };
+var ACTIONS = {
+  apiBootstrap: { w: false }, apiSync: { w: false }, apiLogout: { w: true },
+  apiSaveShow: { p: 'TAO_SHOW', w: true }, apiDeleteShow: { p: 'TAO_SHOW', w: true },
+  apiAssign: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckout: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckin: { p: 'XUAT_NHAP_KHO', w: true },
+  apiSetAssetStatus: { p: 'XUAT_NHAP_KHO', w: true }, apiSavePng: { w: false },
+  apiSaveCustomer: { p: 'SUA_KHACH_HANG', w: true }, apiDeleteCustomer: { p: 'SUA_KHACH_HANG', w: true },
+  apiDiscountRequest: { p: 'TAO_SHOW', w: true }, apiDiscountDecide: { w: true }, apiDiscountCancel: { w: true },
+  apiUserSave: { p: 'QUAN_TRI_USER', w: true }, apiUserDelete: { p: 'QUAN_TRI_USER', w: true },
+  apiUserResetPw: { p: 'QUAN_TRI_USER', w: true }, apiUserStatus: { p: 'QUAN_TRI_USER', w: true },
+  apiChangeMyPassword: { w: true }, apiUpdateMyProfile: { w: true }, apiLockSystem: { p: 'KHOA_HE_THONG', w: true }
+};
+var SILENT_AUDIT = { apiBootstrap: 1, apiSync: 1, apiVisit: 1, apiPublicInfo: 1, apiPing: 1, apiSavePng: 1 };
+
+/** req = {action, args, token, ip, device}. opts = {owner, trusted: ctx, withSnap} */
+function dispatch_(req, opts) {
+  opts = opts || {};
+  var action = String(req.action || ''), args = req.args || [], ip = String(req.ip || ''), device = String(req.device || '').slice(0, 200);
+  var out = { ok: true };
+  CTX = { username: '', name: '', role: '', level: 99, max: 0, perms: {}, ip: ip, device: device };
+  try {
+    var fn = this[action] || (typeof globalThis !== 'undefined' ? globalThis[action] : null);
+    if (PUBLIC_ACTIONS[action]) {
+      CTX = { username: '', name: '', role: '', level: 99, max: 0, perms: {}, ip: ip, device: device, token: req.token || '' };
+      out.result = fn.apply(null, args);
+    } else {
+      var spec = ACTIONS[action];
+      if (!spec || typeof fn !== 'function') throw new Error('Thao tác không hợp lệ: ' + action);
+      if (opts.owner) CTX = ownerCtx_(ip, device);
+      else if (opts.trusted) { CTX = opts.trusted; CTX.ip = ip; CTX.device = device; }
+      else CTX = sessionCtx_(req.token, ip, device);
+      CTX.token = req.token || '';
+      if (spec.p) need_(spec.p);
+      out.result = fn.apply(null, args);
+      if (spec.w && !SILENT_AUDIT[action]) audit_(ACTION_LABEL[action] || action, summarize_(action, args, out.result));
+      if (opts.withSnap && (spec.w || action === 'apiSync')) out.snap = exportForClient_();
+    }
+  } catch (e) {
+    out = { ok: false, error: String(e && e.message || e), code: (e && e.code) || '' };
+    if (!PUBLIC_ACTIONS[action] && !SILENT_AUDIT[action] && CTX && CTX.username) {
+      try { audit_('LỖI ' + (ACTION_LABEL[action] || action), out.error); } catch (e2) {}
+    }
+  }
+  try { out.stats = visitStats_(); out.locked = isLocked_(); } catch (e3) {}
+  return out;
+}
+function err_(msg, code) { var e = new Error(msg); e.code = code; return e; }
+
+function sessionCtx_(token, ip, device) {
+  if (!token) throw err_('Chưa đăng nhập', 'AUTH');
+  var s = sysAll_().m['S:' + token];
+  if (!s) throw err_('Phiên đăng nhập đã hết hạn – đăng nhập lại', 'AUTH');
+  var exp = s['Hết hạn'];
+  if (exp && new Date(exp).getTime() < now_().getTime()) throw err_('Phiên đăng nhập đã hết hạn – đăng nhập lại', 'AUTH');
+  var info = JSON.parse(String(s['Giá trị']));
+  var ut = readTable_('USER'), u = findUser_(ut, info.u);
+  if (!u) throw err_('Tài khoản không còn tồn tại', 'AUTH');
+  var st = userStatus_(u);
+  if (st !== 'Hoạt động') throw err_('Tài khoản đang ở trạng thái: ' + st, 'AUTH');
+  var roles = roles_(), ctx = ctxFromUser_(u, roles, ip, device);
+  if (isLocked_() && !ctx.perms.KHOA_HE_THONG && !info.unlocked) throw err_('Hệ thống đang bị khóa', 'LOCKED');
+  return ctx;
+}
+
+/** google.script.run từ popup trong Google Sheet: chủ sheet = quyền Quản trị */
+function apiCall(action, args, ip) {
+  return dispatch_({ action: action, args: args || [], ip: ip || '', device: 'Google Sheet (popup)' }, { owner: true });
+}
+
+/** Máy chủ cho app điện thoại (Triển khai → Ứng dụng web) */
+function doGet(e) {
+  var o = { ok: true, app: 'QLTB PRO', version: APP.VERSION, time: new Date().toISOString(), locked: isLocked_() };
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+function doPost(e) {
+  var res;
+  try {
+    var req = JSON.parse(e.postData.contents);
+    var lock = LockService.getScriptLock(); lock.waitLock(30000);
+    try { res = dispatch_(req, { withSnap: true }); } finally { lock.releaseLock(); }
+  } catch (err) { res = { ok: false, error: String(err && err.message || err) }; }
+  return ContentService.createTextOutput(JSON.stringify(res)).setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ------------------------------ nhật ký hệ thống + truy cập ------------------------------ */
+function audit_(action, detail) {
+  var c = CTX || {};
+  appendRows_('AUDIT', [{ 'Thời gian': now_(), 'Username': c.username || '(khách)', 'Chức vụ': c.role || '', 'IP': c.ip || '', 'Thao tác': action,
+    'Chi tiết': String(detail || '').slice(0, 1000), 'Thiết bị': c.device || '' }]);
+}
+var ACTION_LABEL = {
+  apiSaveShow: 'Lưu show', apiDeleteShow: 'Xóa show', apiAssign: 'Soạn hàng', apiCheckout: 'Xuất kho', apiCheckin: 'Nhập kho', apiSetAssetStatus: 'Đổi trạng thái thiết bị',
+  apiSaveCustomer: 'Lưu khách hàng', apiDeleteCustomer: 'Xóa khách hàng', apiDiscountRequest: 'Xin chiết khấu', apiDiscountDecide: 'Duyệt chiết khấu', apiDiscountCancel: 'Hủy xin chiết khấu',
+  apiUserSave: 'Lưu user', apiUserDelete: 'Xóa user', apiUserResetPw: 'Reset mật khẩu', apiUserStatus: 'Khóa/ban/mở user', apiChangeMyPassword: 'Đổi mật khẩu của mình',
+  apiUpdateMyProfile: 'Sửa hồ sơ của mình', apiLockSystem: 'Khóa/mở hệ thống', apiLogout: 'Đăng xuất'
+};
+function summarize_(action, args, res) {
+  var a = args || [], s = '';
+  try {
+    if (action === 'apiSaveShow') s = (res && res.code) + ' – ' + (a[0].show.name || '') + ' – ' + (a[0].lines || []).length + ' dòng, CK ' + (a[0].show.discount || 0) + '%';
+    else if (action === 'apiUserSave') s = (a[1] ? 'Tạo mới ' : 'Sửa ') + a[0].username + ' (' + a[0].role + ')';
+    else if (action === 'apiUserResetPw' || action === 'apiUserDelete') s = String(a[0]);
+    else if (action === 'apiChangeMyPassword') s = '(đã đổi)';
+    else if (action === 'apiUserStatus') s = a[0] + ' → ' + a[1] + (a[2] ? ' ' + a[2] + ' ngày' : '') + (a[3] ? ' – ' + a[3] : '');
+    else if (action === 'apiLockSystem') s = a[0] ? 'KHÓA hệ thống' : 'MỞ khóa hệ thống';
+    else if (action === 'apiLogout') s = '';
+    else if (action === 'apiCheckin') s = a[0] + ' – ' + (a[1] || []).length + ' mã';
+    else if (action === 'apiDiscountRequest') s = a[0] + ' xin ' + a[1] + '%' + (a[3] ? ' (GẤP)' : '') + ' – ' + (a[2] || '');
+    else if (action === 'apiDiscountDecide') s = a[0] + ' → ' + a[1] + (a[2] ? ' ' + a[2] + '%' : '') + (a[3] ? ' – ' + a[3] : '');
+    else if (action === 'apiSaveCustomer') s = (res && res.code) + ' – ' + (a[0]['Họ tên'] || '');
+    else s = JSON.stringify(a).slice(0, 300);
+  } catch (e) { s = ''; }
+  return s;
+}
+function apiVisit(page) {
+  appendRows_('VISIT', [{ 'Thời gian': now_(), 'IP': CTX.ip || '(không rõ)', 'Username': CTX.username || String(page && page.user || ''), 'Thiết bị': CTX.device || '', 'Trang': String(page && page.page || page || 'mở app').slice(0, 60) }]);
+  return visitStats_();
+}
+function visitStats_() {
+  var sh = sh_('VISIT'); if (!sh || sh.getLastRow() < 2) return { total: 0, uniqueIp: 0, today: 0, users: 0 };
+  var n = sh.getLastRow() - 1, v = sh.getRange(2, 1, n, 3).getValues();
+  var ips = {}, us = {}, today = Utilities.formatDate(now_(), tz_(), 'yyyy-MM-dd'), td = 0;
+  v.forEach(function (r) { if (r[1]) ips[r[1]] = 1; if (r[2]) us[r[2]] = 1; if (d2s_(r[0]) === today) td++; });
+  return { total: n, uniqueIp: Object.keys(ips).length, today: td, users: Object.keys(us).length };
+}
+
+/* ------------------------------ đăng nhập / đăng ký ------------------------------ */
+function apiPing() { return { app: 'QLTB PRO', version: APP.VERSION }; }
+function apiPublicInfo() {
+  var roles = roles_();
+  return { roles: Object.keys(roles).filter(function (r) { return r !== 'CEO' && r !== 'Quản trị'; }), locked: isLocked_(), company: cfgGet_('TEN_CONG_TY') || '' };
+}
+function apiLogin(username, password, lockPass) {
+  var ut = readTable_('USER'), u = findUser_(ut, username);
+  var fail = function (m) { audit_('Đăng nhập THẤT BẠI', String(username) + ' – ' + m); throw err_(m, 'LOGIN'); };
+  if (!u || !u['Hash']) fail('Sai tên đăng nhập hoặc mật khẩu');
+  if (hashPw_(String(u['Salt']), String(password)) !== String(u['Hash'])) fail('Sai tên đăng nhập hoặc mật khẩu');
+  var st = userStatus_(u);
+  if (st === 'Chờ duyệt') fail('Tài khoản đang chờ CEO/Quản trị duyệt');
+  if (st === 'Tạm khóa') fail('Tài khoản đang bị tạm khóa' + (u['Lý do khóa/ban'] ? ': ' + u['Lý do khóa/ban'] : ''));
+  if (st === 'Ban') fail('Tài khoản bị cấm đến ' + d2s_(u['Ban đến ngày']).split('-').reverse().join('/') + (u['Lý do khóa/ban'] ? ' – ' + u['Lý do khóa/ban'] : ''));
+  var roles = roles_(), ctx = ctxFromUser_(u, roles, CTX.ip, CTX.device), unlocked = false;
+  if (isLocked_() && !ctx.perms.KHOA_HE_THONG) {
+    if (!lockPass) throw err_('Hệ thống đang bị khóa – nhập mật khẩu mở khóa do CEO cung cấp', 'LOCKED');
+    if (hashPw_(sysGet_('LOCK_SALT'), String(lockPass)) !== sysGet_('LOCK_HASH')) fail('Sai mật khẩu mở khóa hệ thống');
+    unlocked = true;
+  }
+  var token = newToken_(), exp = new Date(now_().getTime() + SESSION_DAYS * 86400000);
+  sysSet_('S:' + token, JSON.stringify({ u: String(u['Username']), unlocked: unlocked }), exp.toISOString());
+  sysDel_(function (k, r) { return k.indexOf('S:') === 0 && r['Hết hạn'] && new Date(r['Hết hạn']).getTime() < now_().getTime(); });
+  u['Đăng nhập cuối'] = now_(); u['IP cuối'] = CTX.ip || '';
+  saveTable_(ut);
+  CTX = ctx;
+  audit_('Đăng nhập', 'OK' + (unlocked ? ' (dùng mật khẩu mở khóa)' : ''));
+  appendRows_('VISIT', [{ 'Thời gian': now_(), 'IP': CTX.ip || '(không rõ)', 'Username': CTX.username, 'Thiết bị': CTX.device || '', 'Trang': 'đăng nhập' }]);
+  return { token: token, me: userPub_(u, roles), role: roles[ctx.role] || null, cred: { salt: String(u['Salt']), hash: String(u['Hash']) }, exp: exp.toISOString() };
+}
+function apiLogout() { sysDel_(function (k) { return k === 'S:' + CTX.token; }); return true; }
+
+function checkNewUser_(o) {
+  var u = String(o.username || '').trim().toLowerCase();
+  if (!/^[a-z0-9._-]{3,30}$/.test(u)) throw new Error('Username 3–30 ký tự: chữ thường không dấu, số, dấu . _ -');
+  if (!o.name || String(o.name).trim().length < 2) throw new Error('Phải khai báo họ tên');
+  if (!roles_()[o.role]) throw new Error('Chức vụ không hợp lệ');
+  return u;
+}
+function checkPw_(p) { if (String(p || '').length < 6) throw new Error('Mật khẩu tối thiểu 6 ký tự'); }
+
+function apiRegister(o) {
+  var u = checkNewUser_(o); checkPw_(o.password);
+  if (o.role === 'CEO' || o.role === 'Quản trị') throw new Error('Không tự đăng ký chức vụ này được');
+  var ut = readTable_('USER');
+  if (findUser_(ut, u)) throw new Error('Username đã tồn tại');
+  var salt = newSalt_(), t = now_();
+  ut.rows.push({ 'Username': u, 'Họ tên': String(o.name).trim(), 'Chức vụ': o.role, 'Cấp trên': '', 'Điện thoại': o.phone || '', 'Email': o.email || '',
+    'Trạng thái': 'Chờ duyệt', 'Ngày tạo': t, 'Người tạo': 'Tự đăng ký', 'Ngày sửa thông tin': t, 'Ngày đổi quyền': t, 'Salt': salt, 'Hash': hashPw_(salt, String(o.password)) });
+  saveTable_(ut);
+  CTX.username = u; audit_('Đăng ký tài khoản', u + ' – ' + o.name + ' (' + o.role + ') – chờ duyệt');
+  return { username: u, status: 'Chờ duyệt' };
+}
+function apiChangeMyPassword(oldPw, newPw) {
+  checkPw_(newPw);
+  var ut = readTable_('USER'), u = findUser_(ut, CTX.username);
+  if (!u) throw new Error('Không tìm thấy tài khoản');
+  if (u['Hash'] && hashPw_(String(u['Salt']), String(oldPw)) !== String(u['Hash'])) throw new Error('Mật khẩu cũ không đúng');
+  u['Salt'] = newSalt_(); u['Hash'] = hashPw_(u['Salt'], String(newPw)); u['Ngày sửa thông tin'] = now_();
+  saveTable_(ut);
+  return { cred: { salt: u['Salt'], hash: u['Hash'] } };
+}
+function apiUpdateMyProfile(o) {
+  var ut = readTable_('USER'), u = findUser_(ut, CTX.username);
+  if (!u) throw new Error('Không tìm thấy tài khoản');
+  if (o.name) u['Họ tên'] = String(o.name).trim();
+  if (o.phone !== undefined) u['Điện thoại'] = o.phone;
+  if (o.email !== undefined) u['Email'] = o.email;
+  u['Ngày sửa thông tin'] = now_();
+  saveTable_(ut); return true;
+}
+
+/* ------------------------------ quản trị user (CEO / Quản trị) ------------------------------ */
+function apiUserSave(o, isNew) {
+  var ut = readTable_('USER'), t = now_(), u;
+  if (isNew) {
+    var name = checkNewUser_(o); checkPw_(o.password);
+    if (findUser_(ut, name)) throw new Error('Username đã tồn tại');
+    u = { 'Username': name, 'Ngày tạo': t, 'Người tạo': CTX.username, 'Trạng thái': 'Hoạt động', 'Ngày đổi quyền': t, 'Salt': newSalt_() };
+    u['Hash'] = hashPw_(u['Salt'], String(o.password));
+    ut.rows.push(u);
+  } else {
+    u = findUser_(ut, o.username);
+    if (!u) throw new Error('Không tìm thấy user ' + o.username);
+    if (!roles_()[o.role]) throw new Error('Chức vụ không hợp lệ');
+  }
+  if (o.manager && String(o.manager).toLowerCase() === String(u['Username']).toLowerCase()) throw new Error('Cấp trên không thể là chính mình');
+  if (!isNew && (u['Chức vụ'] !== o.role || String(u['Cấp trên'] || '') !== String(o.manager || ''))) u['Ngày đổi quyền'] = t;
+  u['Họ tên'] = String(o.name || '').trim(); u['Chức vụ'] = o.role; u['Cấp trên'] = o.manager || '';
+  u['Điện thoại'] = o.phone || ''; u['Email'] = o.email || ''; u['Ghi chú'] = o.note || '';
+  u['Ngày sửa thông tin'] = t;
+  saveTable_(ut);
+  return { username: u['Username'] };
+}
+function adminsLeft_(ut, except) {
+  var roles = roles_();
+  return live_(ut).filter(function (r) { var ro = roles[String(r['Chức vụ'])]; return r['Username'] !== except && ro && ro.perms.QUAN_TRI_USER && userStatus_(r) === 'Hoạt động'; }).length;
+}
+function apiUserDelete(username) {
+  var ut = readTable_('USER'), u = findUser_(ut, username);
+  if (!u) throw new Error('Không tìm thấy user');
+  if (String(u['Username']) === CTX.username) throw new Error('Không thể tự xóa chính mình');
+  if (!adminsLeft_(ut, u['Username'])) throw new Error('Phải còn ít nhất 1 tài khoản quản trị đang hoạt động');
+  u._deleted = true; saveTable_(ut);
+  sysDel_(function (k, r) { return k.indexOf('S:') === 0 && String(r['Giá trị']).indexOf('"u":"' + u['Username'] + '"') >= 0; });
+  return true;
+}
+function apiUserResetPw(username, pw) {
+  checkPw_(pw);
+  var ut = readTable_('USER'), u = findUser_(ut, username);
+  if (!u) throw new Error('Không tìm thấy user');
+  u['Salt'] = newSalt_(); u['Hash'] = hashPw_(u['Salt'], String(pw)); u['Ngày sửa thông tin'] = now_();
+  saveTable_(ut); return true;
+}
+function apiUserStatus(username, status, days, reason) {
+  if (USER_ST.indexOf(status) < 0) throw new Error('Trạng thái không hợp lệ');
+  var ut = readTable_('USER'), u = findUser_(ut, username);
+  if (!u) throw new Error('Không tìm thấy user');
+  if (String(u['Username']) === CTX.username && status !== 'Hoạt động') throw new Error('Không thể tự khóa chính mình');
+  if (status !== 'Hoạt động' && !adminsLeft_(ut, u['Username'])) throw new Error('Phải còn ít nhất 1 tài khoản quản trị đang hoạt động');
+  u['Trạng thái'] = status; u['Ngày khóa/ban'] = now_(); u['Lý do khóa/ban'] = reason || '';
+  if (status === 'Ban') {
+    var d = Math.max(1, num_(days) || 1);
+    u['Ban đến ngày'] = new Date(now_().getTime() + d * 86400000);
+  } else u['Ban đến ngày'] = '';
+  if (status === 'Hoạt động') u['Lý do khóa/ban'] = '';
+  saveTable_(ut);
+  if (status !== 'Hoạt động') sysDel_(function (k, r) { return k.indexOf('S:') === 0 && String(r['Giá trị']).indexOf('"u":"' + u['Username'] + '"') >= 0; });
+  return true;
+}
+function apiLockSystem(on, password) {
+  if (on) {
+    if (String(password || '').length < 4) throw new Error('Mật khẩu khóa tối thiểu 4 ký tự');
+    var salt = newSalt_();
+    sysSet_('LOCK_SALT', salt); sysSet_('LOCK_HASH', hashPw_(salt, String(password))); sysSet_('LOCK', '1');
+    sysSet_('LOCK_BY', CTX.username + ' – ' + Utilities.formatDate(now_(), tz_(), 'dd/MM/yyyy HH:mm'));
+  } else { sysSet_('LOCK', '0'); sysSet_('LOCK_BY', ''); }
+  return { locked: !!on };
+}
+
+/* ------------------------------ khách hàng ------------------------------ */
+function apiSaveCustomer(o) {
+  var t = readTable_('CUST'), now = now_(), row;
+  var rows = live_(t);
+  if (o['Mã KH']) row = rows.filter(function (r) { return String(r['Mã KH']) === String(o['Mã KH']); })[0];
+  if (!row) {
+    var max = 0; rows.forEach(function (r) { max = Math.max(max, num_(String(r['Mã KH']).replace('KH-', ''))); });
+    row = { 'Mã KH': 'KH-' + ('00' + (max + 1)).slice(-3), 'Ngày tạo': now, 'Người tạo': CTX.username };
+    t.rows.push(row);
+  }
+  if (!String(o['Họ tên'] || '').trim()) throw new Error('Nhập họ tên khách hàng');
+  COLS.CUST.forEach(function (h) {
+    if (['Mã KH', 'Ngày tạo', 'Người tạo', 'Ngày sửa', 'Số show đã book', 'Show thành công', 'Ngày book gần nhất'].indexOf(h) >= 0) return;
+    if (FIN_FIELDS.indexOf(h) >= 0 && !can_('XEM_TAI_CHINH')) return;
+    if (o[h] !== undefined) row[h] = o[h];
+  });
+  row['Ngày sửa'] = now;
+  saveTable_(t);
+  return { code: row['Mã KH'] };
+}
+function apiDeleteCustomer(code) {
+  var t = readTable_('CUST'), n = 0;
+  live_(t).forEach(function (r) { if (String(r['Mã KH']) === code) { r._deleted = true; n++; } });
+  if (!n) throw new Error('Không tìm thấy khách hàng');
+  saveTable_(t); return true;
+}
+
+/* ------------------------------ chiết khấu & duyệt ------------------------------ */
+/** Gọi trong apiSaveShow: chỉ áp CK mới nếu nằm trong quyền người lưu; vượt quyền thì giữ CK cũ (phải xin duyệt) */
+function discountOnSave_(row, s) {
+  var cur = { pct: num_(row['Chiết khấu %']), status: String(row['Trạng thái CK'] || '') };
+  if (s.discount === undefined || s.discount === null || s.discount === '') return cur;
+  var want = Math.max(0, Math.min(100, num_(s.discount)));
+  if (want === cur.pct) return cur;
+  var max = CTX ? CTX.max : 100;
+  if (want <= max) return { pct: want, status: want ? 'Trong quyền ' + (CTX ? CTX.role + ' (' + CTX.username + ')' : 'chủ sheet') : '' };
+  return cur;
+}
+function setShowDiscount_(code, pct, status) {
+  var t = readTable_('SHOW'), r = live_(t).filter(function (x) { return String(x['Mã show']) === code; })[0];
+  if (!r) throw new Error('Không tìm thấy show ' + code);
+  if (pct !== null) r['Chiết khấu %'] = pct;
+  r['Trạng thái CK'] = status;
+  saveTable_(t);
+}
+function usersPub_() { var roles = roles_(); return { roles: roles, users: live_(readTable_('USER')).map(function (r) { return userPub_(r, roles); }) }; }
+function pendingLabel_(p, users) {
+  if (p === HIGH) return HIGH;
+  var u = users.filter(function (x) { return x.username === p; })[0];
+  return u ? u.name + ' (' + u.role + ')' : p;
+}
+function apiDiscountRequest(code, pct, reason, urgent) {
+  pct = Math.max(0, Math.min(100, num_(pct)));
+  var who = CTX.name + ' (' + CTX.role + ')';
+  if (pct <= CTX.max) { setShowDiscount_(code, pct, 'Trong quyền ' + CTX.role + ' (' + CTX.username + ')'); return { applied: true, pct: pct }; }
+  var up = usersPub_();
+  var pending = urgent ? HIGH : managerOf_(CTX.username, up.users, up.roles);
+  if (!pending) pending = HIGH;
+  var t = readTable_('DISC'), now = now_(), stamp = Utilities.formatDate(now, tz_(), 'dd/MM HH:mm');
+  live_(t).forEach(function (r) {
+    if (String(r['Mã show']) === code && String(r['Người xin']) === CTX.username && r['Trạng thái'] === 'Chờ duyệt') {
+      r['Trạng thái'] = 'Đã hủy'; r['Lịch sử'] = String(r['Lịch sử'] || '') + '\n' + stamp + ' – tự hủy (gửi yêu cầu mới)';
+    }
+  });
+  var id = 'CK-' + Utilities.formatDate(now, tz_(), 'yyMMddHHmmss') + '-' + Math.floor(Math.random() * 90 + 10);
+  t.rows.push({ 'Mã yêu cầu': id, 'Mã show': code, 'Người xin': CTX.username, 'Chức vụ người xin': CTX.role, 'CK xin %': pct, 'Lý do': reason || '', 'Gấp': urgent ? 'GẤP' : '',
+    'Đang chờ': pending, 'Trạng thái': 'Chờ duyệt', 'Lịch sử': stamp + ' – ' + who + ' xin ' + pct + '%' + (urgent ? ' (GẤP → Phó TGĐ trở lên)' : ' → ' + pendingLabel_(pending, up.users)),
+    'Tạo lúc': now, 'Cập nhật lúc': now, 'IP': CTX.ip || '' });
+  saveTable_(t);
+  setShowDiscount_(code, null, 'Chờ duyệt ' + pct + '% – ' + pendingLabel_(pending, up.users));
+  return { id: id, pending: pending, label: pendingLabel_(pending, up.users) };
+}
+function canDecide_(r, ctx) {
+  if (ctx.owner || (ctx.perms && ctx.perms.QUAN_TRI_USER)) return true;
+  var p = String(r['Đang chờ']);
+  return p === ctx.username || (p === HIGH && ctx.level <= 3);
+}
+function apiDiscountDecide(id, decision, pct, note) {
+  var t = readTable_('DISC'), r = live_(t).filter(function (x) { return String(x['Mã yêu cầu']) === id; })[0];
+  if (!r) throw new Error('Không tìm thấy yêu cầu ' + id);
+  if (r['Trạng thái'] !== 'Chờ duyệt') throw new Error('Yêu cầu đã xử lý: ' + r['Trạng thái']);
+  if (!canDecide_(r, CTX)) throw new Error('Yêu cầu này không chờ bạn duyệt');
+  var now = now_(), stamp = Utilities.formatDate(now, tz_(), 'dd/MM HH:mm'), who = CTX.name + ' (' + CTX.role + ')', code = String(r['Mã show']);
+  var hist = function (s) { r['Lịch sử'] = String(r['Lịch sử'] || '') + '\n' + stamp + ' – ' + who + ' ' + s + (note ? ' – "' + note + '"' : ''); };
+  if (decision === 'duyet') {
+    var p = (pct === undefined || pct === null || pct === '') ? num_(r['CK xin %']) : Math.max(0, Math.min(100, num_(pct)));
+    if (p > CTX.max) throw new Error('Vượt quyền của bạn (tối đa ' + CTX.max + '%). Hãy bấm "Chuyển lên cấp trên".');
+    r['Trạng thái'] = 'Đã duyệt'; r['CK được duyệt %'] = p; r['Người duyệt'] = CTX.username; hist('DUYỆT ' + p + '%');
+    setShowDiscount_(code, p, 'Đã duyệt ' + p + '% bởi ' + who);
+  } else if (decision === 'tuchoi') {
+    r['Trạng thái'] = 'Từ chối'; r['Người duyệt'] = CTX.username; hist('TỪ CHỐI');
+    var st = readTable_('SHOW'), sr = live_(st).filter(function (x) { return String(x['Mã show']) === code; })[0];
+    setShowDiscount_(code, null, 'Bị từ chối ' + r['CK xin %'] + '% – giữ CK ' + num_(sr && sr['Chiết khấu %']) + '%');
+  } else if (decision === 'chuyen') {
+    var up = usersPub_(), next = managerOf_(CTX.username, up.users, up.roles);
+    if (!next || next === CTX.username) throw new Error('Không còn cấp trên để chuyển');
+    r['Đang chờ'] = next; hist('chuyển lên ' + pendingLabel_(next, up.users));
+    setShowDiscount_(code, null, 'Chờ duyệt ' + r['CK xin %'] + '% – ' + pendingLabel_(next, up.users));
+  } else throw new Error('Quyết định không hợp lệ');
+  r['Cập nhật lúc'] = now;
+  saveTable_(t);
+  return { id: id, status: r['Trạng thái'] };
+}
+function apiDiscountCancel(id) {
+  var t = readTable_('DISC'), r = live_(t).filter(function (x) { return String(x['Mã yêu cầu']) === id; })[0];
+  if (!r) throw new Error('Không tìm thấy yêu cầu');
+  if (String(r['Người xin']) !== CTX.username && !can_('QUAN_TRI_USER')) throw new Error('Chỉ người xin hoặc quản trị mới hủy được');
+  if (r['Trạng thái'] !== 'Chờ duyệt') throw new Error('Yêu cầu đã xử lý');
+  r['Trạng thái'] = 'Đã hủy'; r['Cập nhật lúc'] = now_();
+  r['Lịch sử'] = String(r['Lịch sử'] || '') + '\n' + Utilities.formatDate(now_(), tz_(), 'dd/MM HH:mm') + ' – ' + CTX.name + ' hủy yêu cầu';
+  saveTable_(t);
+  setShowDiscount_(String(r['Mã show']), null, 'Đã hủy yêu cầu ' + r['CK xin %'] + '%');
+  return true;
+}
+
+/* ------------------------------ dữ liệu cho giao diện ------------------------------ */
+function authBootstrap_() {
+  var ctx = CTX || ownerCtx_();
+  var roles = roles_(), allUsers = live_(readTable_('USER')).map(function (r) { return userPub_(r, roles); });
+  var admin = ctx.owner || (ctx.perms && ctx.perms.QUAN_TRI_USER);
+  var users = admin ? allUsers : allUsers.filter(function (u) { return u.status === 'Hoạt động'; }).map(function (u) {
+    return { username: u.username, name: u.name, role: u.role, manager: u.manager, status: u.status, level: u.level, max: u.max, phone: u.phone, email: u.email };
+  });
+  var visible = admin ? allUsers : allUsers.filter(function (u) { return u.status === 'Hoạt động'; });
+  users.forEach(function (u) { u.boss = managerOf_(u.username, allUsers, roles); u.parent = orgParent_(u.username, visible, roles); });
+  var customers = [];
+  if (can_('XEM_KHACH_HANG')) customers = live_(readTable_('CUST')).map(function (r) {
+    var o = {}; COLS.CUST.forEach(function (h) { var v = r[h]; o[h] = Object.prototype.toString.call(v) === '[object Date]' ? dt2s_(v) : (v === null || v === undefined ? '' : v); });
+    if (!can_('XEM_TAI_CHINH')) FIN_FIELDS.forEach(function (h) { o[h] = '🔒'; });
+    return o;
+  }).filter(function (o) { return o['Mã KH']; });
+  var seeAll = admin || ctx.level <= 3;
+  var discounts = live_(readTable_('DISC')).map(function (r) {
+    return { id: String(r['Mã yêu cầu']), show: String(r['Mã show']), by: String(r['Người xin']), byRole: String(r['Chức vụ người xin']), pct: num_(r['CK xin %']),
+      reason: String(r['Lý do'] || ''), urgent: !!r['Gấp'], pending: String(r['Đang chờ'] || ''), status: String(r['Trạng thái']), approved: num_(r['CK được duyệt %']),
+      approver: String(r['Người duyệt'] || ''), history: String(r['Lịch sử'] || ''), created: dt2s_(r['Tạo lúc']), updated: dt2s_(r['Cập nhật lúc']),
+      canDecide: r['Trạng thái'] === 'Chờ duyệt' && canDecide_(r, ctx) };
+  }).filter(function (d) { return d.id && (seeAll || d.by === ctx.username || d.canDecide); }).reverse();
+  var out = {
+    me: { username: ctx.username, name: ctx.name, role: ctx.role, level: ctx.level, max: ctx.max, perms: ctx.perms, owner: !!ctx.owner, ip: ctx.ip || '' },
+    roles: Object.keys(roles).map(function (k) { return roles[k]; }), users: users, customers: customers, discounts: discounts,
+    perms: PERMS, permLabel: PERM_LABEL, finFields: FIN_FIELDS, high: HIGH, locked: isLocked_(), lockBy: sysGet_('LOCK_BY'), stats: visitStats_()
+  };
+  if (can_('XEM_NHAT_KY_HT')) {
+    out.audit = live_(readTable_('AUDIT')).slice(-300).reverse().map(function (r) {
+      return { t: dt2s_(r['Thời gian']), u: String(r['Username']), role: String(r['Chức vụ']), ip: String(r['IP']), a: String(r['Thao tác']), d: String(r['Chi tiết']), dev: String(r['Thiết bị']) };
+    });
+    out.visits = live_(readTable_('VISIT')).slice(-300).reverse().map(function (r) {
+      return { t: dt2s_(r['Thời gian']), ip: String(r['IP']), u: String(r['Username']), dev: String(r['Thiết bị']), page: String(r['Trang']) };
+    });
+  }
+  return out;
+}
+
+/** Ảnh chụp dữ liệu gửi về điện thoại – bỏ mật khẩu băm, phiên, và phần không có quyền xem */
+function exportForClient_() {
+  var keys = BACKUP_KEYS.filter(function (k) {
+    if (k === 'SYS') return false;
+    if (k === 'CUST' && !can_('XEM_KHACH_HANG')) return false;
+    if ((k === 'AUDIT' || k === 'VISIT') && !can_('XEM_NHAT_KY_HT')) return false;
+    return true;
+  });
+  var data = JSON.parse(exportBackup_(keys));
+  var TRIM = {}; TRIM[SH.AUDIT] = 500; TRIM[SH.VISIT] = 500; TRIM[SH.LOG] = 1500;
+  data.sheets.forEach(function (s) { var t = TRIM[s.n]; if (t && s.d.length > t + 1) s.d = [s.d[0]].concat(s.d.slice(-t)); });
+  data.sheets.forEach(function (s) {
+    var head = s.d[0].map(String);
+    var drop = [];
+    if (s.n === SH.USER) drop = ['Salt', 'Hash'];
+    if (s.n === SH.CUST && !can_('XEM_TAI_CHINH')) drop = FIN_FIELDS;
+    if (!drop.length) return;
+    var idx = drop.map(function (h) { return head.indexOf(h); }).filter(function (i) { return i >= 0; });
+    s.d = s.d.map(function (r, ri) { return r.map(function (v, j) { return ri > 0 && idx.indexOf(j) >= 0 ? (s.n === SH.CUST ? '🔒' : '') : v; }); });
+  });
+  data.locked = isLocked_();
+  return JSON.stringify(data);
+}
+function apiSync() { return { at: new Date().getTime() }; }
+
+/* ------------------------------ hướng dẫn mở máy chủ ------------------------------ */
+function showServerGuide() {
+  var html = '<div style="font-family:Arial,sans-serif;font-size:13.5px;line-height:1.6">' +
+    '<b>Mở máy chủ để app điện thoại đồng bộ với Sheet này</b><ol>' +
+    '<li>Tiện ích mở rộng → Apps Script → nút <b>Triển khai (Deploy)</b> → <b>Tùy chọn triển khai mới</b>.</li>' +
+    '<li>Loại: <b>Ứng dụng web</b>. Thực thi dưới dạng: <b>Tôi</b>. Người có quyền truy cập: <b>Bất kỳ ai</b>.</li>' +
+    '<li>Bấm Triển khai → cấp quyền → sao chép <b>URL ứng dụng web</b> (đuôi /exec).</li>' +
+    '<li>Trên app (điện thoại/máy tính): màn hình đăng nhập → ⚙ Máy chủ → dán URL → Lưu.</li></ol>' +
+    'Mỗi khi sửa code: Triển khai → Quản lý triển khai → ✏️ → Phiên bản mới (URL giữ nguyên).</div>';
+  SpreadsheetApp.getUi().showModalDialog(HtmlService.createHtmlOutput(html).setWidth(520).setHeight(300), '🌐 Máy chủ cho app điện thoại');
 }
 </script>
 <script>/**
@@ -1487,50 +2285,178 @@ var IMG_DATA = {
   "Z5762": "data:image/jpeg;base64,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"
 };
 </script>
-<script>
+<script>/* ===== ENGINE: chạy offline + đồng bộ với máy chủ Google Sheet (Apps Script web app) ===== */
 (function(){
-  var KEY = 'qltb_pro_offline_v1';
+  var K = { data: 'qltb_pro_offline_v1', srv: 'qltb_server', ses: 'qltb_session', creds: 'qltb_creds', out: 'qltb_outbox', last: 'qltb_lastsync', stats: 'qltb_stats', dev: 'qltb_device' };
+  function ls(k, v){ try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){ return null; } }
+  function lj(k, d){ try { var v = ls(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
   function stamp(){ var d = new Date(), p = function(n){ return ('0'+n).slice(-2); }; return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes()); }
-  function save(){ try { localStorage.setItem(KEY, exportBackup_()); return true; } catch(e){ return false; } }
+  var ua = navigator.userAgent || '';
+  var DEV = (/iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Mac/.test(ua) ? 'macOS' : /Windows/.test(ua) ? 'Windows' : 'Khác') + ' · ' +
+    (/CriOS|Chrome/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : /Firefox/.test(ua) ? 'Firefox' : 'Trình duyệt') + (window.matchMedia && matchMedia('(display-mode: standalone)').matches ? ' · app' : '');
+  var WRITE = {}; Object.keys(ACTIONS).forEach(function(k){ if (ACTIONS[k].w) WRITE[k] = 1; });
+
+  function save(){ try { localStorage.setItem(K.data, exportBackup_()); return true; } catch(e){ return false; } }
   function fresh(){ __book.sheets = []; __book.insertSheet('Sheet1'); setupStructure_(); }
-  var saved = null; try { saved = localStorage.getItem(KEY); } catch(e){}
+  var saved = ls(K.data), restored = false;
   fresh();
-  var restored = false;
   if (saved) { try { apiImportBackup(saved, true); restored = true; } catch(e){ console.warn('Không đọc được dữ liệu đã lưu', e); fresh(); } }
   if (!restored) { seedDemo_(); save(); }
-  window.OFFLINE = {
-    save: save,
+
+  var DEFAULT_SRV = window.QLTB_SERVER || '';
+  function srv(){ var v = ls(K.srv); return v === null ? DEFAULT_SRV : v; }
+  function session(){ return lj(K.ses, null); }
+  function setSession(s){ ls(K.ses, s ? JSON.stringify(s) : null); }
+  function outbox(){ return lj(K.out, []); }
+  function setOutbox(o){ ls(K.out, JSON.stringify(o)); changed(); }
+  function changed(){ try { if (E.onChange) E.onChange(); } catch(e){} }
+  function ip(){ return (window.IP && IP.value) || ''; }
+  function req(action, args, token){ return { action: action, args: args || [], token: token || '', ip: ip(), device: DEV }; }
+  function netErr(m){ var e = new Error(m || 'Không kết nối được máy chủ'); e.net = true; return e; }
+  function post(body){
+    return fetch(srv(), { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow' })
+      .then(function(r){ if (!r.ok) throw netErr('Máy chủ trả lỗi ' + r.status); return r.json(); }, function(){ throw netErr(); })
+      .then(function(j){ if (j && j.stats) ls(K.stats, JSON.stringify(j.stats)); return j; });
+  }
+  function applySnap(text){ fresh(); apiImportBackup(text, true); save(); ls(K.last, new Date().toLocaleString('vi-VN')); changed(); }
+  function localCtx(s){
+    try { var u = findUser_(readTable_('USER'), s.me.username); if (u) return ctxFromUser_(u, roles_(), ip(), DEV); } catch(e){}
+    var r = s.role || { level: 9, max: 0, perms: {} };
+    return { username: s.me.username, name: s.me.name, role: s.me.role, level: r.level, max: r.max, perms: r.perms || {}, ip: ip(), device: DEV };
+  }
+  function localDispatch(action, args){
+    var s = session();
+    var r = (!srv() || PUBLIC_ACTIONS[action] || !s) ? dispatch_(req(action, args, s && s.token)) : dispatch_(req(action, args, s.token), { trusted: localCtx(s) });
+    if (WRITE[action] || action === 'apiVisit' || action === 'apiRegister') save();
+    return r;
+  }
+  function queue(action, args){
+    var s = session(), o = outbox();
+    o.push({ action: action, args: args, token: s ? s.token : '', ip: ip(), device: DEV + ' (offline)', at: new Date().toISOString() });
+    setOutbox(o);
+  }
+  var flushing = null;
+  function flush(){
+    if (flushing) return flushing;
+    flushing = (function next(errs){
+      var o = outbox(); if (!o.length || !srv()) return Promise.resolve(errs);
+      var it = o[0];
+      return post({ action: it.action, args: it.args, token: it.token, ip: it.ip, device: it.device }).then(function(r){
+        if (!r.ok && (r.code === 'AUTH' || r.code === 'LOCKED')) { var e = new Error(r.error); e.code = r.code; throw e; }
+        if (!r.ok) errs.push((ACTION_LABEL[it.action] || it.action) + ': ' + r.error);
+        var rest = outbox(); rest.shift(); setOutbox(rest);
+        return next(errs);
+      });
+    })([]).then(function(x){ flushing = null; return x; }, function(e){ flushing = null; throw e; });
+    return flushing;
+  }
+  function sync(manual){
+    var s = session();
+    if (!srv() || !s || s.mode !== 'server') return Promise.resolve({ msg: srv() ? 'Chưa đăng nhập máy chủ' : 'Đang chạy riêng trên máy này' });
+    return flush().then(function(errs){
+      return post(req('apiSync', [], s.token)).then(function(r){
+        if (!r.ok) { var e = new Error(r.error); e.code = r.code; throw e; }
+        if (r.snap) applySnap(r.snap);
+        if (s.offline) { s.offline = false; setSession(s); }
+        return { msg: errs.length ? '⚠️ Đã đồng bộ, ' + errs.length + ' thao tác bị máy chủ từ chối: ' + errs.join('; ') : '🔄 Đã đồng bộ với Google Sheet', bad: errs.length > 0 };
+      });
+    });
+  }
+  var E = {
+    server: srv,
+    setServer: function(u){ ls(K.srv, u || ''); setSession(null); },
+    session: session,
+    stats: function(){ return lj(K.stats, null); },
+    outbox: outbox,
+    lastSync: function(){ return ls(K.last) || ''; },
+    logout: function(silent){
+      var s = session();
+      if (s && s.mode === 'server' && navigator.onLine && !silent) post(req('apiLogout', [], s.token)).catch(function(){});
+      if (s && s.mode === 'local' && !silent) { try { dispatch_(req('apiLogout', [], s.token)); save(); } catch(e){} }
+      setSession(null);
+    },
+    updateCred: function(cred){
+      var s = session(); if (!s || !cred) return;
+      var c = lj(K.creds, {}); if (c[s.me.username]) { c[s.me.username].salt = cred.salt; c[s.me.username].hash = cred.hash; ls(K.creds, JSON.stringify(c)); }
+    },
+    login: function(u, p, lock){
+      u = String(u).trim().toLowerCase();
+      if (!srv()) {
+        var r = dispatch_(req('apiLogin', [u, p, lock])); save();
+        if (!r.ok) { var e = new Error(r.error); e.code = r.code; return Promise.reject(e); }
+        setSession({ token: r.result.token, me: r.result.me, role: r.result.role, mode: 'local' });
+        return Promise.resolve({ me: r.result.me });
+      }
+      return post(req('apiLogin', [u, p, lock])).then(function(r){
+        if (!r.ok) { var e = new Error(r.error); e.code = r.code; throw e; }
+        var x = r.result;
+        setSession({ token: x.token, me: x.me, role: x.role, mode: 'server', exp: x.exp });
+        var c = lj(K.creds, {}); c[u] = { salt: x.cred.salt, hash: x.cred.hash, me: x.me, role: x.role, token: x.token }; ls(K.creds, JSON.stringify(c));
+        return sync().then(function(){ return { me: x.me }; }, function(){ return { me: x.me }; });
+      }, function(err){
+        if (!err.net) throw err;
+        var c = lj(K.creds, {})[u];
+        if (!c) throw new Error('Không có mạng và tài khoản này chưa từng đăng nhập trên máy này. Lần đầu cần có mạng.');
+        if (hashPw_(c.salt, String(p)) !== c.hash) throw new Error('Sai mật khẩu (kiểm tra offline)');
+        setSession({ token: c.token, me: c.me, role: c.role, mode: 'server', offline: true });
+        return { me: c.me, offline: true };
+      });
+    },
+    call: function(action, args){
+      args = args || [];
+      if (!srv()) return Promise.resolve(localDispatch(action, args));
+      var s = session();
+      if (action === 'apiBootstrap') return Promise.resolve(localDispatch(action, args));
+      if (action === 'apiPublicInfo' || action === 'apiRegister' || action === 'apiVisit') {
+        var body = req(action, args, s && s.token);
+        return post(body).catch(function(e){
+          if (action === 'apiRegister') throw new Error('Cần có mạng để gửi đăng ký');
+          if (action === 'apiVisit') { var o = outbox(); o.push({ action: action, args: args, token: '', ip: body.ip, device: DEV + ' (offline)', at: new Date().toISOString() }); setOutbox(o); }
+          return localDispatch(action, args);
+        });
+      }
+      var online = function(){
+        return flush().then(function(){ return post(req(action, args, s && s.token)); }).then(function(r){
+          if (r.ok && r.snap) applySnap(r.snap);
+          delete r.snap; return r;
+        });
+      };
+      var offline = function(){ queue(action, args); var r = localDispatch(action, args); r.queued = true; return r; };
+      if (!WRITE[action]) return Promise.resolve(localDispatch(action, args));
+      if (!navigator.onLine) return Promise.resolve(offline());
+      return online().catch(function(e){ if (e.net) return offline(); var r = { ok: false, error: e.message, code: e.code }; return r; });
+    },
+    sync: sync,
     backup: function(){
       var txt = exportBackup_(), name = 'QLTB-PRO-' + stamp() + '.json';
       try {
-        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], {type:'application/json'})); a.download = name;
+        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'application/json' })); a.download = name;
         document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
-        toast('💾 Đã tạo file sao lưu <b>' + name + '</b>. Trên iPhone: bấm Tải về → file nằm trong app Tệp › Tải về.', 'ok');
+        toast('💾 Đã tạo file sao lưu <b>' + name + '</b>. Trên iPhone: file nằm trong app Tệp › Tải về.', 'ok');
       } catch(e){ toast('Trình duyệt này không cho tải file: ' + e.message, 'bad'); }
     },
     restore: function(txt){ JSON.parse(txt); fresh(); apiImportBackup(txt, true); save(); },
-    reset: function(){ try { localStorage.removeItem(KEY); } catch(e){} fresh(); seedDemo_(); save(); }
+    reset: function(){ ls(K.data, null); fresh(); seedDemo_(); save(); setSession(null); }
   };
-  window.google = { script: { host: { close: function(){} }, run: (function mk(s, f){
-    return new Proxy({}, { get: function(t, p){
-      if (p === 'withSuccessHandler') return function(fn){ return mk(fn, f); };
-      if (p === 'withFailureHandler') return function(fn){ return mk(s, fn); };
-      return function(){ var args = arguments; setTimeout(function(){
-        try {
-          var fn = window[p]; if (typeof fn !== 'function') throw new Error('Chức năng này chỉ có trên Google Sheets');
-          var r = fn.apply(null, args);
-          if (p !== 'apiBootstrap' && !save()) toast('⚠️ Trình duyệt không cho lưu dữ liệu (chế độ riêng tư?). Hãy bấm 💾 Sao lưu thường xuyên.', 'bad');
-          if (s) s(r === undefined ? r : JSON.parse(JSON.stringify(r)));
-        } catch (e) { console.error(e); if (f) f(e); }
-      }, 60); };
-    }});
-  })() } };
+  window.ENGINE = E;
+  window.OFFLINE = { backup: E.backup, restore: E.restore, reset: E.reset, save: save };
+  var bg = function(){
+    var s = session(); if (!srv() || !s || s.mode !== 'server' || !navigator.onLine) return;
+    sync().then(function(){
+      if (typeof reload === 'function' && window.B && !document.querySelector('#modal .ov') && !(S.ed && S.ed.dirty) && !document.getElementById('login')) reload();
+    }).catch(function(e){ if (e.code === 'AUTH' || e.code === 'LOCKED') { E.logout(true); if (typeof showLogin === 'function') showLogin(e.message, e.code === 'LOCKED'); } });
+  };
+  window.addEventListener('online', function(){ changed(); bg(); });
+  window.addEventListener('offline', changed);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) bg(); });
+  setInterval(bg, 90000);
+  setTimeout(bg, 1500);
 })();
 </script>
 <script>
 var MODE = 'offline';
 var B = null;           // dữ liệu tải từ sheet
-var S = { tab: 'week', week: null, series: 'Tất cả', mainOnly: true, kSeries: 'Tất cả', kSearch: '', kMain: false,
+var S = { tab: 'org', week: null, series: 'Tất cả', mainOnly: true, kSeries: 'Tất cả', kSearch: '', kMain: false,
           ed: null, sFilter: '', opsCode: '', checkin: null, slipCode: '', slipType: 'xuat', lookup: '' };
 
 /* ---------------------------- tiện ích ---------------------------- */
@@ -1545,9 +2471,22 @@ function addDays(s, n){ var d = toD(s); d.setDate(d.getDate()+n); return toS(d);
 function monday(s){ var d = toD(s); var w = (d.getDay()+6)%7; d.setDate(d.getDate()-w); return toS(d); }
 function dayName(s){ return ['CN','THỨ 2','THỨ 3','THỨ 4','THỨ 5','THỨ 6','THỨ 7'][toD(s).getDay()]; }
 function overlap(a1,a2,b1,b2){ return a1 <= b2 && a2 >= b1; }
-function call(fn){ var args = [].slice.call(arguments,1); return new Promise(function(res, rej){ var r = google.script.run.withSuccessHandler(res).withFailureHandler(function(e){ rej(e); }); r[fn].apply(r, args); }); }
+function call(fn){
+  var args = [].slice.call(arguments,1);
+  var p = MODE === 'offline' ? window.ENGINE.call(fn, args)
+    : new Promise(function(res, rej){ google.script.run.withSuccessHandler(res).withFailureHandler(rej).apiCall(fn, args, IP.value); });
+  return p.then(function(r){
+    if (r && r.stats) STATS = r.stats;
+    if (!r || !r.ok) {
+      var e = new Error(r ? r.error : 'Lỗi không rõ'); e.code = r && r.code;
+      if (MODE === 'offline' && (e.code === 'AUTH' || e.code === 'LOCKED') && fn !== 'apiLogin' && window.ENGINE.session()) { window.ENGINE.logout(true); B = null; S.lgLock = e.code === 'LOCKED'; setTimeout(function(){ busy(false); showLogin(e.message, e.code === 'LOCKED'); }, 0); }
+      throw e;
+    }
+    return r.result;
+  });
+}
 function busy(on){ $('#loading').classList.toggle('on', !!on); }
-function toast(msg, type){ var el = document.createElement('div'); el.className = 'tst ' + (type||''); el.innerHTML = msg; $('#toast').appendChild(el); setTimeout(function(){ el.remove(); }, type==='bad' ? 7000 : 4200); }
+function toast(msg, type){ var box = $('#toast'); while (box.children.length >= 3) box.firstChild.remove(); var el = document.createElement('div'); el.className = 'tst ' + (type||''); el.innerHTML = msg; $('#toast').appendChild(el); setTimeout(function(){ el.remove(); }, type==='bad' ? 7000 : 4200); }
 function errMsg(e){ return esc((e && e.message) || e); }
 function stColor(s){ return (B.ST_COLOR[s]) || {bg:'#f1f5f9', fg:'#334155', dot:'#94a3b8'}; }
 function stBadge(s){ var c = stColor(s); return '<span class="st" style="background:'+c.bg+';color:'+c.fg+'">'+esc(s)+'</span>'; }
@@ -1623,10 +2562,19 @@ function buildLines(model, qty, params, choices){
 }
 
 /* ---------------------------- khung ---------------------------- */
-var TABS = [['week','📅','Lịch thiết bị tuần'],['stock','📦','Kho thiết bị'],['show','🎪','Show & đặt thiết bị'],['ops','🚚','Xuất / Nhập kho'],['slip','🧾','Phiếu xuất kho / Báo giá'],['log','🕘','Nhật ký']];
+function tabsList(){
+  var t = [['org','🏢','Sơ đồ tổ chức'],['week','📅','Lịch thiết bị tuần'],['stock','📦','Kho thiết bị'],['show','🎪','Show & đặt thiết bị'],['ops','🚚','Xuất / Nhập kho'],['slip','🧾','Phiếu / Báo giá']];
+  if (can('XEM_KHACH_HANG')) t.push(['cust','👥','Khách hàng']);
+  var n = myPending().length; t.push(['disc','💸','Duyệt chiết khấu' + (n ? '<span class="tabbadge">'+n+'</span>' : '')]);
+  t.push(['log','🕘','Nhật ký kho']);
+  if (can('QUAN_TRI_USER')) t.push(['users','👤','Người dùng']);
+  if (can('XEM_NHAT_KY_HT') || can('KHOA_HE_THONG')) t.push(['sys','🛡️','Hệ thống']);
+  return t;
+}
 function renderTabs(){
   if (MODE === 'sidebar') { $('#tabs').innerHTML = ''; return; }
-  $('#tabs').innerHTML = TABS.map(function(t){ return '<button class="tab '+(S.tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+' '+t[2]+'</button>'; }).join('');
+  var T = tabsList(); if (!T.some(function(t){ return t[0] === S.tab; })) S.tab = 'org';
+  $('#tabs').innerHTML = T.map(function(t){ return '<button class="tab '+(S.tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')">'+t[1]+' '+t[2]+'</button>'; }).join('');
 }
 function go(t){ S.tab = t; renderTabs(); render(); }
 function renderKpis(){
@@ -1650,10 +2598,11 @@ function render(){
   renderKpis();
   var v = $('#view');
   if (MODE === 'sidebar') { v.innerHTML = vSidebar(); return; }
-  v.innerHTML = ({week:vWeek, stock:vStock, show:vShow, ops:vOps, slip:vSlip, log:vLog}[S.tab] || vWeek)();
+  v.innerHTML = ({org:vOrg, week:vWeek, stock:vStock, show:vShow, ops:vOps, slip:vSlip, log:vLog, cust:vCust, disc:vDisc, users:vUsers, sys:vSys}[S.tab] || vOrg)();
 }
 function reload(keep){
-  if (typeof google === 'undefined' || !google.script) {
+  if (MODE === 'offline' && !window.ENGINE.session()) { showLogin(); return Promise.resolve(); }
+  if (MODE !== 'offline' && (typeof google === 'undefined' || !google.script)) {
     $('#view').innerHTML = '<div class="card"><div class="empty">⚠️ File <b>App.html</b> là giao diện chạy BÊN TRONG Google Sheets (Apps Script), mở trực tiếp sẽ không có dữ liệu.<br><br>• Dùng trên Google Sheets: dán vào Apps Script rồi mở từ menu ⚡ QUẢN LÝ THIẾT BỊ PRO.<br>• Dùng offline trên máy tính / iPhone: mở file <b>QLTB-PRO-offline.html</b>.</div></div>';
     $('#syncPill').innerHTML = '⚠️ Chưa kết nối'; return Promise.resolve();
   }
@@ -1661,7 +2610,8 @@ function reload(keep){
   return call('apiBootstrap').then(function(d){
     B = d; prep(); busy(false);
     $('#co').innerHTML = '🏢 ' + esc(B.cfg.TEN_CONG_TY || '');
-    $('#syncPill').innerHTML = MODE === 'offline' ? '📴 Offline · lưu trên máy này' : '✅ Đã kết nối Sheet'; $('#syncPill').className = 'pill on noprint';
+    $('#syncPill').innerHTML = syncPillText(); $('#syncPill').className = 'pill on noprint';
+    $('#mePill').innerHTML = mePill(); paintIp(); hideLogin();
     renderTabs(); render();
   }).catch(function(e){ busy(false); toast('Lỗi tải dữ liệu: ' + errMsg(e), 'bad'); $('#view').innerHTML = '<div class="card"><div class="empty">⚠️ ' + errMsg(e) + '<br><br>Hãy chạy menu <b>Khởi tạo / Cập nhật Sheet chuẩn</b> trước.</div></div>'; });
 }
@@ -1765,7 +2715,7 @@ function closeModal(){ $('#modal').innerHTML = ''; }
 /* ======================= 🎪 SHOW & ĐẶT THIẾT BỊ ======================= */
 function newShow(){
   var out = addDays(B.today, 3);
-  S.ed = { show: { code:'', name:'', client:'', venue:'', type:B.SHOW_TYPES[0], out:out, day:addDays(out,2), back:addDays(out,3), days:4, status:'Báo giá', pic:B.cfg.NGUOI_PHU_TRACH||'', note:'', color:'' }, lines: [], dirty:false };
+  S.ed = { show: { code:'', name:'', client:'', venue:'', type:B.SHOW_TYPES[0], out:out, day:addDays(out,2), back:addDays(out,3), days:4, status:'Báo giá', pic:(A().me && A().me.name)||B.cfg.NGUOI_PHU_TRACH||'', note:'', color:'', cust:'', discount:0 }, lines: [], dirty:false };
 }
 function openShow(code){
   var s = B._show[code]; if (!s) return;
@@ -1796,12 +2746,13 @@ function vEditor(){
   var h = '<div class="card"><div class="card-h"><h2>'+(s.code ? '✏️ '+esc(s.code) : '🆕 SHOW MỚI')+'</h2>'+(s.code?showBadge(s.status):'')+(S.ed.dirty?'<span class="pill" style="background:#fef3c7;color:#92400e">● Chưa lưu</span>':'')+'<div class="grow"></div>' +
     (s.code ? '<button class="btn sm" onclick="S.opsCode=\''+s.code+'\';go(\'ops\')">🚚 Xuất / nhập</button><button class="btn sm" onclick="S.slipCode=\''+s.code+'\';go(\'slip\')">🧾 Phiếu</button>' : '') +
     '<button class="btn pri" onclick="saveShow()">💾 Lưu show</button>' + (s.code ? '<button class="btn bad sm" onclick="delShow()">🗑</button>' : '') + '</div><div class="card-b"><div class="form">' +
-    f('Tên show','name','text','s2') + f('Khách hàng','client') + f('Loại','type',null,'',B.SHOW_TYPES) +
+    f('Tên show','name','text','s2') + custField(s) + f('Loại','type',null,'',B.SHOW_TYPES) +
     f('Địa điểm','venue','text','s2') + f('Trạng thái','status',null,'',B.SHOW_ST) + f('Phụ trách','pic') +
     f('🚚 Ngày xuất kho','out','date') + f('★ Ngày diễn','day','date') + f('📥 Ngày nhập kho','back','date') + f('Số ngày tính tiền','days','number') +
     f('Ghi chú','note','text','s4') + '</div>';
   if (B.SHOW_HOLD.indexOf(s.status) < 0) h += '<div class="note" style="margin-top:10px">ⓘ Trạng thái "'+esc(s.status)+'" chưa giữ hàng – các show khác vẫn đặt được thiết bị này. Chuyển sang "Đã xác nhận" để giữ hàng.</div>';
   h += '</div>';
+  if (can('TAO_SHOW')) h += discountBox();
   // bảng chọn thiết bị chính
   var groups = {};
   B.catalog.filter(function(c){ return c.rentable; }).forEach(function(c){ (groups[c.series] = groups[c.series] || []).push(c); });
@@ -1835,8 +2786,8 @@ function vEditor(){
   });
   h += '</tbody></table></div>';
   if (short.length) h = h.replace('<div style="overflow:auto;border-top', '<div class="card-b" style="padding-top:0"><div class="note r">⚠️ Thiếu hàng trong khoảng ngày này: ' + short.map(function(m){ return '<b>'+esc(cat(m).name)+'</b> (cần '+need[m]+', còn '+avail(m, s.out, s.back, s.code).avail+')'; }).join(' · ') + '. Có thể đổi ngày, đổi model trong cùng họ, hoặc thuê ngoài.</div></div><div style="overflow:auto;border-top');
-  var vat = Number(B.cfg['VAT_%']||0);
-  h += '<div class="tot"><div><small>Tạm tính / ngày</small><b>'+money(sub/Math.max(1,Number(s.days||1)))+'</b></div><div><small>× '+(s.days||1)+' ngày</small><b>'+money(sub)+'</b></div><div><small>VAT '+vat+'%</small><b>'+money(sub*vat/100)+'</b></div><div class="big"><small>TỔNG CỘNG</small><b>'+money(sub*(1+vat/100))+'</b></div></div></div>';
+  var vat = Number(B.cfg['VAT_%']||0), dc = Number(s.discount||0), net = sub * (1 - dc/100);
+  h += '<div class="tot"><div><small>Tạm tính / ngày</small><b>'+money(sub/Math.max(1,Number(s.days||1)))+'</b></div><div><small>× '+(s.days||1)+' ngày</small><b>'+money(sub)+'</b></div><div><small>Chiết khấu '+dc+'%</small><b>− '+money(sub*dc/100)+'</b></div><div><small>VAT '+vat+'%</small><b>'+money(net*vat/100)+'</b></div><div class="big"><small>TỔNG CỘNG</small><b>'+money(net*(1+vat/100))+'</b></div></div></div>';
   return h;
 }
 function delLine(i){
@@ -1906,11 +2857,13 @@ function renderLink(){
 }
 function saveShow(){
   var s = S.ed.show;
+  if (!can('TAO_SHOW')) return toast('Bạn không có quyền tạo/sửa show', 'bad');
   if (!s.name) return toast('Nhập tên show trước khi lưu', 'bad');
+  if (S.ed.want !== undefined && Number(S.ed.want) <= A().me.max) s.discount = Number(S.ed.want);
   if (!s.out || !s.back || s.back < s.out) return toast('Ngày nhập kho phải sau ngày xuất kho', 'bad');
   busy(true);
   call('apiSaveShow', { show: s, lines: S.ed.lines.map(function(l){ return { model:l.model, qty:l.qty, source:l.source, group:l.group, req:l.req, price:l.price, note:l.note||'' }; }) })
-    .then(function(r){ toast('💾 Đã lưu show <b>'+esc(r.code)+'</b>' + (r.released ? ' · thả '+r.released+' mã TB về kho' : ''), 'ok'); return reload().then(function(){ openShow(r.code); }); })
+    .then(function(r){ S.ed.want = undefined; toast('💾 Đã lưu show <b>'+esc(r.code)+'</b>' + (r.released ? ' · thả '+r.released+' mã TB về kho' : ''), 'ok'); return reload().then(function(){ openShow(r.code); }); })
     .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
 }
 function delShow(){
@@ -1928,7 +2881,8 @@ function vOps(){
   if (!s) return h + '</div><div class="empty">Chưa có show.</div></div>';
   var mine = B._top.filter(function(a){ return a.show === s.code; });
   var nCB = mine.filter(function(a){ return a.status === B.ST.CB; }).length, nSH = mine.filter(function(a){ return a.status === B.ST.SHOW; }).length;
-  var canAssign = ['Báo giá','Đã xác nhận','Đang soạn hàng'].indexOf(s.status) >= 0;
+  var canAssign = ['Báo giá','Đã xác nhận','Đang soạn hàng'].indexOf(s.status) >= 0 && can('XUAT_NHAP_KHO');
+  if (!can('XUAT_NHAP_KHO')) { nCB = 0; nSH = 0; }
   h += '<button class="btn warn" '+(canAssign?'':'disabled')+' onclick="doAssign()">🧰 Soạn hàng tự động</button><button class="btn pri" '+(nCB?'':'disabled')+' onclick="doCheckout()">🚚 Xuất kho ('+nCB+')</button><button class="btn ok" '+(nSH?'':'disabled')+' onclick="startCheckin()">📥 Nhập kho ('+nSH+')</button></div>';
   var flow = ['Báo giá','Đã xác nhận','Đang soạn hàng','Đang ở show','Đã nhập kho'], cur = flow.indexOf(s.status);
   h += '<div class="card-b"><div class="row" style="justify-content:space-between"><div><b style="font-size:14px">'+esc(s.name)+'</b><div class="mute">📍 '+esc(s.venue)+' · 👤 '+esc(s.client)+' · 🚚 '+fd(s.out)+' → ★ '+fd(s.day)+' → 📥 '+fd(s.back)+'</div></div><div class="steps">' +
@@ -2018,7 +2972,7 @@ function vSlip(){
     '<div><span>Xuất kho:</span> <b>'+fd(s.out)+'</b> · <span>Ngày diễn:</span> <b>'+fd(s.day)+'</b></div><div><span>Nhập kho:</span> <b>'+fd(s.back)+'</b> · <span>Số ngày tính tiền:</span> '+s.days+'</div><div><span>Phụ trách:</span> '+esc(s.pic)+'</div><div><span>Trạng thái:</span> '+esc(s.status)+'</div></div>' +
     '<table><thead><tr><th>#</th><th>Ảnh</th><th>Thiết bị</th><th>Part No.</th><th>SL</th>' + (xuat ? '<th>Mã thiết bị đã gán</th><th>Kiểm</th>' : '<th>Đơn giá/ngày</th><th>Ngày</th><th>Thành tiền</th>') + '</tr></thead><tbody>' + rows + '</tbody></table>';
   if (xuat) h += '<div class="sum"><table><tr><td>Tổng số dòng:</td><td class="num"><b>'+lines.length+'</b></td></tr><tr><td>Tổng số lượng:</td><td class="num"><b>'+lines.reduce(function(a,l){return a+l.qty;},0)+'</b></td></tr><tr><td>Khối lượng loa/mixer ước tính:</td><td class="num"><b>'+Math.round(kg).toLocaleString('vi-VN')+' kg</b></td></tr></table></div>';
-  else h += '<div class="sum"><table><tr><td>Tạm tính:</td><td class="num">'+money(sub)+'</td></tr><tr><td>VAT '+vat+'%:</td><td class="num">'+money(sub*vat/100)+'</td></tr><tr><td><b>TỔNG CỘNG:</b></td><td class="num"><b style="font-size:16px;color:#4f46e5">'+money(sub*(1+vat/100))+'</b></td></tr></table></div><div class="mute" style="font-size:11px">* '+esc(B.cfg.GHI_CHU_GIA||'')+'</div>';
+  else { var dc = Number(s.discount||0), net = sub*(1-dc/100); h += '<div class="sum"><table><tr><td>Tạm tính:</td><td class="num">'+money(sub)+'</td></tr>'+(dc?'<tr><td>Chiết khấu '+dc+'%:</td><td class="num">− '+money(sub*dc/100)+'</td></tr>':'')+'<tr><td>VAT '+vat+'%:</td><td class="num">'+money(net*vat/100)+'</td></tr><tr><td><b>TỔNG CỘNG:</b></td><td class="num"><b style="font-size:16px;color:#4f46e5">'+money(net*(1+vat/100))+'</b></td></tr></table></div><div class="mute" style="font-size:11px">* '+esc(B.cfg.GHI_CHU_GIA||'')+'</div>'; }
   h += '<div class="sig"><div><b>Người lập phiếu</b><i>(Ký & ghi rõ họ tên)</i></div><div><b>'+(xuat?'Thủ kho':'Khách hàng xác nhận')+'</b><i>(Ký & ghi rõ họ tên)</i></div><div><b>'+(xuat?'Người nhận hàng':'Quản lý')+'</b><i>(Ký & ghi rõ họ tên)</i>'+(xuat?'':'<div class="stamp">ĐÃ DUYỆT</div>')+'</div></div></div></div>';
   return h;
 }
@@ -2066,6 +3020,333 @@ function vSidebar(){
   return h;
 }
 
+/* ======================= 🔐 ĐĂNG NHẬP · PHÂN QUYỀN · TỔ CHỨC ======================= */
+var IP = { value: '', ready: null };
+var STATS = null;
+function fetchIp(){
+  if (IP.ready) return IP.ready;
+  IP.ready = new Promise(function(res){
+    var done = false, fin = function(v){ if (done) return; done = true; IP.value = v || ''; paintIp(); res(IP.value); };
+    setTimeout(function(){ fin(''); }, 5000);
+    try { fetch('https://api.ipify.org?format=json', { cache: 'no-store' }).then(function(r){ return r.json(); }).then(function(j){ fin(j.ip); }).catch(function(){ fin(''); }); } catch(e){ fin(''); }
+  });
+  return IP.ready;
+}
+function paintIp(){
+  var t = IP.value ? '🌐 IP: <b>' + esc(IP.value) + '</b>' : '🌐 IP: <b>không xác định (offline)</b>';
+  var a = document.getElementById('ipPill'); if (a) a.innerHTML = t;
+  var b = document.getElementById('loginIp'); if (b) b.innerHTML = t;
+}
+function A(){ return (B && B.auth) || { me: { perms: {} }, users: [], roles: [], customers: [], discounts: [] }; }
+function can(p){ var me = A().me || {}; return !!(me.owner || (me.perms && me.perms[p])); }
+function initials2(n){ var w = String(n||'?').replace(/\(.*?\)/g,'').trim().split(/\s+/); return ((w[0]||'?')[0] + (w.length > 1 ? w[w.length-1][0] : '')).toUpperCase(); }
+var LEVEL_COLOR = { 1:'#7c3aed', 2:'#4f46e5', 3:'#0ea5e9', 4:'#10b981', 5:'#f59e0b' };
+function lvColor(l){ return LEVEL_COLOR[l] || '#64748b'; }
+var USER_BADGE = { 'Hoạt động':['#dcfce7','#166534'], 'Chờ duyệt':['#fef3c7','#92400e'], 'Tạm khóa':['#e2e8f0','#334155'], 'Ban':['#fee2e2','#991b1b'] };
+function userBadge(s){ var c = USER_BADGE[s] || ['#f1f5f9','#334155']; return '<span class="st" style="background:'+c[0]+';color:'+c[1]+'">'+esc(s)+'</span>'; }
+function userName(u){ var x = A().users.filter(function(v){ return v.username === u; })[0]; return x ? x.name : (u === A().high ? 'Phó TGĐ trở lên' : u); }
+
+/* ---------- màn hình đăng nhập (bản app / offline) ---------- */
+function showLogin(msg, needLock){
+  var E = window.ENGINE, srv = E ? E.server() : '';
+  var st = STATS || (E && E.stats()) || null;
+  var h = '<div id="login"><div class="lg-card"><div class="lg-top"><div class="logo">⚡</div><div><h2>QUẢN LÝ THIẾT BỊ PRO</h2><div class="mute">Âm thanh · Ánh sáng · Cho thuê show</div></div></div>' +
+    '<div class="row" style="gap:6px;margin:6px 0 12px"><span class="pill" id="loginIp"></span>' + (st ? '<span class="pill">👁️ ' + st.total + ' lượt truy cập · ' + st.uniqueIp + ' IP · hôm nay ' + st.today + '</span>' : '') + '</div>' +
+    '<div class="chips" style="margin-bottom:12px"><span class="chip '+(S.lgTab!=='reg'?'on':'')+'" onclick="S.lgTab=\'in\';showLogin()">Đăng nhập</span><span class="chip '+(S.lgTab==='reg'?'on':'')+'" onclick="S.lgTab=\'reg\';showLogin()">Đăng ký tài khoản</span></div>';
+  if (msg) h += '<div class="note r" style="margin-bottom:10px">'+esc(msg)+'</div>';
+  if (S.lgTab === 'reg') {
+    var roles = (S.pubRoles || []).map(function(r){ return '<option>'+esc(r)+'</option>'; }).join('');
+    h += '<div class="lg-form"><label>Username<input class="inp" id="rgU" autocomplete="username" placeholder="vd: nguyenvana"></label><label>Mật khẩu (≥ 6 ký tự)<input class="inp" id="rgP" type="password" autocomplete="new-password"></label>' +
+      '<label>Họ tên<input class="inp" id="rgN" placeholder="Nguyễn Văn A"></label><label>Chức vụ<select class="inp" id="rgR">'+roles+'</select></label>' +
+      '<label>Điện thoại<input class="inp" id="rgPh" inputmode="tel"></label><label>Email<input class="inp" id="rgE" inputmode="email"></label>' +
+      '<button class="btn pri" style="justify-content:center" onclick="doRegister()">Gửi đăng ký</button><div class="mute" style="font-size:12px">Tài khoản mới ở trạng thái <b>Chờ duyệt</b> – CEO hoặc Quản trị duyệt rồi mới đăng nhập được.</div></div>';
+  } else {
+    h += '<div class="lg-form"><label>Username<input class="inp" id="lgU" autocomplete="username" autocapitalize="off"></label><label>Mật khẩu<input class="inp" id="lgP" type="password" autocomplete="current-password" onkeydown="if(event.key===\'Enter\')doLogin()"></label>' +
+      ((needLock || S.lgLock) ? '<label>🔒 Mật khẩu mở khóa hệ thống<input class="inp" id="lgL" type="password"></label>' : '') +
+      '<button class="btn pri" style="justify-content:center" onclick="doLogin()">Đăng nhập</button></div>';
+  }
+  h += '<details class="lg-srv"'+(S.lgSrv?' open':'')+'><summary>⚙ Máy chủ đồng bộ: <b>'+(srv ? 'Google Sheet' : 'chưa cài – chỉ dùng trên máy này')+'</b></summary>' +
+    '<div class="mute" style="font-size:12px;margin:6px 0">Dán URL "Ứng dụng web" của Apps Script (đuôi /exec). Để trống = chạy riêng trên máy này.</div>' +
+    '<input class="inp" id="srvUrl" style="width:100%" placeholder="https://script.google.com/macros/s/…/exec" value="'+esc(srv)+'"><div class="row" style="margin-top:8px"><button class="btn sm" onclick="saveServer()">Lưu máy chủ</button><button class="btn sm" onclick="testServer()">Kiểm tra kết nối</button><span id="srvMsg" class="mute" style="font-size:12px"></span></div></details>' +
+    '<div class="mute" style="font-size:11px;margin-top:10px">IP của bạn và mọi thao tác được ghi lại trong nhật ký hệ thống.</div></div></div>';
+  var el = document.getElementById('login');
+  if (!el) { el = document.createElement('div'); document.body.appendChild(el); }
+  el.outerHTML = h; paintIp();
+  if (S.lgTab === 'reg' && !S.pubRoles) call('apiPublicInfo').then(function(r){ S.pubRoles = r.roles; S.lgLock = r.locked; showLogin(msg, needLock); }).catch(function(){});
+  var f = document.getElementById(S.lgTab === 'reg' ? 'rgU' : 'lgU'); if (f && !msg) f.focus();
+}
+function hideLogin(){ var el = document.getElementById('login'); if (el) el.remove(); }
+function doLogin(){
+  var u = $('#lgU').value.trim(), p = $('#lgP').value, l = document.getElementById('lgL') ? $('#lgL').value : '';
+  if (!u || !p) return showLogin('Nhập username và mật khẩu');
+  busy(true);
+  window.ENGINE.login(u, p, l).then(function(r){ busy(false); hideLogin(); S.tab = 'org'; toast('👋 Xin chào ' + esc(r.me.name) + (r.offline ? ' – đăng nhập offline' : ''), 'ok'); return reload(); })
+    .catch(function(e){ busy(false); S.lgLock = e.code === 'LOCKED' || S.lgLock; showLogin(e.message || String(e), e.code === 'LOCKED'); });
+}
+function doRegister(){
+  var o = { username: $('#rgU').value.trim().toLowerCase(), password: $('#rgP').value, name: $('#rgN').value.trim(), role: $('#rgR').value, phone: $('#rgPh').value, email: $('#rgE').value };
+  busy(true);
+  call('apiRegister', o).then(function(){ busy(false); S.lgTab = 'in'; showLogin('✅ Đã gửi đăng ký "' + o.username + '". Chờ CEO/Quản trị duyệt rồi đăng nhập.'); })
+    .catch(function(e){ busy(false); showLogin(e.message); });
+}
+function saveServer(){ var v = $('#srvUrl').value.trim(); window.ENGINE.setServer(v); S.lgSrv = true; S.pubRoles = null; showLogin(v ? '✅ Đã lưu máy chủ. Đăng nhập để đồng bộ.' : 'Đã chuyển về chế độ chỉ trên máy này.'); }
+function testServer(){
+  var v = $('#srvUrl').value.trim(); if (!v) return;
+  $('#srvMsg').textContent = 'Đang kiểm tra…';
+  fetch(v + (v.indexOf('?') < 0 ? '?' : '&') + 'ping=1').then(function(r){ return r.json(); }).then(function(j){ $('#srvMsg').textContent = j.app ? '✅ Kết nối được: ' + j.app + ' ' + (j.version||'') : '⚠️ Phản hồi lạ'; })
+    .catch(function(e){ $('#srvMsg').textContent = '❌ Không kết nối được: ' + e.message; });
+}
+function logout(){ if (window.ENGINE) { window.ENGINE.logout(); B = null; S.ed = null; showLogin('Đã đăng xuất.'); } }
+function mePill(){
+  var me = A().me; if (!me || !me.username) return '';
+  return '<span class="pill mep" onclick="openMe()" title="Tài khoản của bạn"><span class="av2" style="background:'+lvColor(me.level)+'">'+esc(initials2(me.name))+'</span>'+esc(me.name)+' · '+esc(me.role)+' · CK ≤ '+me.max+'%</span>';
+}
+function openMe(){
+  var me = A().me;
+  $('#modal').innerHTML = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md sm"><div class="md-h"><h3>👤 '+esc(me.name)+'</h3><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div><div class="md-b">' +
+    '<div class="mute">'+esc(me.username)+' · '+esc(me.role)+' · chiết khấu tối đa <b>'+me.max+'%</b></div><div class="mute" style="font-size:12px;margin:4px 0 12px">Quyền: '+A().perms.filter(function(p){ return can(p); }).map(function(p){ return A().permLabel[p]; }).join(' · ')+'</div>' +
+    (me.owner ? '<div class="note i">Bạn đang mở từ Google Sheet nên có quyền quản trị.</div>' :
+    '<div class="form" style="grid-template-columns:1fr"><label>Mật khẩu hiện tại<input class="inp" type="password" id="mpOld"></label><label>Mật khẩu mới (≥ 6 ký tự)<input class="inp" type="password" id="mpNew"></label></div>') +
+    '</div><div class="md-f">'+(me.owner?'':'<button class="btn bad" onclick="closeModal();logout()">⎋ Đăng xuất</button><div class="grow"></div><button class="btn pri" onclick="changeMyPw()">Đổi mật khẩu</button>')+'</div></div></div>';
+}
+function changeMyPw(){
+  busy(true);
+  call('apiChangeMyPassword', $('#mpOld').value, $('#mpNew').value).then(function(r){ busy(false); if (window.ENGINE) window.ENGINE.updateCred(r.cred); closeModal(); toast('🔑 Đã đổi mật khẩu', 'ok'); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+
+/* ---------- 🏢 sơ đồ tổ chức ---------- */
+function vOrg(){
+  var a = A(), users = a.users.filter(function(u){ return u.status === 'Hoạt động' || can('QUAN_TRI_USER'); });
+  var kids = {}, roots = [];
+  users.forEach(function(u){ var p = u.parent; if (p && users.some(function(x){ return x.username === p; })) (kids[p] = kids[p] || []).push(u); else roots.push(u); });
+  var sortU = function(x, y){ return x.level - y.level || x.role.localeCompare(y.role); };
+  var node = function(u){
+    var me = u.username === a.me.username, inactive = u.status !== 'Hoạt động';
+    var h = '<li><div class="onode'+(me?' me':'')+(inactive?' off':'')+'" style="--lc:'+lvColor(u.level)+'" onclick="openUser(\''+esc(u.username)+'\')"><span class="av2 big" style="background:'+lvColor(u.level)+'">'+esc(initials2(u.name))+'</span><b>'+esc(u.name)+'</b><span class="orole">'+esc(u.role)+'</span><span class="mute" style="font-size:11px">@'+esc(u.username)+' · CK ≤ '+u.max+'%</span>'+(inactive?userBadge(u.status):'')+(me?'<span class="st" style="background:#ede9fe;color:#5b21b6">Bạn</span>':'')+'</div>';
+    var ch = (kids[u.username] || []).sort(sortU);
+    if (ch.length) h += '<ul>' + ch.map(node).join('') + '</ul>';
+    return h + '</li>';
+  };
+  roots.sort(sortU);
+  var peers = roots.filter(function(u){ return u.level <= 1 && u.role !== 'CEO' && !(kids[u.username] || []).length; });
+  roots = roots.filter(function(u){ return peers.indexOf(u) < 0; });
+  var h = '<div class="card"><div class="card-h"><h2>🏢 SƠ ĐỒ TỔ CHỨC</h2><span class="mute">'+users.length+' tài khoản · đường nối = báo cáo cho cấp trên</span><div class="grow"></div>' + (can('QUAN_TRI_USER') ? '<button class="btn sm" onclick="go(\'users\')">👤 Quản lý user</button>' : '') + '</div>' +
+    (peers.length ? '<div class="card-b" style="border-bottom:1px dashed var(--line)"><div class="row"><span class="mute" style="font-size:12px">🛡️ Ngang hàng CEO (quản trị hệ thống):</span>' + peers.map(function(u){ return '<div class="onode" style="--lc:'+lvColor(u.level)+';flex-direction:row;max-width:none;min-width:0;padding:6px 12px" onclick="openUser(\''+esc(u.username)+'\')"><span class="av2" style="background:'+lvColor(u.level)+'">'+esc(initials2(u.name))+'</span><b>'+esc(u.name)+'</b><span class="orole">'+esc(u.role)+'</span>'+(u.username===a.me.username?'<span class="st" style="background:#ede9fe;color:#5b21b6">Bạn</span>':'')+'</div>'; }).join('') + '</div></div>' : '') +
+    '<div class="tree-wrap"><div class="tree"><ul>' + roots.map(node).join('') + '</ul></div></div>' +
+    '<div class="card-b legend">' + [1,2,3,4].map(function(l){ return '<span><i style="background:'+lvColor(l)+'"></i>'+({1:'CEO / Quản trị',2:'Giám đốc',3:'Phó TGĐ',4:'Trưởng bộ phận & nhân viên'})[l]+'</span>'; }).join('') + '<span>Tài khoản mờ = chưa hoạt động (chỉ quản trị thấy)</span></div></div>';
+  h += '<div class="card" style="margin-top:12px"><div class="card-h"><h2>🛡️ QUYỀN & CHIẾT KHẤU THEO CHỨC VỤ</h2><span class="mute">Sửa ở sheet "Chức vụ"</span></div><div style="overflow:auto"><table class="t"><thead><tr><th>Chức vụ</th><th class="num">Cấp</th><th class="num">CK tối đa</th><th>Báo cáo cho</th>' + a.perms.map(function(p){ return '<th style="text-align:center;font-size:10px;max-width:90px;white-space:normal">'+esc(a.permLabel[p])+'</th>'; }).join('') + '</tr></thead><tbody>' +
+    a.roles.slice().sort(function(x,y){ return x.level - y.level; }).map(function(r){ return '<tr><td><b>'+esc(r.name)+'</b></td><td class="num">'+r.level+'</td><td class="num"><b>'+r.max+'%</b>'+(r.max>=100?' <span class="mute">(FOC)</span>':'')+'</td><td>'+esc(r.reportsTo||'—')+'</td>' + a.perms.map(function(p){ return '<td style="text-align:center">'+(r.perms[p]?'✅':'<span class="mute">—</span>')+'</td>'; }).join('') + '</tr>'; }).join('') +
+    '</tbody></table></div><div class="card-b note i" style="margin:12px">Chiết khấu vượt quyền → bấm <b>Xin duyệt</b> (gửi cấp trên trực tiếp, mỗi cấp có thể duyệt trong quyền của mình hoặc chuyển lên tiếp) hoặc <b>🚨 GẤP</b> (gửi thẳng Phó TGĐ trở lên).</div></div>';
+  return h;
+}
+function openUser(username){
+  var u = A().users.filter(function(x){ return x.username === username; })[0]; if (!u) return;
+  if (can('QUAN_TRI_USER')) return userForm(u);
+  $('#modal').innerHTML = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md sm"><div class="md-h"><span class="av2 big" style="background:'+lvColor(u.level)+'">'+esc(initials2(u.name))+'</span><div><h3>'+esc(u.name)+'</h3><div class="mute">'+esc(u.role)+' · @'+esc(u.username)+'</div></div><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div>' +
+    '<div class="md-b"><div>📞 '+esc(u.phone||'—')+'</div><div>✉️ '+esc(u.email||'—')+'</div><div>⬆️ Báo cáo cho: <b>'+esc(u.boss ? userName(u.boss) : '—')+'</b></div><div>💸 Chiết khấu tối đa: <b>'+u.max+'%</b></div></div></div></div>';
+}
+
+/* ---------- 👤 quản lý user ---------- */
+function vUsers(){
+  if (!can('QUAN_TRI_USER')) return '<div class="card"><div class="empty">Bạn không có quyền xem trang này.</div></div>';
+  var q = (S.uq || '').toLowerCase(), list = A().users.filter(function(u){ return !q || (u.username+' '+u.name+' '+u.role+' '+u.status).toLowerCase().indexOf(q) >= 0; });
+  var pend = A().users.filter(function(u){ return u.status === 'Chờ duyệt'; }).length;
+  var h = '<div class="card"><div class="card-h"><h2>👤 NGƯỜI DÙNG</h2><span class="mute">'+A().users.length+' tài khoản'+(pend?' · <b style="color:#b45309">'+pend+' chờ duyệt</b>':'')+'</span><div class="grow"></div>' +
+    '<input class="inp" style="width:220px" placeholder="🔎 Tìm user…" value="'+esc(S.uq||'')+'" oninput="S.uq=this.value;clearTimeout(window._t);window._t=setTimeout(render,250)"><button class="btn pri" onclick="userForm(null)">＋ Thêm user</button></div>' +
+    '<div style="overflow:auto"><table class="t"><thead><tr><th>User</th><th>Chức vụ / cấp trên</th><th>Trạng thái</th><th>Ngày tạo</th><th>Sửa thông tin</th><th>Đổi quyền</th><th>Khóa / ban</th><th>Đăng nhập cuối · IP</th><th></th></tr></thead><tbody>';
+  list.forEach(function(u){
+    var self = u.username === A().me.username;
+    h += '<tr><td><div class="row" style="gap:8px;flex-wrap:nowrap"><span class="av2" style="background:'+lvColor(u.level)+'">'+esc(initials2(u.name))+'</span><div><b>'+esc(u.name)+'</b><div class="mute" style="font-size:11px">@'+esc(u.username)+(u.hasPw?'':' · <span style="color:#dc2626">chưa có mật khẩu</span>')+'</div></div></div></td>' +
+      '<td>'+esc(u.role)+' <span class="mute">(CK ≤ '+u.max+'%)</span><div class="mute" style="font-size:11px">⬆ '+esc(u.boss ? userName(u.boss) : '—')+'</div></td>' +
+      '<td>'+userBadge(u.status)+(u.status==='Ban'&&u.banUntil?'<div class="mute" style="font-size:11px">đến '+fd(u.banUntil)+'</div>':'')+(u.reason?'<div class="mute" style="font-size:11px">'+esc(u.reason)+'</div>':'')+'</td>' +
+      '<td class="mute" style="font-size:11.5px">'+esc(u.created)+'<div>'+esc(u.createdBy)+'</div></td><td class="mute" style="font-size:11.5px">'+esc(u.editedInfo)+'</td><td class="mute" style="font-size:11.5px">'+esc(u.editedRole)+'</td><td class="mute" style="font-size:11.5px">'+esc(u.editedBan)+'</td>' +
+      '<td class="mute" style="font-size:11.5px">'+esc(u.lastLogin||'—')+'<div><span class="code">'+esc(u.lastIp||'')+'</span></div></td>' +
+      '<td style="white-space:nowrap">' +
+        (u.status==='Chờ duyệt' ? '<button class="btn sm ok" onclick="userStatus(\''+u.username+'\',\'Hoạt động\')">✅ Duyệt</button>' : '') +
+        '<button class="btn sm" title="Sửa" onclick="openUser(\''+u.username+'\')">✏️</button><button class="btn sm" title="Reset mật khẩu" onclick="userResetPw(\''+u.username+'\')">🔑</button>' +
+        (self ? '' : (u.status==='Hoạt động' ? '<button class="btn sm" title="Tạm khóa" onclick="userStatusAsk(\''+u.username+'\',\'Tạm khóa\')">⏸</button><button class="btn sm" title="Ban theo số ngày" onclick="userStatusAsk(\''+u.username+'\',\'Ban\')">⛔</button>' : (u.status!=='Chờ duyệt' ? '<button class="btn sm" title="Mở khóa" onclick="userStatus(\''+u.username+'\',\'Hoạt động\')">▶️</button>' : '')) + '<button class="btn sm bad" title="Xóa" onclick="userDelAsk(\''+u.username+'\')">🗑</button>') +
+      '</td></tr>';
+  });
+  return h + '</tbody></table></div></div>';
+}
+function userForm(u){
+  var isNew = !u; u = u || { username:'', name:'', role:'Kỹ thuật', manager:'', phone:'', email:'', note:'' };
+  var roles = A().roles.slice().sort(function(x,y){ return x.level - y.level; }).map(function(r){ return '<option '+(r.name===u.role?'selected':'')+'>'+esc(r.name)+'</option>'; }).join('');
+  var mgrs = '<option value="">(tự động theo chức vụ)</option>' + A().users.filter(function(x){ return x.username !== u.username; }).map(function(x){ return '<option value="'+esc(x.username)+'" '+(x.username===u.manager?'selected':'')+'>'+esc(x.name+' – '+x.role)+'</option>'; }).join('');
+  $('#modal').innerHTML = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md sm"><div class="md-h"><h3>'+(isNew?'＋ Thêm user':'✏️ '+esc(u.name))+'</h3><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div><div class="md-b"><div class="form" style="grid-template-columns:1fr 1fr">' +
+    '<label>Username<input class="inp" id="ufU" value="'+esc(u.username)+'" '+(isNew?'':'disabled')+' autocapitalize="off"></label>' + (isNew ? '<label>Mật khẩu (≥ 6)<input class="inp" id="ufP" type="password"></label>' : '<label>Trạng thái<input class="inp" value="'+esc(u.status)+'" disabled></label>') +
+    '<label class="s2">Họ tên<input class="inp" id="ufN" value="'+esc(u.name)+'"></label><label>Chức vụ<select class="inp" id="ufR">'+roles+'</select></label><label>Cấp trên<select class="inp" id="ufM">'+mgrs+'</select></label>' +
+    '<label>Điện thoại<input class="inp" id="ufPh" value="'+esc(u.phone)+'"></label><label>Email<input class="inp" id="ufE" value="'+esc(u.email)+'"></label><label class="s2">Ghi chú<input class="inp" id="ufNo" value="'+esc(u.note||'')+'"></label></div>' +
+    (isNew ? '' : '<div class="mute" style="font-size:11.5px;margin-top:10px">Tạo: '+esc(u.created)+' bởi '+esc(u.createdBy)+' · Sửa thông tin: '+esc(u.editedInfo)+' · Đổi quyền: '+esc(u.editedRole)+' · Khóa/ban: '+esc(u.editedBan||'—')+' · Đăng nhập cuối: '+esc(u.lastLogin||'—')+' ('+esc(u.lastIp||'')+')</div>') +
+    '</div><div class="md-f"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn pri" onclick="saveUser('+isNew+')">💾 Lưu</button></div></div></div>';
+}
+function saveUser(isNew){
+  var o = { username: $('#ufU').value.trim().toLowerCase(), name: $('#ufN').value.trim(), role: $('#ufR').value, manager: $('#ufM').value, phone: $('#ufPh').value, email: $('#ufE').value, note: $('#ufNo').value };
+  if (isNew) o.password = $('#ufP').value;
+  busy(true); call('apiUserSave', o, isNew).then(function(){ closeModal(); toast('💾 Đã lưu user ' + esc(o.username), 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function userResetPw(u){
+  $('#modal').innerHTML = '<div class="ov"><div class="md sm"><div class="md-h"><h3>🔑 Reset mật khẩu – '+esc(u)+'</h3></div><div class="md-b"><label class="mute">Mật khẩu mới (≥ 6 ký tự)<input class="inp" id="rpw" style="width:100%;margin-top:4px"></label><div class="mute" style="font-size:12px;margin-top:6px">Gửi mật khẩu này cho người dùng, dặn họ đổi lại sau khi đăng nhập.</div></div><div class="md-f"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn pri" onclick="var p=$(\'#rpw\').value;closeModal();busy(true);call(\'apiUserResetPw\',\''+u+'\',p).then(function(){toast(\'🔑 Đã reset mật khẩu '+u+'\',\'ok\');return reload();}).catch(function(e){busy(false);toast(errMsg(e),\'bad\');})">Reset</button></div></div></div>';
+}
+function userStatus(u, st, days, reason){ busy(true); call('apiUserStatus', u, st, days || 0, reason || '').then(function(){ toast('✅ ' + esc(u) + ' → ' + esc(st), 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); }); }
+function userStatusAsk(u, st){
+  $('#modal').innerHTML = '<div class="ov"><div class="md sm"><div class="md-h"><h3>'+(st==='Ban'?'⛔ Ban':'⏸ Tạm khóa')+' – '+esc(u)+'</h3></div><div class="md-b"><div class="form" style="grid-template-columns:1fr">' + (st==='Ban' ? '<label>Số ngày ban<input class="inp" id="bnD" type="number" min="1" value="7"></label>' : '') + '<label>Lý do<input class="inp" id="bnR"></label></div></div><div class="md-f"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn bad" onclick="var d=document.getElementById(\'bnD\');var r=$(\'#bnR\').value;closeModal();userStatus(\''+u+'\',\''+st+'\',d?Number(d.value):0,r)">Xác nhận</button></div></div></div>';
+}
+function userDelAsk(u){
+  $('#modal').innerHTML = '<div class="ov"><div class="md sm"><div class="md-h"><h3>🗑 Xóa user '+esc(u)+'?</h3></div><div class="md-b">Tài khoản bị xóa vĩnh viễn, phiên đăng nhập bị hủy. Lịch sử thao tác vẫn giữ trong nhật ký.</div><div class="md-f"><button class="btn" onclick="closeModal()">Không</button><button class="btn bad" onclick="closeModal();busy(true);call(\'apiUserDelete\',\''+u+'\').then(function(){toast(\'Đã xóa '+u+'\',\'ok\');return reload();}).catch(function(e){busy(false);toast(errMsg(e),\'bad\');})">Xóa</button></div></div></div>';
+}
+
+/* ---------- 👥 khách hàng ---------- */
+var CUST_GROUPS = [
+  ['📇 Liên hệ', ['Họ tên','Điện thoại','Công ty','Chức vụ','Địa chỉ']],
+  ['🧭 Quan hệ', ['Cấp trên của KH','Cấp dưới của KH','Nơi làm trước đây','Phụ trách KH']],
+  ['☕ Thói quen', ['Thói quen sinh hoạt','Mùa cao điểm (ghi tay)']],
+  ['💰 Giá & tiền hồi', ['Giá mặc cả (% hay xin giảm)','Make up giá?','Ghi chú giá','Tiền hồi %','Tiền hồi (số tiền)']],
+  ['🧾 Xuất hóa đơn VAT', ['Tên công ty xuất HĐ','MST','Địa chỉ xuất HĐ','Email nhận HĐ']],
+  ['📝 Khác', ['Ghi chú']]
+];
+function custStats(code){
+  var sh = B.shows.filter(function(s){ return s.cust === code; }).sort(function(a,b){ return a.day < b.day ? 1 : -1; });
+  var ok = sh.filter(function(s){ return s.status === 'Đã nhập kho'; }).length, rev = sh.filter(function(s){ return s.status !== 'Hủy' && s.status !== 'Báo giá'; }).reduce(function(a,s){ return a + s.total; }, 0);
+  var m = {}; sh.forEach(function(s){ if (s.day) { var k = Number(s.day.slice(5,7)); m[k] = (m[k]||0) + 1; } });
+  var top = Object.keys(m).sort(function(a,b){ return m[b] - m[a]; }).slice(0,3).map(function(k){ return 'T' + k; });
+  return { shows: sh, ok: ok, rev: rev, season: top.join(', ') };
+}
+function vCust(){
+  if (!can('XEM_KHACH_HANG')) return '<div class="card"><div class="empty">Bạn không có quyền xem khách hàng.</div></div>';
+  var q = (S.cq || '').toLowerCase(), list = A().customers.filter(function(c){ return !q || (c['Mã KH']+' '+c['Họ tên']+' '+c['Công ty']+' '+c['Điện thoại']).toLowerCase().indexOf(q) >= 0; });
+  var h = '<div class="card"><div class="card-h"><h2>👥 KHÁCH HÀNG</h2><span class="mute">'+A().customers.length+' khách'+(can('XEM_TAI_CHINH')?'':' · 🔒 phần giá & tiền hồi bị ẩn theo quyền')+'</span><div class="grow"></div>' +
+    '<input class="inp" style="width:220px" placeholder="🔎 Tìm tên, công ty, SĐT…" value="'+esc(S.cq||'')+'" oninput="S.cq=this.value;clearTimeout(window._t);window._t=setTimeout(render,250)">' + (can('SUA_KHACH_HANG') ? '<button class="btn pri" onclick="custForm(null)">＋ Thêm khách</button>' : '') + '</div><div class="card-b"><div class="grid">';
+  list.forEach(function(c){
+    var st = custStats(c['Mã KH']);
+    h += '<div class="ic-card" onclick="custForm(\''+esc(c['Mã KH'])+'\')"><div class="bd"><div class="row" style="justify-content:space-between"><span class="code">'+esc(c['Mã KH'])+'</span>'+(c['Make up giá?']==='Có'?'<span class="st" style="background:#fef3c7;color:#92400e">make up giá</span>':'')+'</div>' +
+      '<h3>'+esc(c['Họ tên'])+'</h3><div class="mute" style="font-size:12px">'+esc(c['Chức vụ'])+(c['Công ty']?' · '+esc(c['Công ty']):'')+'</div><div style="font-size:12px">📞 '+esc(c['Điện thoại']||'—')+'</div>' +
+      '<div class="cnts"><span>🎪 '+st.shows.length+' show</span><span>✅ '+st.ok+' thành công</span>'+(st.season?'<span>📈 '+esc(st.season)+'</span>':'')+'</div>' +
+      '<div class="mute" style="font-size:11.5px">Mặc cả ~'+esc(c['Giá mặc cả (% hay xin giảm)'])+'% · tiền hồi '+esc(c['Tiền hồi %'])+'%</div></div></div>';
+  });
+  if (!list.length) h += '<div class="empty">Chưa có khách hàng.</div>';
+  return h + '</div></div></div>';
+}
+function custForm(code){
+  var c = code ? A().customers.filter(function(x){ return x['Mã KH'] === code; })[0] : {};
+  var edit = can('SUA_KHACH_HANG'), fin = can('XEM_TAI_CHINH');
+  var st = code ? custStats(code) : null;
+  var h = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md"><div class="md-h"><h3>👤 '+(code?esc(c['Họ tên'])+' <span class="code">'+esc(code)+'</span>':'Khách hàng mới')+'</h3><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div><div class="md-b">';
+  if (st) h += '<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:12px">' + [['🎪', st.shows.length, 'Show đã book'], ['✅', st.ok, 'Show thành công'], ['📈', st.season || '—', 'Mùa cao điểm (theo show)'], ['💵', money(st.rev), 'Doanh thu (show đã chốt)']].map(function(k){ return '<div class="kpi"><div class="ic">'+k[0]+'</div><div><b style="font-size:15px">'+esc(k[1])+'</b><small>'+k[2]+'</small></div></div>'; }).join('') + '</div>';
+  CUST_GROUPS.forEach(function(g){
+    var locked = g[0].indexOf('Giá') >= 0 && !fin;
+    h += '<div class="grp"><h4>'+g[0]+(locked?' 🔒':'')+'</h4>' + (locked ? '<div class="mute">Bạn không có quyền xem phần này.</div>' : '<div class="form" style="grid-template-columns:repeat(2,minmax(0,1fr))">' + g[1].map(function(f){
+      var v = c[f] === undefined ? '' : c[f], id = 'cf_' + f.replace(/[^A-Za-z0-9]/g,'_') + '_' + COLS_IDX(f);
+      var wide = ['Thói quen sinh hoạt','Ghi chú','Ghi chú giá','Địa chỉ','Địa chỉ xuất HĐ'].indexOf(f) >= 0;
+      if (f === 'Make up giá?') return '<label>'+esc(f)+'<select class="inp" data-f="'+esc(f)+'" '+(edit?'':'disabled')+'>'+['','Có','Không','Tùy show'].map(function(o){ return '<option '+(o===v?'selected':'')+'>'+o+'</option>'; }).join('')+'</select></label>';
+      if (f === 'Phụ trách KH') return '<label>'+esc(f)+'<select class="inp" data-f="'+esc(f)+'" '+(edit?'':'disabled')+'><option value=""></option>'+A().users.map(function(u){ return '<option value="'+esc(u.username)+'" '+(u.username===v?'selected':'')+'>'+esc(u.name)+'</option>'; }).join('')+'</select></label>';
+      if (wide) return '<label class="s2">'+esc(f)+'<textarea class="inp" rows="2" data-f="'+esc(f)+'" '+(edit?'':'disabled')+'>'+esc(v)+'</textarea></label>';
+      return '<label>'+esc(f)+'<input class="inp" data-f="'+esc(f)+'" value="'+esc(v)+'" '+(edit?'':'disabled')+'></label>';
+    }).join('') + '</div>') + '</div>';
+  });
+  if (st && st.shows.length) h += '<div class="grp"><h4>📅 Lịch sử book show</h4><table class="t"><thead><tr><th>Show</th><th>Ngày diễn</th><th>Trạng thái</th><th class="num">Tổng</th></tr></thead><tbody>' + st.shows.map(function(s){ return '<tr style="cursor:pointer" onclick="closeModal();openShow(\''+s.code+'\')"><td><span class="code">'+esc(s.code)+'</span> '+esc(s.name)+'</td><td>'+fd(s.day)+'</td><td>'+showBadge(s.status)+'</td><td class="num">'+money(s.total)+'</td></tr>'; }).join('') + '</tbody></table></div>';
+  if (code) h += '<div class="mute" style="font-size:11.5px">Tạo: '+esc(c['Ngày tạo'])+' bởi '+esc(c['Người tạo'])+' · Sửa: '+esc(c['Ngày sửa'])+'</div>';
+  h += '</div><div class="md-f">' + (edit && code ? '<button class="btn bad" onclick="custDel(\''+esc(code)+'\')">🗑 Xóa</button>' : '') + '<div class="grow"></div><button class="btn" onclick="closeModal()">Đóng</button>' + (edit ? '<button class="btn pri" onclick="custSave(\''+esc(code||'')+'\')">💾 Lưu</button>' : '') + '</div></div></div>';
+  $('#modal').innerHTML = h;
+}
+function COLS_IDX(f){ var s = 0; for (var i = 0; i < f.length; i++) s = (s * 31 + f.charCodeAt(i)) % 9973; return s; }
+function custSave(code){
+  var o = { 'Mã KH': code };
+  document.querySelectorAll('#modal [data-f]').forEach(function(el){ o[el.getAttribute('data-f')] = el.value; });
+  busy(true); call('apiSaveCustomer', o).then(function(r){ closeModal(); toast('💾 Đã lưu khách ' + esc(r.code), 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function custDel(code){ busy(true); call('apiDeleteCustomer', code).then(function(){ closeModal(); toast('Đã xóa ' + esc(code), 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); }); }
+
+/* ---------- 💸 duyệt chiết khấu ---------- */
+function discBadge(st){ var c = { 'Chờ duyệt':['#fef3c7','#92400e'], 'Đã duyệt':['#dcfce7','#166534'], 'Từ chối':['#fee2e2','#991b1b'], 'Đã hủy':['#f1f5f9','#475569'] }[st] || ['#f1f5f9','#334155']; return '<span class="st" style="background:'+c[0]+';color:'+c[1]+'">'+esc(st)+'</span>'; }
+function myPending(){ return A().discounts.filter(function(d){ return d.canDecide; }); }
+function discCard(d, act){
+  var s = B._show[d.show] || { name: '(show đã xóa)', total: 0, subtotal: 0 };
+  var h = '<div class="dcard'+(d.urgent?' urg':'')+'"><div class="row" style="justify-content:space-between"><div class="row" style="gap:6px"><span class="code">'+esc(d.id)+'</span>'+discBadge(d.status)+(d.urgent?'<span class="st" style="background:#fee2e2;color:#b91c1c">🚨 GẤP</span>':'')+'</div><b style="font-size:20px;color:var(--pri)">'+d.pct+'%</b></div>' +
+    '<div><span class="code" style="cursor:pointer" onclick="openShow(\''+esc(d.show)+'\')">'+esc(d.show)+'</span> <b>'+esc(s.name)+'</b></div><div class="mute" style="font-size:12px">Người xin: <b>'+esc(userName(d.by))+'</b> ('+esc(d.byRole)+') · '+esc(d.created)+(d.pending&&d.status==='Chờ duyệt'?' · đang chờ: <b>'+esc(userName(d.pending))+'</b>':'')+'</div>' +
+    (d.reason ? '<div style="font-size:12.5px">💬 '+esc(d.reason)+'</div>' : '') + (s.subtotal ? '<div class="mute" style="font-size:12px">Tạm tính '+money(s.subtotal)+' → giảm '+money(s.subtotal*d.pct/100)+'</div>' : '') +
+    '<details><summary class="mute" style="font-size:12px;cursor:pointer">Lịch sử</summary><pre class="hist">'+esc(d.history)+'</pre></details>';
+  if (act && d.canDecide) {
+    var me = A().me;
+    h += '<div class="row" style="margin-top:6px"><input class="inp" id="dp_'+d.id+'" type="number" style="width:80px" value="'+Math.min(d.pct, me.max)+'"><span class="mute" style="font-size:12px">% (quyền bạn ≤ '+me.max+'%)</span><input class="inp grow" id="dn_'+d.id+'" placeholder="Ghi chú"></div><div class="row" style="margin-top:6px">' +
+      '<button class="btn ok sm" onclick="discDecide(\''+d.id+'\',\'duyet\')">✅ Duyệt</button><button class="btn sm" onclick="discDecide(\''+d.id+'\',\'chuyen\')">⬆️ Chuyển lên cấp trên</button><button class="btn bad sm" onclick="discDecide(\''+d.id+'\',\'tuchoi\')">✕ Từ chối</button></div>';
+  }
+  if (act === 'mine' && d.status === 'Chờ duyệt') h += '<div style="margin-top:6px"><button class="btn sm bad" onclick="discCancel(\''+d.id+'\')">Hủy yêu cầu</button></div>';
+  return h + '</div>';
+}
+function vDisc(){
+  var a = A(), mine = a.discounts.filter(function(d){ return d.by === a.me.username; }), pend = myPending();
+  var others = a.discounts.filter(function(d){ return d.by !== a.me.username && !d.canDecide; });
+  var h = '<div class="card"><div class="card-h"><h2>💸 DUYỆT CHIẾT KHẤU</h2><span class="mute">Quyền của bạn: tối đa <b>'+a.me.max+'%</b> · '+esc(a.me.role)+'</span></div><div class="card-b">';
+  h += '<h4 class="sec">⏳ Chờ bạn duyệt ('+pend.length+')</h4><div class="dgrid">' + (pend.length ? pend.map(function(d){ return discCard(d, true); }).join('') : '<div class="mute">Không có yêu cầu nào.</div>') + '</div>';
+  h += '<h4 class="sec">📨 Yêu cầu của bạn ('+mine.length+')</h4><div class="dgrid">' + (mine.length ? mine.map(function(d){ return discCard(d, 'mine'); }).join('') : '<div class="mute">Chưa gửi yêu cầu nào. Xin chiết khấu ở tab Show → ô Chiết khấu.</div>') + '</div>';
+  if (others.length) h += '<h4 class="sec">📚 Các yêu cầu khác</h4><div class="dgrid">' + others.map(function(d){ return discCard(d, false); }).join('') + '</div>';
+  return h + '</div></div>';
+}
+function discDecide(id, dec){
+  var p = document.getElementById('dp_' + id), n = document.getElementById('dn_' + id);
+  busy(true); call('apiDiscountDecide', id, dec, dec === 'duyet' ? Number(p.value) : null, n.value).then(function(r){ toast('✅ ' + esc(id) + ': ' + esc(r.status), 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function discCancel(id){ busy(true); call('apiDiscountCancel', id).then(function(){ toast('Đã hủy yêu cầu', 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); }); }
+function discountBox(){
+  var s = S.ed.show, me = A().me, cur = Number(s.discount || 0), orig = (B._show[s.code] || {}).discount || 0;
+  var want = Number(S.ed.want === undefined ? cur : S.ed.want), over = want > me.max;
+  var h = '<div class="card-b disc-box"><div class="row"><b>💸 Chiết khấu cho khách</b><span class="mute" style="font-size:12px">Quyền của bạn: tối đa <b>'+me.max+'%</b></span>' + (s.discStatus ? '<span class="pill" style="font-size:11px">'+esc(s.discStatus)+'</span>' : '') + '</div>' +
+    '<div class="row" style="margin-top:8px"><input class="inp" type="number" min="0" max="100" style="width:90px" value="'+want+'" onchange="S.ed.want=Number(this.value);setTimeout(render,0)"><span>%</span>';
+  if (!over) h += '<span class="mute" style="font-size:12px">'+(want!==orig?'Trong quyền – sẽ áp dụng khi bấm 💾 Lưu show':'Đang áp dụng')+'</span>';
+  else h += '<span class="av r">⚠ Vượt quyền ('+me.max+'%)</span><input class="inp grow" id="dReason" placeholder="Lý do xin (vd: khách quen, cạnh tranh giá…)"><button class="btn sm pri" onclick="discRequest(false)">📨 Xin duyệt cấp trên</button><button class="btn sm bad" onclick="discRequest(true)">🚨 GẤP – Phó TGĐ trở lên</button>';
+  return h + '</div></div>';
+}
+function discRequest(urgent){
+  var s = S.ed.show; if (!s.code) return toast('Lưu show trước rồi mới xin chiết khấu', 'bad');
+  var r = document.getElementById('dReason');
+  busy(true); call('apiDiscountRequest', s.code, Number(S.ed.want), r ? r.value : '', urgent).then(function(x){ toast(x.applied ? '✅ Đã áp chiết khấu ' + x.pct + '%' : '📨 Đã gửi xin ' + S.ed.want + '% → ' + esc(x.label), 'ok'); var c = s.code; S.ed.want = undefined; return reload().then(function(){ openShow(c); }); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+
+/* ---------- 🛡️ hệ thống: truy cập, IP, nhật ký, khóa ---------- */
+function vSys(){
+  var a = A(), st = a.stats || STATS || { total:0, uniqueIp:0, today:0, users:0 }, E = window.ENGINE;
+  var h = '<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">' + [['👁️', st.total, 'Lượt truy cập'], ['🌐', st.uniqueIp, 'Địa chỉ IP khác nhau'], ['📅', st.today, 'Truy cập hôm nay'], ['👤', st.users, 'User đã đăng nhập']].map(function(k){ return '<div class="kpi"><div class="ic">'+k[0]+'</div><div><b>'+k[1]+'</b><small>'+k[2]+'</small></div></div>'; }).join('') + '</div>';
+  if (can('KHOA_HE_THONG')) h += '<div class="card" style="margin-bottom:12px"><div class="card-h"><h2>🔒 KHÓA HỆ THỐNG</h2>' + (a.locked ? '<span class="st" style="background:#fee2e2;color:#991b1b">ĐANG KHÓA</span><span class="mute">'+esc(a.lockBy)+'</span>' : '<span class="st" style="background:#dcfce7;color:#166534">Đang mở</span>') + '</div><div class="card-b"><div class="mute" style="font-size:12.5px;margin-bottom:8px">Khi khóa: chỉ CEO/Quản trị vào được. Người khác phải nhập thêm mật khẩu mở khóa khi đăng nhập; phiên đang mở của họ bị chặn.</div><div class="row">' +
+    (a.locked ? '<button class="btn ok" onclick="lockSys(false)">🔓 Mở khóa hệ thống</button>' : '<input class="inp" id="lkP" type="password" placeholder="Mật khẩu khóa (≥ 4 ký tự)"><button class="btn bad" onclick="lockSys(true)">🔒 Khóa hệ thống</button>') + '</div></div></div>';
+  if (E && E.server) {
+    var q = E.outbox().length;
+    h += '<div class="card" style="margin-bottom:12px"><div class="card-h"><h2>🔄 ĐỒNG BỘ</h2><span class="mute">'+(E.server() ? 'Máy chủ Google Sheet' : 'Chỉ trên máy này (chưa cài máy chủ)')+' · '+(q?'<b style="color:#b45309">'+q+' thao tác chờ gửi</b>':'không có thao tác chờ')+' · lần cuối: '+esc(E.lastSync()||'—')+'</span><div class="grow"></div>' + (E.server() ? '<button class="btn sm pri" onclick="syncNow()">⟳ Đồng bộ ngay</button>' : '') + '</div></div>';
+  }
+  if (!can('XEM_NHAT_KY_HT')) return h + '<div class="card"><div class="empty">Bạn không có quyền xem nhật ký hệ thống.</div></div>';
+  var q2 = (S.aq || '').toLowerCase();
+  var au = (a.audit || []).filter(function(x){ return !q2 || (x.u+' '+x.ip+' '+x.a+' '+x.d).toLowerCase().indexOf(q2) >= 0; });
+  h += '<div class="card" style="margin-bottom:12px"><div class="card-h"><h2>🛡️ NHẬT KÝ HỆ THỐNG</h2><span class="mute">Mọi thay đổi: thời gian · người · chức vụ · IP · thao tác (300 dòng gần nhất – đủ ở sheet "Nhật ký hệ thống")</span><div class="grow"></div><input class="inp" style="width:220px" placeholder="🔎 Lọc theo user, IP, thao tác…" value="'+esc(S.aq||'')+'" oninput="S.aq=this.value;clearTimeout(window._t);window._t=setTimeout(render,250)"></div>' +
+    '<div style="overflow:auto;max-height:460px"><table class="t"><thead><tr><th>Thời gian</th><th>User</th><th>IP</th><th>Thao tác</th><th>Chi tiết</th><th>Thiết bị</th></tr></thead><tbody>' +
+    au.map(function(x){ var bad = /LỖI|THẤT BẠI/.test(x.a); return '<tr><td class="mute" style="white-space:nowrap;font-size:11.5px">'+esc(x.t)+'</td><td><b>'+esc(x.u)+'</b><div class="mute" style="font-size:11px">'+esc(x.role)+'</div></td><td><span class="code">'+esc(x.ip||'—')+'</span></td><td style="'+(bad?'color:#b91c1c;':'')+'font-weight:600;font-size:12px">'+esc(x.a)+'</td><td style="font-size:12px;max-width:380px">'+esc(x.d)+'</td><td class="mute" style="font-size:10.5px;max-width:200px">'+esc(x.dev)+'</td></tr>'; }).join('') +
+    '</tbody></table></div></div>';
+  h += '<div class="card"><div class="card-h"><h2>👁️ LƯỢT TRUY CẬP GẦN ĐÂY</h2></div><div style="overflow:auto;max-height:360px"><table class="t"><thead><tr><th>Thời gian</th><th>IP</th><th>User</th><th>Trang</th><th>Thiết bị</th></tr></thead><tbody>' +
+    (a.visits || []).map(function(v){ return '<tr><td class="mute" style="font-size:11.5px;white-space:nowrap">'+esc(v.t)+'</td><td><span class="code">'+esc(v.ip)+'</span></td><td>'+esc(v.u||'(chưa đăng nhập)')+'</td><td>'+esc(v.page)+'</td><td class="mute" style="font-size:10.5px">'+esc(v.dev)+'</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  return h;
+}
+function lockSys(on){
+  var p = on ? $('#lkP').value : '';
+  busy(true); call('apiLockSystem', on, p).then(function(){ toast(on ? '🔒 Đã khóa hệ thống' : '🔓 Đã mở khóa', 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function syncNow(){ busy(true); window.ENGINE.sync(true).then(function(r){ busy(false); toast(r && r.msg ? esc(r.msg) : '🔄 Đã đồng bộ', r && r.bad ? 'bad' : 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); }); }
+function syncPillText(){
+  var E = window.ENGINE;
+  if (MODE !== 'offline') return '✅ Đã kết nối Sheet';
+  if (!E || !E.server()) return '💾 Chỉ trên máy này';
+  var q = E.outbox().length;
+  if (!navigator.onLine) return '📴 Offline' + (q ? ' · ' + q + ' chờ gửi' : '');
+  return q ? '🟠 ' + q + ' thao tác chờ gửi' : '🟢 Đã đồng bộ';
+}
+
+function custField(s){
+  var cs = A().customers;
+  if (!cs.length) return '<label>Khách hàng<input class="inp" value="'+esc(s.client||'')+'" onchange="edSet(\'client\',this.value)"></label>';
+  return '<label>Khách hàng<select class="inp" onchange="var c=A().customers.filter(function(x){return x[\'Mã KH\']===this.value;}.bind(this))[0];S.ed.show.cust=this.value;edSet(\'client\',c?(c[\'Công ty\']||c[\'Họ tên\']):S.ed.show.client)"><option value="">— chọn khách —</option>' +
+    cs.map(function(c){ return '<option value="'+esc(c['Mã KH'])+'" '+(c['Mã KH']===s.cust?'selected':'')+'>'+esc(c['Họ tên']+(c['Công ty']?' – '+c['Công ty']:''))+'</option>'; }).join('') + '</select></label>';
+}
+
 /* ---------------- bản offline: sao lưu / khôi phục ---------------- */
 function offBackup(){ if (window.OFFLINE) window.OFFLINE.backup(); }
 function offRestorePick(){ $('#offFile').value = ''; $('#offFile').click(); }
@@ -2082,6 +3363,8 @@ function offResetAsk(){
 /* --------------------------- khởi động --------------------------- */
 document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && $('#modal').innerHTML) closeModal(); });
 if (MODE === 'sidebar' || MODE === 'offline') { $('#btnClose').style.display = 'none'; }
+fetchIp().then(function(){ if (MODE !== 'offline' || window.ENGINE) call('apiVisit', { page: 'mở app (' + MODE + ')' }).catch(function(){}); });
+if (MODE === 'offline' && window.ENGINE) { window.ENGINE.onChange = function(){ var p = $('#syncPill'); if (p) p.innerHTML = syncPillText(); }; }
 reload();
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
