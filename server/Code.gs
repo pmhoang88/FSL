@@ -52,9 +52,9 @@ var COLS = {
           'Yêu cầu cấu hình', 'Ghi chú'],
   SHOW:  ['Mã show', 'Tên show', 'Khách hàng', 'Địa điểm', 'Loại', 'Ngày xuất kho', 'Ngày diễn',
           'Ngày nhập kho', 'Số ngày tính tiền', 'Trạng thái', 'Phụ trách', 'Tổng tiền', 'Ghi chú', 'Màu',
-          'Mã KH', 'Chiết khấu %', 'Trạng thái CK', 'Người tạo', 'Thành phố', 'Kho xuất', 'Ngày diễn cuối', 'Mã ưu đãi', 'Chính sách CK'],
+          'Mã KH', 'Chiết khấu %', 'Trạng thái CK', 'Người tạo', 'Thành phố', 'Kho xuất', 'Ngày diễn cuối', 'Mã ưu đãi', 'Chính sách CK', 'Tiến độ %', 'Việc tiếp theo', 'Khóa báo giá'],
   LINE:  ['Mã show', 'STT', 'Mã model', 'Tên thiết bị', 'Loại', 'SL', 'Nguồn', 'Nhóm liên kết', 'Yêu cầu',
-          'Đơn giá', 'Số ngày', 'Thành tiền', 'Mã TB đã gán', 'Ghi chú'],
+          'Đơn giá', 'Số ngày', 'Thành tiền', 'Mã TB đã gán', 'Ghi chú', 'Khóa'],
   LOG:   ['Thời gian', 'Mã show', 'Mã TB', 'Từ', 'Sang', 'Người', 'Ghi chú'],
   STAFF: ['Mã NV', 'Họ tên', 'Vai trò', 'Kho làm việc', 'Điện thoại', 'Ghi chú'],
   ASSIGN: ['Mã phân công', 'Mã show', 'Mã NV', 'Ngày', 'Từ giờ', 'Đến giờ', 'Việc làm', 'Địa điểm', 'Mã TB', 'Ghi chú'],
@@ -594,7 +594,7 @@ function showObj_(r) {
     total: num_(r['Tổng tiền']), note: String(r['Ghi chú'] || ''), color: String(r['Màu'] || ''),
     cust: String(r['Mã KH'] || ''), discount: num_(r['Chiết khấu %']), discStatus: String(r['Trạng thái CK'] || ''), creator: String(r['Người tạo'] || ''),
     city: String(r['Thành phố'] || ''), wh: String(r['Kho xuất'] || WH.HN),
-    dayEnd: d2s_(r['Ngày diễn cuối']) || d2s_(r['Ngày diễn']), promo: String(r['Mã ưu đãi'] || ''),
+    dayEnd: d2s_(r['Ngày diễn cuối']) || d2s_(r['Ngày diễn']), promo: String(r['Mã ưu đãi'] || ''), locked: bool_(r['Khóa báo giá']),
     progress: String(r['Tiến độ %'] === '' || r['Tiến độ %'] == null ? '' : r['Tiến độ %']), nextStep: String(r['Việc tiếp theo'] || '')
   };
 }
@@ -603,7 +603,7 @@ function lineObj_(r) {
     show: String(r['Mã show'] || ''), no: num_(r['STT']), model: String(r['Mã model'] || ''), name: String(r['Tên thiết bị'] || ''),
     type: String(r['Loại'] || ''), qty: num_(r['SL']), source: String(r['Nguồn'] || ''), group: String(r['Nhóm liên kết'] || ''),
     req: String(r['Yêu cầu'] || ''), price: num_(r['Đơn giá']), days: num_(r['Số ngày']), amount: num_(r['SL']) * num_(r['Đơn giá']) * num_(r['Số ngày']),
-    tags: String(r['Mã TB đã gán'] || '').split(/[,\s]+/).filter(String), note: String(r['Ghi chú'] || '')
+    tags: String(r['Mã TB đã gán'] || '').split(/[,\s]+/).filter(String), note: String(r['Ghi chú'] || ''), locked: bool_(r['Khóa'])
   };
 }
 
@@ -622,6 +622,19 @@ function apiSaveShow(payload) {
     var days = num_(s.days) || Math.max(1, daysBetween_(s.out, s.back) + 1);
     var color = s.color || row['Màu'] || SHOW_COLORS[shows.length % SHOW_COLORS.length];
 
+    // ---- khóa báo giá: không đổi thiết bị đã khóa (phải mở khóa trước) ----
+    var showLocked = !isNew && !!row && bool_(row['Khóa báo giá']), lockedQ = {}, oldSig = [], newSig = [];
+    live_(lineT).forEach(function (r) {
+      if (String(r['Mã show']) !== s.code) return;
+      oldSig.push(String(r['Mã model']) + '|' + String(r['Nguồn']) + ':' + num_(r['SL']));
+      if (bool_(r['Khóa']) && String(r['Nguồn']) === 'Chính') lockedQ[String(r['Mã model'])] = { q: num_(r['SL']), on: true };
+    });
+    lines.forEach(function (l) { newSig.push(String(l.model) + '|' + String(l.source || 'Chính') + ':' + num_(l.qty)); });
+    if (showLocked && oldSig.slice().sort().join(',') !== newSig.slice().sort().join(',')) throw new Error('Báo giá đang KHÓA – mở khóa trước khi đổi thiết bị');
+    Object.keys(lockedQ).forEach(function (m) {
+      var inQ = 0; lines.forEach(function (l) { if (l.model === m && (l.source || 'Chính') === 'Chính') inQ += num_(l.qty); });
+      if (inQ !== lockedQ[m].q) throw new Error('Thiết bị đang khóa: ' + m + ' – mở khóa trước khi đổi số lượng');
+    });
     // giữ lại mã TB đã gán theo model
     var oldTags = {};
     live_(lineT).forEach(function (r) {
@@ -639,7 +652,7 @@ function apiSaveShow(payload) {
       newLines.push({
         'Mã show': s.code, 'STT': ++no, 'Mã model': l.model, 'Tên thiết bị': c.name, 'Loại': c.type, 'SL': q,
         'Nguồn': l.source || 'Chính', 'Nhóm liên kết': l.group || '', 'Yêu cầu': l.req || '', 'Đơn giá': price,
-        'Số ngày': days, 'Thành tiền': amount, 'Mã TB đã gán': keep.join(', '), 'Ghi chú': l.note || ''
+        'Số ngày': days, 'Thành tiền': amount, 'Mã TB đã gán': keep.join(', '), 'Ghi chú': l.note || '', 'Khóa': !!lockedQ[l.model]
       });
     });
     newLines.forEach(function (o) { lineT.rows.push(o); });
@@ -1351,6 +1364,69 @@ function apiStatsEquip(mode, ref, from, to) {
   });
   rows.sort(function (a, b) { return b.shows - a.shows || b.unitDays - a.unitDays || (a.code < b.code ? -1 : 1); });
   return { from: R.from, to: R.to, rows: rows, idle: rows.filter(function (x) { return x.idle; }).length };
+}
+
+/** Thống kê chi tiết: show (doanh thu, chi, phạt, lợi nhuận, số nhân sự), nhân sự, cơ cấu chi & phạt (chỉ Giám đốc trở lên) */
+function apiStatsDetail(mode, ref, from, to) {
+  if (!isTopCtx_()) throw new Error('Chỉ Giám đốc trở lên xem thống kê');
+  var R = statsRange_(mode || 'month', ref, from, to);
+  var sub = {};
+  live_(readTable_('LINE')).forEach(function (l) { var c = String(l['Mã show']); sub[c] = (sub[c] || 0) + num_(l['SL']) * num_(l['Đơn giá']) * num_(l['Số ngày']); });
+  var shows = {};
+  live_(readTable_('SHOW')).forEach(function (r) {
+    var st = String(r['Trạng thái'] || ''), day = d2s_(r['Ngày diễn']);
+    if (['Hủy', 'Báo giá', 'On Hold'].indexOf(st) >= 0) return;
+    if (!day || day < R.from || day > R.to) return;
+    var code = String(r['Mã show']);
+    var pol = policyOf_({ promo: r['Mã ưu đãi'], day: day, dayEnd: d2s_(r['Ngày diễn cuối']) });
+    var pct = effPct_(r['Chiết khấu %'], pol);
+    shows[code] = { code: code, name: String(r['Tên show'] || code), day: day, revenue: Math.round((sub[code] || 0) * (1 - pct / 100)), expense: 0, penalty: 0, staff: {}, assigns: 0 };
+  });
+  expenseList_().forEach(function (x) { if (shows[x.show]) shows[x.show].expense += x.amount; });
+  penaltyList_().forEach(function (x) { if (shows[x.show]) shows[x.show].penalty += x.amount; });
+  var staffMap = {};
+  live_(readTable_('ASSIGN')).forEach(function (a) {
+    var sh = String(a['Mã show']), nv = String(a['Mã NV'] || '');
+    if (!shows[sh] || !nv) return;
+    shows[sh].staff[nv] = true; shows[sh].assigns++;
+    var m = staffMap[nv] = staffMap[nv] || { shows: {}, assigns: 0 };
+    m.shows[sh] = true; m.assigns++;
+  });
+  var showList = Object.keys(shows).map(function (k) {
+    var x = shows[k];
+    return { code: x.code, name: x.name, day: x.day, revenue: x.revenue, expense: Math.round(x.expense), penalty: Math.round(x.penalty),
+      profit: Math.round(x.revenue - x.expense - x.penalty), staffCount: Object.keys(x.staff).length, assigns: x.assigns };
+  });
+  var staffList = live_(readTable_('STAFF')).map(function (r) {
+    var nv = String(r['Mã NV']), m = staffMap[nv] || { shows: {}, assigns: 0 };
+    return { code: nv, name: String(r['Họ tên'] || ''), role: String(r['Vai trò'] || ''), wh: String(r['Kho làm việc'] || ''), shows: Object.keys(m.shows).length, assigns: m.assigns };
+  });
+  var byType = function (list) {
+    var o = {};
+    list.forEach(function (x) { if (x.day >= R.from && x.day <= R.to) o[x.type || 'Khác'] = (o[x.type || 'Khác'] || 0) + x.amount; });
+    return Object.keys(o).map(function (k) { return { name: k, amount: Math.round(o[k]) }; });
+  };
+  return { from: R.from, to: R.to, shows: showList, staff: staffList,
+    expType: byType(expenseList_().map(function (x) { return { day: x.date, type: x.type, amount: x.amount }; })),
+    penType: byType(penaltyList_().map(function (x) { return { day: x.date, type: x.type, amount: x.amount }; })) };
+}
+
+/** Khóa / mở khóa báo giá (cả báo giá hoặc từng thiết bị) – cấp Sales trở lên */
+function apiSetShowLock(rec) {
+  return withLock_(function () {
+    if (!canSalesCtx_()) throw new Error('Chỉ cấp Sales trở lên được khóa báo giá');
+    rec = rec || {};
+    var code = String(rec.code || '');
+    var showT = readTable_('SHOW');
+    var row = live_(showT).filter(function (r) { return String(r['Mã show']) === code; })[0];
+    if (!row) throw new Error('Không tìm thấy show');
+    row['Khóa báo giá'] = !!rec.locked;
+    var models = rec.models || [];
+    var lineT = readTable_('LINE');
+    live_(lineT).forEach(function (r) { if (String(r['Mã show']) === code) r['Khóa'] = models.indexOf(String(r['Mã model'])) >= 0; });
+    saveTable_(showT); saveTable_(lineT);
+    return { code: code, locked: !!rec.locked };
+  });
 }
 
 /** Lưu ảnh PNG (phiếu xuất kho / báo giá) vào Drive, trả về link */

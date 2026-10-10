@@ -324,6 +324,22 @@ html[data-theme="dark"] .ov{background:rgba(2,6,23,.7)}
 .rk-av.tC{box-shadow:0 0 0 2px var(--card),0 0 0 4px #0d9488}
 .rk-av.tD{box-shadow:0 0 0 2px var(--card),0 0 0 3px #94a3b8}
 .opt-row input[type=number]::-webkit-inner-spin-button{opacity:.4}
+html[data-theme="dark"] .disc-box{background:var(--card);color:var(--ink)}
+.disc-note{background:#faf5ff;border:1px solid #d8b4fe;color:#1e1b4b}
+.disc-note .mute{color:#5b5680}
+html[data-theme="dark"] .disc-note{background:#1e1b3a;border-color:#4c1d95;color:#e7eaf5}
+html[data-theme="dark"] .disc-note .mute{color:#a5a0c8}
+html[data-theme="dark"] .disc-note a{color:#c4b5fd}
+html[data-theme="dark"] .disc-box .note,html[data-theme="dark"] .disc-box .inp{background:var(--soft);color:var(--ink)}
+/* popup trên điện thoại: cuộn được, không bị cắt chữ */
+.ov{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.md{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
+.md-b{flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+@media (max-width:700px){
+  .ov{place-items:start center;padding:8px}
+  .md{width:100%;max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px);border-radius:16px}
+  .md-f{flex-shrink:0}
+}
 </style>
 </head>
 <body class="mode-<?= mode ?>">
@@ -759,7 +775,7 @@ function newShow(){
 }
 function openShow(code){
   var s = B._show[code]; if (!s) return;
-  S.ed = { show: JSON.parse(JSON.stringify(s)), lines: (B._linesBy[code]||[]).map(function(l){ return { model:l.model, qty:l.qty, source:l.source, group:l.group, req:l.req, price:l.price, note:l.note, tags:l.tags }; }), dirty:false };
+  S.ed = { show: JSON.parse(JSON.stringify(s)), lines: (B._linesBy[code]||[]).map(function(l){ return { model:l.model, qty:l.qty, source:l.source, group:l.group, req:l.req, price:l.price, note:l.note, tags:l.tags, locked:l.locked }; }), dirty:false };
   S.tab = 'show'; renderTabs(); render(); closeModal();
 }
 function vShow(){
@@ -834,6 +850,7 @@ function vEditor(){
 }
 function delLine(i){
   var L = S.ed.lines, l = L[i];
+  if (S.ed.show.locked || l.locked) return toast('🔒 Đang khóa – bấm 🔓 để mở khóa trước', 'bad');
   if (l.source === 'Chính') { var j = i + 1; while (j < L.length && L[j].source === 'Kèm ' + l.model) j++; L.splice(i, j - i); }
   else L.splice(i, 1);
   S.ed.dirty = true; render();
@@ -1680,38 +1697,7 @@ function finDel(kind, id){
 
 /* ======================== 📊 THỐNG KÊ (Giám đốc trở lên) ======================== */
 S.stat = { mode: 'month', ref: null, from: '', to: '', res: null, busy: false, err: '' };
-function loadStats(){
-  var st = S.stat; st.busy = true; st.err = '';
-  var ref = st.ref || B.today, fr = st.mode === 'custom' ? st.from : '', to = st.mode === 'custom' ? st.to : '';
-  Promise.all([call('apiStats', st.mode, ref, fr, to), call('apiStatsEquip', st.mode, ref, fr, to)])
-    .then(function(r){ st.res = r[0]; st.eq = r[1]; st.busy = false; render(); })
-    .catch(function(e){ st.busy = false; st.err = (e && e.message) || String(e); render(); });
-}
 function statSet(k, v){ S.stat[k] = v; S.stat.res = null; S.stat.err = ''; render(); }
-function vStats(){
-  if (!canPrice()) return '<div class="card"><div class="empty">Chỉ Giám đốc trở lên xem được thống kê.</div></div>';
-  var st = S.stat;
-  var ready = st.mode !== 'custom' || (st.from && st.to);
-  if (!st.res && !st.busy && !st.err && ready) loadStats();
-  var MODES = [['week','Tuần'],['month','Tháng'],['quarter','Quý'],['half','Nửa năm'],['year','Năm'],['custom','Tùy chọn']];
-  var h = '<div class="card"><div class="card-h"><h2>📊 THỐNG KÊ DOANH THU · CHI PHÍ · TIỀN PHẠT · LỢI NHUẬN</h2></div><div class="card-b">';
-  h += '<div class="chips">' + MODES.map(function(m){ return '<span class="chip ' + (st.mode === m[0] ? 'on' : '') + '" onclick="statSet(\'mode\',\'' + m[0] + '\')">' + m[1] + '</span>'; }).join('') + '</div>';
-  h += '<div class="row" style="margin-top:10px;flex-wrap:wrap;gap:8px">';
-  if (st.mode === 'custom') h += '<label>Từ <input class="inp" type="date" value="' + esc(st.from) + '" onchange="S.stat.from=this.value;statSet(\'from\',this.value)"></label><label>Đến <input class="inp" type="date" value="' + esc(st.to) + '" onchange="statSet(\'to\',this.value)"></label>';
-  else h += '<label>Mốc thời gian <input class="inp" type="date" value="' + esc(st.ref || B.today) + '" onchange="statSet(\'ref\',this.value)"></label>';
-  h += '<button class="btn sm" onclick="loadStats()">⟳ Tính lại</button></div>';
-  if (st.err) h += '<div class="note" style="margin-top:10px;color:#991b1b">⚠️ ' + esc(st.err) + '</div>';
-  else if (st.busy || !st.res) h += '<div class="empty">' + (ready ? 'Đang tính…' : 'Chọn khoảng ngày “Từ – Đến”.') + '</div>';
-  else {
-    var r = st.res, t = r.total || {};
-    h += '<div class="mute" style="margin:10px 0;font-size:12px">Khoảng: ' + fd(r.from) + ' → ' + fd(r.to) + ' · doanh thu = tiền hàng sau chiết khấu, chưa VAT</div>';
-    h += '<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">' + [['💰', t.revenue, 'Doanh thu'], ['🧾', t.expense, 'Chi phí'], ['⚠️', t.penalty, 'Tiền phạt'], ['📈', t.profit, 'Lợi nhuận']].map(function(k){ return '<div class="kpi"><div class="ic">' + k[0] + '</div><div><b>' + money(k[1] || 0) + '</b><small>' + k[2] + '</small></div></div>'; }).join('') + '</div>';
-    h += statChart(r.rows) + '<div style="overflow:auto"><table class="t"><thead><tr><th>Kỳ</th><th class="num">Doanh thu</th><th class="num">Chi phí</th><th class="num">Tiền phạt</th><th class="num">Lợi nhuận</th></tr></thead><tbody>' +
-      r.rows.map(function(x){ return '<tr><td><b>' + esc(x.label) + '</b></td><td class="num">' + money(x.revenue) + '</td><td class="num">' + money(x.expense) + '</td><td class="num">' + money(x.penalty) + '</td><td class="num"><b style="color:' + (x.profit < 0 ? '#b91c1c' : '#166534') + '">' + money(x.profit) + '</b></td></tr>'; }).join('') + '</tbody></table></div>';
-  }
-  return h + equipCard(st.eq) + '</div></div>';
-}
-
 /* ======================== 🚗 XE CÔNG TY ======================== */
 function carCard(){
   var cars = B.cars || [], roles = B.carRoles || [], sroles = B.salesRoles || [], rev = B.salesRev || {}, min = Number(B.carMin) || 1e10;
@@ -1840,7 +1826,7 @@ function saveProg(code){
 function discBlock(s){
   var pol = s.policy || { pct: 0, label: '' }, manual = Number(s.discount || 0), auto = Number(pol.pct || 0), eff = Math.max(manual, auto);
   var st = s.discStatus ? '<span class="pill" style="font-size:11px">'+esc(s.discStatus)+'</span>' : '';
-  return '<div class="note" style="background:#faf5ff;border-color:#d8b4fe;color:var(--ink)"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><b>💸 Chiết khấu & chính sách</b>'+st+'</div>' +
+  return '<div class="note disc-note"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><b>💸 Chiết khấu & chính sách</b>'+st+'</div>' +
     '<div class="form" style="margin-top:8px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' +
     '<div><div class="mute" style="font-size:11px">Chiết khấu thủ công (đã duyệt)</div><b>'+manual+'%</b></div>' +
     '<div><div class="mute" style="font-size:11px">Chính sách tự động</div><b>'+auto+'%</b>'+(pol.label?'<div class="mute" style="font-size:11px">'+esc(pol.label)+'</div>':'')+'</div>' +
@@ -1902,58 +1888,6 @@ function staffFilterBar(){
     '<span class="mute" style="font-size:12px">'+staffFilt().length+' / '+B.staff.length+' người</span></div>';
 }
 
-/* ======================== 🧩 TỐI ƯU THIẾT BỊ CHO SHOW CHƯA CHỐT ======================== */
-var OPT_ST = ['Báo giá', 'On Hold', 'Đã xác nhận', 'Đang soạn hàng'];
-S.opt = { q: '' };
-function optCur(code){
-  var m = S.ed.lines.filter(function(l){ return l.source === 'Chính' && l.model === code; })[0];
-  return m ? Number(m.qty || 0) : 0;
-}
-/** Đặt số lượng thiết bị chính cho show đang soạn (0 = bỏ chọn, kèm theo cũng bỏ) */
-function optSet(code, qty){
-  qty = Math.max(0, Math.round(Number(qty) || 0));
-  var L = S.ed.lines;
-  if (qty === 0) {
-    S.ed.lines = L.filter(function(l){ return !(l.model === code && l.source === 'Chính') && l.source !== 'Kèm ' + code; });
-  } else {
-    var m = L.filter(function(l){ return l.source === 'Chính' && l.model === code; })[0];
-    if (m) m.qty = qty;
-    else L.push({ model: code, qty: qty, source: 'Chính', group: '', req: '', price: undefined, note: '', tags: [] });
-  }
-  S.ed.dirty = true; setTimeout(render, 0);
-}
-/** Lăn chuột trên ô số lượng: lên = +1, xuống = −1 */
-function optWheel(e, code){
-  e.preventDefault();
-  optSet(code, optCur(code) + (e.deltaY < 0 ? 1 : -1));
-}
-function optPanel(s){
-  if (!s.code || OPT_ST.indexOf(s.status) < 0) return '';
-  var q = (S.opt.q || '').toLowerCase();
-  var items = B.catalog.filter(function(c){ return c.rentable && (!q || (c.name + ' ' + c.code + ' ' + c.series).toLowerCase().indexOf(q) >= 0); });
-  var h = '<div class="card-b" style="border-top:1px solid var(--line);background:var(--soft)"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><b>🧩 Tối ưu thiết bị cho show này</b>' +
-    '<span class="mute" style="font-size:12px">Tích chọn · lăn chuột trên ô số lượng hoặc bấm ▲▼ · lưu show để ghi nhận</span></div>' +
-    '<div class="row" style="margin-top:8px;flex-wrap:wrap;gap:8px"><input class="inp" style="width:220px" placeholder="🔎 Lọc thiết bị…" value="'+esc(S.opt.q||'')+'" oninput="S.opt.q=this.value;clearTimeout(window._to);window._to=setTimeout(render,250)">' +
-    '<a style="cursor:pointer;font-size:12px;text-decoration:underline" onclick="go(\'stock\')">📦 Xem kho thiết bị →</a></div>' +
-    '<div style="max-height:380px;overflow:auto;margin-top:8px;border:1px solid var(--line);border-radius:10px;background:var(--card)">';
-  items.forEach(function(c){
-    var a = avail(c.code, s.out, s.back, s.code), n = optCur(c.code), dmg = ((B._cnt[c.code] || {})[ST.BT]) || 0;
-    var free = a.by.length === 0;
-    var st = free ? '<span class="st" style="background:#dcfce7;color:#166534">chưa ai đặt</span>' : '<span class="mute" style="font-size:11px">đang giữ: '+esc(uniq(a.by).join(', '))+'</span>';
-    h += '<div style="display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">' +
-      '<input type="checkbox" '+(n>0?'checked':'')+' onchange="optSet(\''+esc(c.code)+'\', this.checked ? 1 : 0)" style="width:18px;height:18px">' +
-      '<div style="min-width:0"><b style="font-size:12.5px">'+esc(c.name)+'</b> <span class="code">'+esc(c.code)+'</span>' +
-      '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px"><span class="av '+(a.avail>0?'g':'r')+'" style="font-size:11px">còn trống '+a.avail+'/'+a.total+'</span>'+st +
-      (dmg>0 ? '<span class="st" style="background:#fee2e2;color:#991b1b">⚠ hỏng/bảo trì '+dmg+'</span>' : '') +
-      (n>a.avail && n>0 ? '<span class="av r" style="font-size:11px">⚠ vượt tồn</span>' : '') + '</div></div>' +
-      '<div style="display:flex;align-items:center;gap:4px;white-space:nowrap"><button class="btn sm" onclick="optSet(\''+esc(c.code)+'\','+(n-1)+')">▼</button>' +
-      '<input class="inp" type="number" min="0" value="'+n+'" style="width:58px;text-align:center" onwheel="optWheel(event,\''+esc(c.code)+'\')" onchange="optSet(\''+esc(c.code)+'\', this.value)">' +
-      '<button class="btn sm" onclick="optSet(\''+esc(c.code)+'\','+(n+1)+')">▲</button></div></div>';
-  });
-  if (!items.length) h += '<div class="empty">Không có thiết bị khớp.</div>';
-  return h + '</div></div>';
-}
-
 /* ======================== 🔄 ĐỒNG BỘ: sau đăng nhập & trước khi tạo báo giá ======================== */
 function autoSyncAfterLogin(){
   var E = window.ENGINE; if (!E || !E.server || !E.server()) return Promise.resolve();
@@ -1969,21 +1903,235 @@ function syncBeforeQuote(fn){
 }
 function setSlipType(t){ syncBeforeQuote(function(){ S.slipType = t; render(); }); }
 
-/* ======================== 🎛️ THIẾT BỊ ĐI SHOW / Ế (trong Thống kê) ======================== */
-function equipCard(eq){
-  if (!eq || !eq.rows) return '';
-  var max = Math.max.apply(null, [1].concat(eq.rows.map(function(r){ return r.shows; })));
-  var top = eq.rows.filter(function(r){ return !r.idle; }).slice(0, 12), idle = eq.rows.filter(function(r){ return r.idle; });
-  var bar = function(r){
-    return '<div style="display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr auto;gap:8px;align-items:center;padding:4px 0">' +
-      '<div style="min-width:0"><b style="font-size:12.5px">'+esc(r.name)+'</b><div class="code">'+esc(r.code)+'</div></div>' +
-      '<div style="background:var(--line);border-radius:6px;height:12px;overflow:hidden"><div style="width:'+(r.shows/max*100)+'%;height:100%;background:linear-gradient(90deg,#7c3aed,#0ea5e9)"></div></div>' +
-      '<div class="mute" style="font-size:11.5px;white-space:nowrap;text-align:right"><b>'+r.shows+'</b> show · '+r.unitDays+' ngày-máy · '+money(r.revenue)+'</div></div>';
-  };
-  return '<div class="card" style="margin-top:12px"><div class="card-h"><h2>🎛️ THIẾT BỊ ĐI SHOW & THIẾT BỊ Ế</h2><span class="mute">Kỳ '+fd(eq.from)+' → '+fd(eq.to)+' · '+idle.length+' thiết bị không đi show nào</span></div><div class="card-b">' +
-    '<h4 style="margin:4px 0">🔥 Đi nhiều show nhất</h4>' + (top.length ? top.map(bar).join('') : '<div class="empty">Chưa có show nào trong kỳ.</div>') +
-    '<h4 style="margin:14px 0 6px">🧊 Thiết bị ế trong kỳ</h4>' + (idle.length ? '<div class="chips">' + idle.map(function(r){ return '<span class="pill" title="'+esc(r.name)+'">'+esc(r.code)+' · '+esc(r.name)+'</span>'; }).join(' ') + '</div>' : '<div class="mute" style="font-size:12px">Không có thiết bị ế.</div>') +
-    '</div></div>';
+/* ======================== 🔒 KHÓA BÁO GIÁ · 🧩 TỐI ƯU THIẾT BỊ · 🚚 TỐI ƯU VẬN CHUYỂN ======================== */
+var OPT_ST = ['Báo giá', 'On Hold', 'Đã xác nhận', 'Đang soạn hàng'];
+var OPT_TRUCK_KG = 1500, OPT_TRIP_COST = 3500000; // GIẢ ĐỊNH: xe tải 1,5 tấn, 3,5 triệu/chuyến nội địa – chỉnh theo thực tế
+S.opt = { q: '' };
+function optCur(code){
+  var m = S.ed.lines.filter(function(l){ return l.source === 'Chính' && l.model === code; })[0];
+  return m ? Number(m.qty || 0) : 0;
+}
+function optLocked(code){
+  var m = S.ed.lines.filter(function(l){ return l.source === 'Chính' && l.model === code; })[0];
+  return !!(S.ed.show.locked || (m && m.locked));
+}
+/** Đặt số lượng thiết bị chính (0 = bỏ chọn, kèm theo cũng bỏ). Thiết bị đang khóa thì không đổi. */
+function optSet(code, qty){
+  if (optLocked(code)) return toast('🔒 Đang khóa – bấm 🔓 để mở khóa trước', 'bad');
+  qty = Math.max(0, Math.round(Number(qty) || 0));
+  var L = S.ed.lines;
+  if (qty === 0) {
+    S.ed.lines = L.filter(function(l){ return !(l.model === code && l.source === 'Chính') && l.source !== 'Kèm ' + code; });
+  } else {
+    var m = L.filter(function(l){ return l.source === 'Chính' && l.model === code; })[0];
+    if (m) m.qty = qty;
+    else L.push({ model: code, qty: qty, source: 'Chính', group: '', req: '', price: undefined, note: '', tags: [] });
+  }
+  S.ed.dirty = true; setTimeout(render, 0);
+}
+/** Lăn chuột trên ô số lượng: lên = +1, xuống = −1 */
+function optWheel(e, code){
+  e.preventDefault();
+  if (optLocked(code)) return;
+  optSet(code, optCur(code) + (e.deltaY < 0 ? 1 : -1));
+}
+/** Khóa / mở khóa cả báo giá (phải lưu show trước) */
+function lockShow(on){
+  var s = S.ed.show; if (!s.code) return;
+  if (S.ed.dirty) return toast('Lưu show trước rồi mới khóa / mở khóa', 'bad');
+  var models = on ? uniq(S.ed.lines.filter(function(l){ return l.source === 'Chính'; }).map(function(l){ return l.model; })) : [];
+  busy(true);
+  call('apiSetShowLock', { code: s.code, locked: on, models: models }).then(function(){ toast(on ? '🔒 Đã khóa báo giá' : '🔓 Đã mở khóa báo giá', 'ok'); var c = s.code; return reload().then(function(){ openShow(c); }); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+/** Khóa / mở khóa từng thiết bị */
+function lockLine(model){
+  var s = S.ed.show; if (!s.code) return;
+  if (S.ed.dirty) return toast('Lưu show trước rồi mới khóa / mở khóa', 'bad');
+  var cur = uniq(S.ed.lines.filter(function(l){ return l.source === 'Chính' && l.locked; }).map(function(l){ return l.model; }));
+  var i = cur.indexOf(model); if (i >= 0) cur.splice(i, 1); else cur.push(model);
+  busy(true);
+  call('apiSetShowLock', { code: s.code, locked: !!s.locked, models: cur }).then(function(){ var c = s.code; return reload().then(function(){ openShow(c); }); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+
+/** Phương án kho xuất: chi phí = số chuyến × giá chuyến; chọn kho rẻ nhất, thiếu thì lấy kho khác (thêm chuyến) */
+function planFor(need, whs, freeBy, w){
+  var kgW = 0, restKg = 0, lack = 0;
+  need.forEach(function(n){
+    var f = Math.min(n.qty, freeBy[n.model][w] || 0); kgW += f * n.kg;
+    var r = n.qty - f; if (!r) return;
+    var other = whs.filter(function(x){ return x !== w; }).reduce(function(t, x){ return t + (freeBy[n.model][x] || 0); }, 0);
+    var g = Math.min(r, other); restKg += g * n.kg; lack += r - g;
+  });
+  var trips = (kgW ? Math.ceil(kgW / OPT_TRUCK_KG) : 0) + (restKg ? Math.ceil(restKg / OPT_TRUCK_KG) : 0);
+  return { wh: w, kgW: kgW, restKg: restKg, lack: lack, trips: trips, cost: trips * OPT_TRIP_COST };
+}
+function optimizeTransport(){
+  var s = S.ed.show; if (!s.code) return toast('Lưu show trước rồi mới tối ưu vận chuyển', 'bad');
+  var L = S.ed.lines.filter(function(l){ return l.source === 'Chính' && Number(l.qty) > 0; });
+  if (!L.length) return toast('Chưa chọn thiết bị nào', 'bad');
+  var whs = B.whList.map(function(w){ return w.name; });
+  var need = L.map(function(l){ return { model: l.model, qty: Number(l.qty), kg: Number(cat(l.model).weight) || 0, locked: !!(l.locked || s.locked) }; });
+  var freeBy = {};
+  need.forEach(function(n){
+    freeBy[n.model] = {}; whs.forEach(function(w){ freeBy[n.model][w] = 0; });
+    var a = avail(n.model, s.out, s.back, s.code);
+    (B.assets || []).forEach(function(x){ if (x.model !== n.model || x.parent || x.status !== ST.KHO) return; if (freeBy[n.model][x.loc] !== undefined) freeBy[n.model][x.loc]++; });
+    whs.forEach(function(w){ freeBy[n.model][w] = Math.min(freeBy[n.model][w], a.avail); });
+  });
+  var plans = whs.map(function(w){ return planFor(need, whs, freeBy, w); }).sort(function(a, b){ return a.cost - b.cost || (a.wh === s.wh ? -1 : (b.wh === s.wh ? 1 : 0)); });
+  var best = plans[0], cur = plans.filter(function(p){ return p.wh === s.wh; })[0] || { cost: 0, trips: 0 };
+  var mates = B.shows.filter(function(x){ return x.code !== s.code && x.out === s.out && x.wh === best.wh && x.status !== 'Hủy'; });
+  var totalKg = need.reduce(function(t, n){ return t + n.qty * n.kg; }, 0);
+  var lockedN = need.filter(function(n){ return n.locked; }).length;
+  var h = '<div class="note" style="background:#ecfdf5;color:#065f46;border-color:#6ee7b7">✅ Đề xuất: lấy hàng từ <b>'+esc(best.wh)+'</b> · <b>'+best.trips+'</b> chuyến · chi phí ước tính <b>'+money(best.cost)+'</b>'+
+    (best.lack ? '<br><span style="color:#b91c1c">⚠ Còn thiếu '+best.lack+' thiết bị trong kho – cần điều thêm / đổi số lượng</span>' : '') +
+    (cur.wh !== best.wh ? '<br>Kho xuất hiện tại ('+esc(s.wh||'—')+') tốn '+money(cur.cost)+' → tiết kiệm <b>'+money(Math.max(0, cur.cost - best.cost))+'</b>' : '<br>Kho xuất hiện tại đã là phương án rẻ nhất.') + '</div>';
+  h += '<div style="overflow:auto;margin-top:10px"><table class="t"><thead><tr><th>Kho xuất</th><th class="num">Chuyến</th><th class="num">Hàng từ kho này</th><th class="num">Thiếu</th><th class="num">Chi phí ước tính</th></tr></thead><tbody>' +
+    plans.map(function(p){ return '<tr'+(p === best ? ' style="background:#ecfdf5"' : '')+'><td><b>'+esc(p.wh)+'</b>'+(p.wh === s.wh ? ' <span class="mute">(hiện tại)</span>' : '')+'</td><td class="num">'+p.trips+'</td><td class="num">'+Math.round(p.kgW)+' kg</td><td class="num">'+p.lack+'</td><td class="num"><b>'+money(p.cost)+'</b></td></tr>'; }).join('') +
+    '</tbody></table></div>';
+  h += '<div class="mute" style="font-size:12px;margin-top:10px">Tổng hàng: '+need.reduce(function(t,n){ return t+n.qty; },0)+' thiết bị · '+Math.round(totalKg)+' kg · '+(lockedN ? lockedN+' thiết bị đang khóa được giữ nguyên · ' : '')+
+    (mates.length ? 'Có thể <b>ghép chuyến</b> với: '+mates.map(function(x){ return esc(x.code)+' '+esc(x.name); }).join('; ') : 'Chưa có show khác cùng ngày xuất từ kho này để ghép chuyến.') + '</div>' +
+    '<div class="mute" style="font-size:11px;margin-top:6px">ⓘ Giả định: xe tải '+OPT_TRUCK_KG+' kg, '+money(OPT_TRIP_COST)+'/chuyến nội địa. Chỉnh hằng số trong mã khi có giá thật.</div>';
+  $('#modal').innerHTML = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md sm"><div class="md-h"><h3>🚚 Tối ưu vận chuyển · '+esc(s.code)+'</h3><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div>' +
+    '<div class="md-b">'+h+'</div><div class="md-f"><button class="btn" onclick="closeModal()">Đóng</button>' +
+    (best.wh !== s.wh ? '<button class="btn pri" onclick="applyWh(\''+esc(best.wh)+'\')">✔ Áp dụng kho xuất: '+esc(best.wh)+'</button>' : '') + '</div></div></div>';
+}
+function applyWh(w){ S.ed.show.wh = w; S.ed.dirty = true; closeModal(); render(); toast('Đã đặt kho xuất ' + esc(w) + ' – bấm 💾 Lưu show', 'ok'); }
+
+/** Bảng thiết bị tối ưu: tích · số lượng · còn trống · chưa ai đặt · hỏng */
+S.opt = { q: '' };
+function optPanel(s){
+  if (!s.code || OPT_ST.indexOf(s.status) < 0) return '';
+  var canL = canSalesFe(), q = (S.opt.q || '').toLowerCase();
+  var items = B.catalog.filter(function(c){ return c.rentable && (!q || (c.name + ' ' + c.code + ' ' + c.series).toLowerCase().indexOf(q) >= 0); });
+  var h = '<div class="card-b" style="border-top:1px solid var(--line);background:var(--soft)"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><b>🧩 Tối ưu thiết bị cho show này</b>' +
+    '<div class="row" style="gap:6px;flex-wrap:wrap">' + (canL ? (s.locked ? '<button class="btn sm ok" onclick="lockShow(false)">🔓 Mở khóa báo giá</button>' : '<button class="btn sm" onclick="lockShow(true)">🔒 Khóa báo giá</button>') : '') +
+    '<button class="btn sm pri" onclick="optimizeTransport()">🚚 Tối ưu vận chuyển</button></div></div>' +
+    (s.locked ? '<div class="note" style="margin-top:8px">🔒 Báo giá đang khóa – không đổi được thiết bị. Bấm 🔓 để mở khóa.</div>' : '') +
+    '<div class="row" style="margin-top:8px;flex-wrap:wrap;gap:8px"><input class="inp" style="width:220px" placeholder="🔎 Lọc thiết bị…" value="'+esc(S.opt.q||'')+'" oninput="S.opt.q=this.value;clearTimeout(window._to);window._to=setTimeout(render,250)">' +
+    '<a style="cursor:pointer;font-size:12px;text-decoration:underline" onclick="go(\'stock\')">📦 Xem kho thiết bị →</a></div>' +
+    '<div style="max-height:380px;overflow:auto;-webkit-overflow-scrolling:touch;margin-top:8px;border:1px solid var(--line);border-radius:10px;background:var(--card)">';
+  items.forEach(function(c){
+    var a = avail(c.code, s.out, s.back, s.code), n = optCur(c.code), dmg = ((B._cnt[c.code] || {})[ST.BT]) || 0;
+    var lk = optLocked(c.code), lineLk = S.ed.lines.some(function(l){ return l.source === 'Chính' && l.model === c.code && l.locked; });
+    var st = a.by.length === 0 ? '<span class="st" style="background:#dcfce7;color:#166534">chưa ai đặt</span>' : '<span class="mute" style="font-size:11px">đang giữ: '+esc(uniq(a.by).join(', '))+'</span>';
+    h += '<div style="display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">' +
+      '<input type="checkbox" '+(n>0?'checked':'')+' '+(lk?'disabled':'')+' onchange="optSet(\''+esc(c.code)+'\', this.checked ? 1 : 0)" style="width:18px;height:18px">' +
+      '<div style="min-width:0"><b style="font-size:12.5px">'+esc(c.name)+'</b> <span class="code">'+esc(c.code)+'</span>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px"><span class="av '+(a.avail>0?'g':'r')+'" style="font-size:11px">còn trống '+a.avail+'/'+a.total+'</span>'+st +
+      (dmg>0 ? '<span class="st" style="background:#fee2e2;color:#991b1b">⚠ hỏng/bảo trì '+dmg+'</span>' : '') +
+      (n>a.avail && n>0 ? '<span class="av r" style="font-size:11px">⚠ vượt tồn</span>' : '') + '</div></div>' +
+      '<div style="display:flex;align-items:center;gap:4px;white-space:nowrap">' +
+      (canL && !s.locked ? '<button class="btn sm" title="'+(lineLk?'Mở khóa dòng':'Khóa dòng này')+'" onclick="lockLine(\''+esc(c.code)+'\')">'+(lineLk?'🔒':'🔓')+'</button>' : '') +
+      '<button class="btn sm" '+(lk?'disabled':'')+' onclick="optSet(\''+esc(c.code)+'\','+(n-1)+')">▼</button>' +
+      '<input class="inp" type="number" min="0" value="'+n+'" '+(lk?'disabled':'')+' style="width:58px;text-align:center" onwheel="optWheel(event,\''+esc(c.code)+'\')" onchange="optSet(\''+esc(c.code)+'\', this.value)">' +
+      '<button class="btn sm" '+(lk?'disabled':'')+' onclick="optSet(\''+esc(c.code)+'\','+(n+1)+')">▲</button></div></div>';
+  });
+  if (!items.length) h += '<div class="empty">Không có thiết bị khớp.</div>';
+  return h + '</div></div>';
+}
+
+/* ======================== 📊 THỐNG KÊ 3 MỤC: NHÂN SỰ · THU CHI · THIẾT BỊ ======================== */
+S.stat.sec = S.stat.sec || 'staff';
+function loadStats(){
+  var st = S.stat; st.busy = true; st.err = '';
+  var ref = st.ref || B.today, fr = st.mode === 'custom' ? st.from : '', to = st.mode === 'custom' ? st.to : '';
+  Promise.all([call('apiStats', st.mode, ref, fr, to), call('apiStatsEquip', st.mode, ref, fr, to), call('apiStatsDetail', st.mode, ref, fr, to)])
+    .then(function(r){ st.res = r[0]; st.eq = r[1]; st.det = r[2]; st.busy = false; render(); })
+    .catch(function(e){ st.busy = false; st.err = (e && e.message) || String(e); render(); });
+}
+function statF(k, v){ S.stat[k] = v; render(); }
+var SORTS_ST = {
+  staff: [['shows','Nhiều show nhất'], ['assigns','Nhiều lượt phân công nhất'], ['low','Ít việc nhất (cần giao thêm)']],
+  cash: [['profit_desc','Lợi nhuận cao nhất'], ['profit_asc','Lợi nhuận thấp nhất'], ['revenue_desc','Doanh thu cao nhất'], ['expense_desc','Chi phí cao nhất'], ['penalty_desc','Tiền phạt nhiều nhất']],
+  equip: [['shows_desc','Đi nhiều show nhất'], ['days_desc','Nhiều ngày-máy nhất'], ['revenue_desc','Doanh thu cao nhất'], ['idle','Ế (không đi show)']]
+};
+function selOpt(opts, cur, onch){ return '<select class="inp" onchange="'+onch+'">'+opts.map(function(o){ return '<option value="'+o[0]+'" '+(o[0]===cur?'selected':'')+'>'+esc(o[1])+'</option>'; }).join('')+'</select>'; }
+function topSel(cur, key){ return '<select class="inp" onchange="statF(\''+key+'\',Number(this.value))">'+[[5,'Top 5'],[10,'Top 10'],[20,'Top 20'],[0,'Tất cả']].map(function(o){ return '<option value="'+o[0]+'" '+(o[0]===cur?'selected':'')+'>'+o[1]+'</option>'; }).join('')+'</select>'; }
+function hbar(label, sub, val, max, color, right){
+  var w = max > 0 ? Math.max(0, Math.min(100, Math.abs(val) / max * 100)) : 0;
+  return '<div style="display:grid;grid-template-columns:minmax(110px,1.1fr) 2fr auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line)">' +
+    '<div style="min-width:0"><b style="font-size:12.5px">'+esc(label)+'</b>'+(sub?'<div class="mute" style="font-size:11px">'+esc(sub)+'</div>':'')+'</div>' +
+    '<div style="background:var(--line);border-radius:6px;height:12px;overflow:hidden"><div style="width:'+w+'%;height:100%;background:'+(val<0?'#ef4444':color)+'"></div></div>' +
+    '<div style="font-size:11.5px;white-space:nowrap;text-align:right">'+right+'</div></div>';
+}
+function secStaff(det){
+  var st = S.stat, so = st.sStaff || 'shows', minS = Number(st.minS) || 0, dept = st.dept || '', minSh = Number(st.minSh) || 0;
+  var list = det.staff.filter(function(x){ return (!dept || deptOf(x.role) === dept) && x.shows >= minS; });
+  list.sort(so === 'assigns' ? function(a,b){ return b.assigns - a.assigns || b.shows - a.shows; } : so === 'low' ? function(a,b){ return a.shows - b.shows || a.assigns - b.assigns; } : function(a,b){ return b.shows - a.shows || b.assigns - a.assigns; });
+  var key = function(x){ return so === 'assigns' ? x.assigns : x.shows; };
+  var max = Math.max.apply(null, [1].concat(list.map(key)));
+  var depts = uniq(det.staff.map(function(x){ return deptOf(x.role); }));
+  var h = '<div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:8px">' + selOpt(SORTS_ST.staff, so, "statF('sStaff',this.value)") +
+    '<select class="inp" onchange="statF(\'dept\',this.value)"><option value="">Mọi bộ phận</option>' + depts.map(function(d){ return '<option value="'+esc(d)+'" '+(dept===d?'selected':'')+'>'+esc(d)+'</option>'; }).join('') + '</select>' +
+    '<label class="mute" style="font-size:12px">Tối thiểu <input class="inp" type="number" min="0" style="width:64px" value="'+minS+'" onchange="statF(\'minS\',Number(this.value))"> show</label></div>';
+  h += list.length ? list.map(function(x){ return hbar(x.name, x.role + ' · ' + x.wh, key(x), max, '#7c3aed', '<b>'+x.shows+'</b> show · '+x.assigns+' lượt'); }).join('') : '<div class="empty">Không có nhân sự khớp bộ lọc.</div>';
+  var sh = det.shows.filter(function(x){ return x.staffCount >= minSh; }).sort(function(a,b){ return b.staffCount - a.staffCount || b.assigns - a.assigns; });
+  var maxS = Math.max.apply(null, [1].concat(sh.map(function(x){ return x.staffCount; })));
+  h += '<h4 style="margin:16px 0 6px">👷 Số nhân sự làm cho từng show</h4><div class="row" style="margin-bottom:6px"><label class="mute" style="font-size:12px">Tối thiểu <input class="inp" type="number" min="0" style="width:64px" value="'+minSh+'" onchange="statF(\'minSh\',Number(this.value))"> người</label></div>';
+  h += sh.length ? sh.map(function(x){ return hbar(x.name, x.code + ' · ' + fd(x.day), x.staffCount, maxS, '#0ea5e9', '<b>'+x.staffCount+'</b> người · '+x.assigns+' lượt'); }).join('') : '<div class="empty">Không có show khớp.</div>';
+  return h;
+}
+function barsSimple(list){
+  if (!list || !list.length) return '<div class="mute" style="font-size:12px">Chưa có dữ liệu trong kỳ.</div>';
+  var m = Math.max.apply(null, [1].concat(list.map(function(x){ return x.amount; })));
+  return list.slice().sort(function(a,b){ return b.amount - a.amount; }).map(function(x){ return hbar(x.name, '', x.amount, m, '#f97316', '<b>'+money(x.amount)+'</b>'); }).join('');
+}
+function secCash(det, res){
+  var st = S.stat, so = st.sCash || 'profit_desc', top = st.topN === undefined ? 10 : st.topN;
+  var cmp = { profit_desc: function(a,b){ return b.profit - a.profit; }, profit_asc: function(a,b){ return a.profit - b.profit; }, revenue_desc: function(a,b){ return b.revenue - a.revenue; }, expense_desc: function(a,b){ return b.expense - a.expense; }, penalty_desc: function(a,b){ return b.penalty - a.penalty; } }[so];
+  var metric = so === 'revenue_desc' ? 'revenue' : so === 'expense_desc' ? 'expense' : so === 'penalty_desc' ? 'penalty' : 'profit';
+  var list = det.shows.slice().sort(cmp), shown = top ? list.slice(0, top) : list;
+  var maxM = Math.max.apply(null, [1].concat(shown.map(function(x){ return Math.abs(x[metric]); })));
+  var color = metric === 'profit' ? '#10b981' : metric === 'expense' ? '#f97316' : metric === 'penalty' ? '#ef4444' : '#7c3aed';
+  var h = '<div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:8px">' + selOpt(SORTS_ST.cash, so, "statF('sCash',this.value)") + topSel(top, 'topN') + '</div>';
+  h += '<h4 style="margin:4px 0 6px">📈 Xu hướng theo kỳ</h4>' + statChart(res.rows);
+  h += '<h4 style="margin:14px 0 6px">🏆 Show theo ' + ({profit:'lợi nhuận',revenue:'doanh thu',expense:'chi phí',penalty:'tiền phạt'})[metric] + '</h4>';
+  h += shown.length ? shown.map(function(x){ return hbar(x.name, x.code + ' · DT ' + money(x.revenue) + ' · CP ' + money(x.expense) + ' · phạt ' + money(x.penalty), x[metric], maxM, color, '<b>'+money(x[metric])+'</b>'); }).join('') : '<div class="empty">Chưa có show trong kỳ.</div>';
+  h += '<h4 style="margin:14px 0 6px">🧾 Cơ cấu chi phí</h4>' + barsSimple(det.expType);
+  h += '<h4 style="margin:14px 0 6px">⚠️ Cơ cấu tiền phạt</h4>' + barsSimple(det.penType);
+  return h;
+}
+function secEquip(eq){
+  if (!eq || !eq.rows) return '<div class="empty">Chưa có dữ liệu.</div>';
+  var st = S.stat, so = st.sEq || 'shows_desc', minE = Number(st.minE) || 0, top = st.topN === undefined ? 10 : st.topN;
+  var list = so === 'idle' ? eq.rows.filter(function(r){ return r.idle; }) : eq.rows.filter(function(r){ return r.shows >= minE; });
+  var cmp = so === 'days_desc' ? function(a,b){ return b.unitDays - a.unitDays; } : so === 'revenue_desc' ? function(a,b){ return b.revenue - a.revenue; } : function(a,b){ return b.shows - a.shows || b.unitDays - a.unitDays; };
+  list.sort(cmp);
+  var shown = top ? list.slice(0, top) : list;
+  var metric = so === 'days_desc' ? 'unitDays' : so === 'revenue_desc' ? 'revenue' : 'shows';
+  var maxM = Math.max.apply(null, [1].concat(shown.map(function(x){ return x[metric]; })));
+  var h = '<div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:8px">' + selOpt(SORTS_ST.equip, so, "statF('sEq',this.value)") + topSel(top, 'topN') +
+    (so === 'idle' ? '' : '<label class="mute" style="font-size:12px">Đi tối thiểu <input class="inp" type="number" min="0" style="width:64px" value="'+minE+'" onchange="statF(\'minE\',Number(this.value))"> show</label>') + '</div>';
+  h += '<div class="mute" style="font-size:12px;margin-bottom:6px">'+eq.idle+' thiết bị không đi show nào trong kỳ '+fd(eq.from)+' → '+fd(eq.to)+'</div>';
+  h += shown.length ? shown.map(function(x){ return hbar(x.name, x.code + ' · ' + x.series, x[metric], maxM, '#7c3aed', '<b>'+x.shows+'</b> show · '+x.unitDays+' ngày-máy · '+money(x.revenue)); }).join('') : '<div class="empty">Không có thiết bị khớp bộ lọc.</div>';
+  return h;
+}
+function vStats(){
+  if (!canPrice()) return '<div class="card"><div class="empty">Chỉ Giám đốc trở lên xem được thống kê.</div></div>';
+  var st = S.stat;
+  var ready = st.mode !== 'custom' || (st.from && st.to);
+  if (!st.res && !st.busy && !st.err && ready) loadStats();
+  var MODES = [['week','Tuần'],['month','Tháng'],['quarter','Quý'],['half','Nửa năm'],['year','Năm'],['custom','Tùy chọn']];
+  var h = '<div class="card"><div class="card-h"><h2>📊 THỐNG KÊ</h2><span class="mute">Ba mục: nhân sự · thu chi · thiết bị</span></div><div class="card-b">';
+  h += '<div class="chips">' + MODES.map(function(m){ return '<span class="chip '+(st.mode===m[0]?'on':'')+'" onclick="statSet(\'mode\',\''+m[0]+'\')">'+m[1]+'</span>'; }).join('') + '</div>';
+  h += '<div class="row" style="margin-top:10px;flex-wrap:wrap;gap:8px">';
+  if (st.mode === 'custom') h += '<label>Từ <input class="inp" type="date" value="'+esc(st.from)+'" onchange="statSet(\'from\',this.value)"></label><label>Đến <input class="inp" type="date" value="'+esc(st.to)+'" onchange="statSet(\'to\',this.value)"></label>';
+  else h += '<label>Mốc thời gian <input class="inp" type="date" value="'+esc(st.ref||B.today)+'" onchange="statSet(\'ref\',this.value)"></label>';
+  h += '<button class="btn sm" onclick="loadStats()">⟳ Tính lại</button></div>';
+  if (st.err) h += '<div class="note" style="margin-top:10px;color:#991b1b">⚠️ ' + esc(st.err) + '</div>';
+  else if (st.busy || !st.res || !st.det) h += '<div class="empty">' + (ready ? 'Đang tính…' : 'Chọn khoảng ngày “Từ – Đến”.') + '</div>';
+  else {
+    var r = st.res, t = r.total || {};
+    h += '<div class="mute" style="margin:10px 0;font-size:12px">Khoảng: ' + fd(r.from) + ' → ' + fd(r.to) + ' · doanh thu = tiền hàng sau chiết khấu, chưa VAT</div>';
+    h += '<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">' + [['💰', t.revenue, 'Doanh thu'], ['🧾', t.expense, 'Chi phí'], ['⚠️', t.penalty, 'Tiền phạt'], ['📈', t.profit, 'Lợi nhuận']].map(function(k){ return '<div class="kpi"><div class="ic">' + k[0] + '</div><div><b>' + money(k[1] || 0) + '</b><small>' + k[2] + '</small></div></div>'; }).join('') + '</div>';
+    var secs = [['staff','👥 Nhân sự'], ['cash','💰 Thu chi'], ['equip','🎛️ Thiết bị']];
+    h += '<div class="chips" style="margin-top:14px">' + secs.map(function(x){ return '<span class="chip '+(st.sec===x[0]?'on':'')+'" onclick="statF(\'sec\',\''+x[0]+'\')">'+x[1]+'</span>'; }).join('') + '</div>';
+    h += '<div style="margin-top:12px">' + (st.sec === 'cash' ? secCash(st.det, r) : st.sec === 'equip' ? secEquip(st.eq) : secStaff(st.det)) + '</div>';
+  }
+  return h + '</div></div>';
 }
 
 /* ---------- 🛡️ hệ thống: truy cập, IP, nhật ký, khóa ---------- */

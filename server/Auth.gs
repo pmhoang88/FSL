@@ -217,7 +217,7 @@ function isLocked_() { return sysGet_('LOCK') === '1'; }
 /* ------------------------------ bộ điều phối duy nhất ------------------------------ */
 var PUBLIC_ACTIONS = { apiLogin: 1, apiRegister: 1, apiVisit: 1, apiPublicInfo: 1, apiPing: 1 };
 var ACTIONS = {
-  apiBootstrap: { w: false }, apiSync: { w: false }, apiLogout: { w: true }, apiSaveProgress: { w: true },
+  apiBootstrap: { w: false }, apiSync: { w: false }, apiLogout: { w: true }, apiSaveProgress: { w: true }, apiSetShowLock: { w: true }, apiStatsDetail: { w: false },
   apiSaveShow: { p: 'TAO_SHOW', w: true }, apiDeleteShow: { p: 'TAO_SHOW', w: true },
   apiAssign: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckout: { p: 'XUAT_NHAP_KHO', w: true }, apiCheckin: { p: 'XUAT_NHAP_KHO', w: true },
   apiSetAssetStatus: { p: 'XUAT_NHAP_KHO', w: true }, apiSavePng: { w: false },
