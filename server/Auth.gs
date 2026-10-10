@@ -45,28 +45,31 @@ function seedRoles_() {
     ['Kế toán trưởng', 4, 15, 'Phó tổng giám đốc', T, F, F, T, F, T, F, F, F, ''],
     ['Quản lý Kho', 4, 15, 'Phó tổng giám đốc', T, T, T, F, F, F, F, F, F, ''],
     ['Trưởng phòng sửa chữa', 4, 15, 'Phó tổng giám đốc', T, T, F, F, F, F, F, F, F, ''],
-    ['Kỹ thuật', 4, 15, 'Phó tổng giám đốc', T, T, F, F, F, F, F, F, F, '']
+    ['Kỹ thuật', 4, 15, 'Phó tổng giám đốc', T, T, F, F, F, F, F, F, F, ''],
+    ['Kỹ thuật trưởng', 4, 15, 'Phó giám đốc Kỹ Thuật', T, T, F, F, F, F, F, F, F, 'Trưởng kỹ thuật thực hiện show'],
+    ['Sales Manager', 4, 15, 'Giám đốc Sale', T, F, F, T, T, T, F, F, F, 'Quản lý sales, báo cáo Giám đốc Sale']
   ];
   sh_('ROLE').getRange(2, 1, rows.length, COLS.ROLE.length).setValues(rows);
 }
 
 function seedUsers_() {
   var t = now_();
-  var U = function (u, name, role, mgr, st, salt, hash, note) {
-    return [u, name, role, mgr, '', '', st, '', '', t, 'Khởi tạo', t, t, '', '', '', note || '', salt || '', hash || ''];
+  var U = function (u, name, role, mgr, st, salt, hash, note, title) {
+    return [u, name, role, mgr, '', '', st, '', '', t, 'Khởi tạo', t, t, '', '', '', note || '', salt || '', hash || '', title || ''];
   };
   var rows = [
-    U('dvhung', 'CEO Hùng (cập nhật họ tên)', 'CEO', '', 'Hoạt động', '15a7d846218d0d4a', '345d5669387252052c804d480f2008ccf2f8661ee3cbd23c588c46d39093a419', 'Tài khoản CEO – nên đổi mật khẩu sau lần đăng nhập đầu'),
-    U('admin', 'Phạm Minh Hoàng', 'Quản trị', '', 'Hoạt động', '3369c5d790da6ee7', 'e1ed677e4ddd027793d2fa902c629e635479d7184304acd86ca1f2b4c47d113a', 'Quản trị hệ thống – nên đổi mật khẩu sau lần đăng nhập đầu'),
-    U('gd.mau', 'Nguyễn Văn A (mẫu)', 'Giám đốc', 'dvhung', 'Tạm khóa', '', '', 'Tài khoản MẪU – reset mật khẩu + mở khóa để dùng, hoặc xóa'),
-    U('ptgd.mau', 'Trần Thị B (mẫu)', 'Phó tổng giám đốc', 'gd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
-    U('gdkt.mau', 'Lê Văn C (mẫu)', 'Giám đốc Kỹ Thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
-    U('pgdkt.mau', 'Phạm Văn D (mẫu)', 'Phó giám đốc Kỹ Thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
-    U('gdsale.mau', 'Hoàng Thị E (mẫu)', 'Giám đốc Sale', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
-    U('ktt.mau', 'Võ Thị F (mẫu)', 'Kế toán trưởng', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
-    U('kho.mau', 'Đỗ Văn G (mẫu)', 'Quản lý Kho', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
-    U('suachua.mau', 'Bùi Văn H (mẫu)', 'Trưởng phòng sửa chữa', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU'),
-    U('kythuat.mau', 'Đặng Văn I (mẫu)', 'Kỹ thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Tài khoản MẪU')
+    U('dvhung', 'CEO Hùng (cập nhật họ tên)', 'CEO', '', 'Hoạt động', '15a7d846218d0d4a', '345d5669387252052c804d480f2008ccf2f8661ee3cbd23c588c46d39093a419', 'Tài khoản CEO – nên đổi mật khẩu sau lần đăng nhập đầu', 'CEO'),
+    U('admin', 'Phạm Minh Hoàng', 'Quản trị', '', 'Hoạt động', '3369c5d790da6ee7', 'e1ed677e4ddd027793d2fa902c629e635479d7184304acd86ca1f2b4c47d113a', 'Quản trị hệ thống – nên đổi mật khẩu sau lần đăng nhập đầu', 'Kỹ thuật hệ thống'),
+    U('phuonganh', 'Phương Anh', 'Giám đốc Sale', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Giám đốc Sales'),
+    U('thuy', 'Thuý', 'Sales Manager', 'phuonganh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Sales Manager'),
+    U('son', 'Sơn', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'PGĐ Kỹ thuật · Ánh sáng'),
+    U('thiet', 'Thiết', 'Phó giám đốc Kỹ Thuật', 'dvhung', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'PGĐ Kỹ thuật · Âm thanh'),
+    U('minh', 'Minh', 'Kỹ thuật trưởng', 'thiet', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Kỹ thuật trưởng'),
+    U('manh', 'Mạnh', 'Kỹ thuật', 'minh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Setup'),
+    U('hieu', 'Hiếu', 'Kỹ thuật', 'minh', 'Tạm khóa', '', '', 'Chưa có mật khẩu – quản trị đặt mật khẩu rồi mở khóa', 'Setup'),
+    U('ptgd.mau', 'Vị trí trống – Phó tổng giám đốc', 'Phó tổng giám đốc', 'dvhung', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu, đổi tên khi có người', 'Phó TGĐ (trống)'),
+    U('gdkt.mau', 'Vị trí trống – Giám đốc Kỹ Thuật', 'Giám đốc Kỹ Thuật', 'ptgd.mau', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu', 'GĐ Kỹ thuật (trống)'),
+    U('ktt.mau', 'Vị trí trống – Kế toán trưởng', 'Kế toán trưởng', 'ptgd.mau', 'Tạm khóa', '', '', 'Chưa bổ nhiệm – mẫu', 'Kế toán trưởng (trống)')
   ];
   sh_('USER').getRange(2, 1, rows.length, COLS.USER.length).setValues(rows);
 }
@@ -89,6 +92,9 @@ function seedCustomers_() {
     K({ 'Mã KH': 'KH-003', 'Họ tên': 'Lê Quốc Bảo (giả định)', 'Điện thoại': '0900 000 003', 'Công ty': 'Nhà hát/Venue GHI (giả định)', 'Chức vụ': 'Trưởng kỹ thuật',
       'Thói quen sinh hoạt': 'Rất kỹ về rider kỹ thuật, thích xem simulation ArrayCalc trước', 'Giá mặc cả (% hay xin giảm)': 5, 'Make up giá?': 'Không',
       'Phụ trách KH': 'admin', 'Ghi chú': 'Dữ liệu GIẢ ĐỊNH', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t })
+    ,
+    K({ 'Mã KH': 'KH-005', 'Họ tên': 'Minh Tấn', 'Công ty': '', 'Ghi chú': 'KHÁCH QUEN – đối tác tin cậy', 'Phụ trách KH': 'admin', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t }),
+    K({ 'Mã KH': 'KH-004', 'Họ tên': 'Stage Professional (StagePro)', 'Công ty': 'Stage Professional', 'Ghi chú': 'CÔNG TY PHÂN PHỐI – hỗ trợ theo mã ưu đãi STAGEPRO (giảm 100%, chỉ CEO nhập mã)', 'Phụ trách KH': 'dvhung', 'Ngày tạo': t, 'Người tạo': who, 'Ngày sửa': t })
   ];
   sh_('CUST').getRange(2, 1, rows.length, COLS.CUST.length).setValues(rows);
   applyCustFormulas_(rows.length);
@@ -135,7 +141,7 @@ function userPub_(r, roles) {
     phone: String(r['Điện thoại'] || ''), email: String(r['Email'] || ''), status: userStatus_(r), banUntil: d2s_(r['Ban đến ngày']),
     reason: String(r['Lý do khóa/ban'] || ''), created: dt2s_(r['Ngày tạo']), createdBy: String(r['Người tạo'] || ''),
     editedInfo: dt2s_(r['Ngày sửa thông tin']), editedRole: dt2s_(r['Ngày đổi quyền']), editedBan: dt2s_(r['Ngày khóa/ban']),
-    lastLogin: dt2s_(r['Đăng nhập cuối']), lastIp: String(r['IP cuối'] || ''), note: String(r['Ghi chú'] || ''),
+    lastLogin: dt2s_(r['Đăng nhập cuối']), lastIp: String(r['IP cuối'] || ''), note: String(r['Ghi chú'] || ''), title: String(r['Chức danh'] || ''),
     level: ro.level, max: ro.max, hasPw: !!r['Hash']
   };
 }
@@ -218,6 +224,10 @@ var ACTIONS = {
   apiSetAssetInfo: { p: 'SUA_DANH_MUC', w: true }, apiMaintAdd: { p: 'SUA_DANH_MUC', w: true },
   apiSetPrice: { w: true },  // kiểm tra cấp Giám đốc trở lên bên trong hàm
   apiUpdateShowPrices: { w: true },  // Giám đốc trở lên, kiểm tra bên trong
+  apiSavePenalty: { p: 'XEM_TAI_CHINH', w: true }, apiDeletePenalty: { p: 'XEM_TAI_CHINH', w: true },
+  apiSaveExpense: { p: 'XEM_TAI_CHINH', w: true }, apiDeleteExpense: { p: 'XEM_TAI_CHINH', w: true },
+  apiSaveCar: { w: true }, apiDeleteCar: { w: true },  // Giám đốc trở lên, kiểm tra bên trong
+  apiStats: { w: false },  // Giám đốc trở lên, kiểm tra bên trong
   apiBulkUpdatePrices: { w: true },  // chỉ CEO, kiểm tra bên trong
   apiSaveTransport: { p: 'XUAT_NHAP_KHO', w: true }, apiDeleteTransport: { p: 'XUAT_NHAP_KHO', w: true },
   apiSaveStaff: { p: 'SUA_DANH_MUC', w: true }, apiDeleteStaff: { p: 'SUA_DANH_MUC', w: true },
@@ -312,6 +322,8 @@ var ACTION_LABEL = {
   apiUpdateShowPrices: 'Cập nhật giá show', apiBulkUpdatePrices: 'Cập nhật giá hàng loạt (CEO)',
   apiSaveTransport: 'Lưu vận chuyển', apiDeleteTransport: 'Xóa vận chuyển', apiSaveStaff: 'Lưu nhân sự', apiDeleteStaff: 'Xóa nhân sự',
   apiSaveAssign: 'Lưu phân công nhân sự', apiDeleteAssign: 'Xóa phân công nhân sự',
+  apiSavePenalty: 'Ghi tiền phạt show', apiDeletePenalty: 'Xóa tiền phạt', apiSaveExpense: 'Ghi chi phí show', apiDeleteExpense: 'Xóa chi phí',
+  apiSaveCar: 'Cấp / sửa xe công ty', apiDeleteCar: 'Xóa xe công ty',
   apiSaveCustomer: 'Lưu khách hàng', apiDeleteCustomer: 'Xóa khách hàng', apiDiscountRequest: 'Xin chiết khấu', apiDiscountDecide: 'Duyệt chiết khấu', apiDiscountCancel: 'Hủy xin chiết khấu',
   apiUserSave: 'Lưu user', apiUserDelete: 'Xóa user', apiUserResetPw: 'Reset mật khẩu', apiUserStatus: 'Khóa/ban/mở user', apiChangeMyPassword: 'Đổi mật khẩu của mình',
   apiUpdateMyProfile: 'Sửa hồ sơ của mình', apiLockSystem: 'Khóa/mở hệ thống', apiLogout: 'Đăng xuất'

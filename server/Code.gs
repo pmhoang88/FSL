@@ -25,7 +25,8 @@ var SH = {
   SHOW: 'Show', LINE: 'Chi tiết show', LOG: 'Nhật ký', TEST: 'Kịch bản test', GUIDE: 'Hướng dẫn',
   ROLE: 'Chức vụ', USER: 'Người dùng', CUST: 'Khách hàng', DISC: 'Duyệt chiết khấu',
   VISIT: 'Truy cập', AUDIT: 'Nhật ký hệ thống', SYS: '_Hệ thống', MAINT: 'Bảo trì thiết bị',
-  STAFF: 'Nhân sự', ASSIGN: 'Phân công nhân sự', TRANSPORT: 'Vận chuyển', PRICELOG: 'Nhật ký giá'
+  STAFF: 'Nhân sự', ASSIGN: 'Phân công nhân sự', TRANSPORT: 'Vận chuyển', PRICELOG: 'Nhật ký giá',
+  PHAT: 'Tiền phạt show', CHI: 'Chi phí show', XE: 'Xe công ty'
 };
 
 /** Hiện trạng thiết bị (tách khỏi Trạng thái kho) */
@@ -51,7 +52,7 @@ var COLS = {
           'Yêu cầu cấu hình', 'Ghi chú'],
   SHOW:  ['Mã show', 'Tên show', 'Khách hàng', 'Địa điểm', 'Loại', 'Ngày xuất kho', 'Ngày diễn',
           'Ngày nhập kho', 'Số ngày tính tiền', 'Trạng thái', 'Phụ trách', 'Tổng tiền', 'Ghi chú', 'Màu',
-          'Mã KH', 'Chiết khấu %', 'Trạng thái CK', 'Người tạo', 'Thành phố', 'Kho xuất'],
+          'Mã KH', 'Chiết khấu %', 'Trạng thái CK', 'Người tạo', 'Thành phố', 'Kho xuất', 'Ngày diễn cuối', 'Mã ưu đãi', 'Chính sách CK'],
   LINE:  ['Mã show', 'STT', 'Mã model', 'Tên thiết bị', 'Loại', 'SL', 'Nguồn', 'Nhóm liên kết', 'Yêu cầu',
           'Đơn giá', 'Số ngày', 'Thành tiền', 'Mã TB đã gán', 'Ghi chú'],
   LOG:   ['Thời gian', 'Mã show', 'Mã TB', 'Từ', 'Sang', 'Người', 'Ghi chú'],
@@ -59,12 +60,15 @@ var COLS = {
   ASSIGN: ['Mã phân công', 'Mã show', 'Mã NV', 'Ngày', 'Từ giờ', 'Đến giờ', 'Việc làm', 'Địa điểm', 'Mã TB', 'Ghi chú'],
   TRANSPORT: ['Mã vận chuyển', 'Mã show', 'Từ kho', 'Đến', 'Phương thức', 'Ngày gửi', 'Ngày dự kiến đến', 'Hạn chốt', 'Trạng thái', 'Số kiện', 'Mã TB', 'Ghi chú', 'Người ghi'],
   PRICELOG: ['Thời gian', 'Người', 'IP', 'Loại', 'Mã', 'Giá cũ', 'Giá mới', 'Ghi chú'],
+  PHAT: ['Mã phạt', 'Mã show', 'Ngày', 'Loại', 'Mô tả', 'Số tiền', 'Người chịu', 'Người ghi', 'Ghi chú'],
+  CHI: ['Mã chi', 'Mã show', 'Ngày', 'Khoản chi', 'Số tiền', 'Người ghi', 'Ghi chú'],
+  XE: ['Mã xe', 'Loại xe', 'Biển số', 'Người được cấp', 'Ngày nhận', 'Ngày trả', 'Ghi chú', 'Người ghi'],
   TEST:  ['STT', 'Phần', 'Thao tác', 'Kết quả mong đợi', 'Đạt', 'Ghi chú'],
   GUIDE: ['Mục', 'Nội dung'],
   ROLE:  ['Chức vụ', 'Cấp', 'Chiết khấu tối đa %', 'Báo cáo cho', 'TAO_SHOW', 'XUAT_NHAP_KHO', 'SUA_DANH_MUC',
           'XEM_KHACH_HANG', 'SUA_KHACH_HANG', 'XEM_TAI_CHINH', 'QUAN_TRI_USER', 'KHOA_HE_THONG', 'XEM_NHAT_KY_HT', 'Ghi chú'],
   USER:  ['Username', 'Họ tên', 'Chức vụ', 'Cấp trên', 'Điện thoại', 'Email', 'Trạng thái', 'Ban đến ngày', 'Lý do khóa/ban',
-          'Ngày tạo', 'Người tạo', 'Ngày sửa thông tin', 'Ngày đổi quyền', 'Ngày khóa/ban', 'Đăng nhập cuối', 'IP cuối', 'Ghi chú', 'Salt', 'Hash'],
+          'Ngày tạo', 'Người tạo', 'Ngày sửa thông tin', 'Ngày đổi quyền', 'Ngày khóa/ban', 'Đăng nhập cuối', 'IP cuối', 'Ghi chú', 'Salt', 'Hash', 'Chức danh'],
   CUST:  ['Mã KH', 'Họ tên', 'Điện thoại', 'Công ty', 'Chức vụ', 'Cấp trên của KH', 'Cấp dưới của KH', 'Nơi làm trước đây', 'Địa chỉ',
           'Thói quen sinh hoạt', 'Giá mặc cả (% hay xin giảm)', 'Make up giá?', 'Ghi chú giá', 'Tên công ty xuất HĐ', 'MST', 'Địa chỉ xuất HĐ',
           'Email nhận HĐ', 'Tiền hồi %', 'Tiền hồi (số tiền)', 'Mùa cao điểm (ghi tay)', 'Phụ trách KH', 'Ghi chú', 'Ngày tạo', 'Người tạo', 'Ngày sửa',
@@ -86,7 +90,7 @@ ST_COLOR[ST.SHOW] = { bg: '#ede9fe', fg: '#5b21b6', dot: '#7c3aed' };
 ST_COLOR[ST.BT]   = { bg: '#fee2e2', fg: '#991b1b', dot: '#ef4444' };
 
 /** Trạng thái show. Các trạng thái "giữ hàng" mới bị trừ tồn kho theo ngày. */
-var SHOW_ST = ['Báo giá', 'Đã xác nhận', 'Đang soạn hàng', 'Đang ở show', 'Đã nhập kho', 'Hủy'];
+var SHOW_ST = ['Báo giá', 'On Hold', 'Đã xác nhận', 'Đang soạn hàng', 'Đang ở show', 'Đã nhập kho', 'Hủy'];
 var SHOW_HOLD = ['Đã xác nhận', 'Đang soạn hàng', 'Đang ở show'];
 var SHOW_TYPES = ['Concert (cc)', 'Workshop (ws)', 'Training (tn)', 'Sự kiện / Hội nghị', 'Khác'];
 var SHOW_COLORS = ['#7c3aed', '#0ea5e9', '#f97316', '#10b981', '#e11d48', '#6366f1', '#ca8a04', '#14b8a6'];
@@ -261,9 +265,9 @@ function reseedDemo() {
 
 function setupStructure_() {
   var ss = ss_();
-  var order = ['GUIDE', 'CFG', 'CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'TRANSPORT', 'ASSIGN', 'STAFF', 'LOG', 'PRICELOG', 'TEST', 'CUST', 'DISC', 'USER', 'ROLE', 'VISIT', 'AUDIT', 'SYS'];
+  var order = ['GUIDE', 'CFG', 'CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'TRANSPORT', 'ASSIGN', 'STAFF', 'PHAT', 'CHI', 'XE', 'LOG', 'PRICELOG', 'TEST', 'CUST', 'DISC', 'USER', 'ROLE', 'VISIT', 'AUDIT', 'SYS'];
   var tabColor = { GUIDE: '#64748b', CFG: '#64748b', CAT: '#16a34a', ASSET: '#0ea5e9', MAINT: '#0d9488', RULE: '#f59e0b', SHOW: '#7c3aed', LINE: '#a855f7', LOG: '#94a3b8', TEST: '#e11d48',
-    STAFF: '#ca8a04', ASSIGN: '#ca8a04', TRANSPORT: '#0369a1', PRICELOG: '#94a3b8', CUST: '#0891b2', DISC: '#db2777', USER: '#1e293b', ROLE: '#1e293b', VISIT: '#475569', AUDIT: '#475569', SYS: '#000000' };
+    STAFF: '#ca8a04', ASSIGN: '#ca8a04', PHAT: '#dc2626', CHI: '#ea580c', XE: '#0f766e', TRANSPORT: '#0369a1', PRICELOG: '#94a3b8', CUST: '#0891b2', DISC: '#db2777', USER: '#1e293b', ROLE: '#1e293b', VISIT: '#475569', AUDIT: '#475569', SYS: '#000000' };
   order.forEach(function (key, i) {
     var sh = ss.getSheetByName(SH[key]);
     if (!sh) sh = ss.insertSheet(SH[key], Math.min(i, ss.getSheets().length));
@@ -308,6 +312,9 @@ function formatSheet_(key, sh, headers) {
     ASSIGN: [100, 110, 90, 105, 80, 80, 220, 160, 110, 240],
     TRANSPORT: [110, 110, 140, 120, 110, 105, 115, 150, 130, 80, 160, 260, 110],
     PRICELOG: [140, 110, 110, 150, 110, 110, 110, 300],
+    PHAT: [100, 110, 110, 140, 260, 110, 170, 120, 220],
+    CHI: [100, 110, 110, 150, 110, 120, 220],
+    XE: [90, 160, 130, 190, 110, 110, 220, 120],
     TEST: [50, 150, 520, 460, 60, 260],
     GUIDE: [220, 900],
     ROLE: [190, 50, 90, 170, 90, 110, 110, 120, 120, 110, 110, 110, 120, 260],
@@ -448,8 +455,8 @@ function uploadImagesToDrive() {
 }
 
 /* ================= ĐỒNG BỘ VỚI BẢN OFFLINE (file .json) ================= */
-var BACKUP_KEYS = ['CFG', 'CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'ROLE', 'USER', 'CUST', 'DISC', 'VISIT', 'AUDIT', 'SYS', 'STAFF', 'ASSIGN', 'TRANSPORT', 'PRICELOG'];
-var BUSINESS_KEYS = ['CFG', 'CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'CUST', 'DISC', 'STAFF', 'ASSIGN', 'TRANSPORT', 'PRICELOG'];
+var BACKUP_KEYS = ['CFG', 'CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'ROLE', 'USER', 'CUST', 'DISC', 'VISIT', 'AUDIT', 'SYS', 'STAFF', 'ASSIGN', 'TRANSPORT', 'PRICELOG', 'PHAT', 'CHI', 'XE'];
+var BUSINESS_KEYS = ['CFG', 'CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'CUST', 'DISC', 'STAFF', 'ASSIGN', 'TRANSPORT', 'PRICELOG', 'PHAT', 'CHI', 'XE'];
 
 /** Toàn bộ dữ liệu 9 sheet → chuỗi JSON (ngày giờ lưu dạng {"$d": mili-giây}) */
 function exportBackup_(keys) {
@@ -556,7 +563,7 @@ function apiBootstrap() {
   var lines = live_(readTable_('LINE')).map(lineObj_).filter(function (l) { return l.show; });
   var vat = num_(cfg['VAT_%']), sum = {};
   lines.forEach(function (l) { sum[l.show] = (sum[l.show] || 0) + l.amount; });
-  shows.forEach(function (s) { s.subtotal = sum[s.code] || 0; s.total = Math.round(s.subtotal * (1 - s.discount / 100) * (1 + vat / 100)); });
+  shows.forEach(function (s) { s.subtotal = sum[s.code] || 0; s.policy = policyOf_(s); s.total = Math.round(s.subtotal * (1 - effPct_(s.discount, s.policy) / 100) * (1 + vat / 100)); });
   var logs = live_(readTable_('LOG')).slice(-60).reverse().map(function (r) {
     return { t: dt2s_(r['Thời gian']), show: String(r['Mã show']), tag: String(r['Mã TB']), from: String(r['Từ']), to: String(r['Sang']), who: String(r['Người']), note: String(r['Ghi chú']) };
   });
@@ -570,6 +577,8 @@ function apiBootstrap() {
     whList: [{ name: WH.HN, city: WH_CITY[WH.HN] }, { name: WH.HCM, city: WH_CITY[WH.HCM] }], transMethods: TRANS_METHODS, transStatus: TRANS_ST,
     staffRoles: STAFF_ROLES, staff: staffList_(), assigns: assignList_(), transports: trs, priceLog: priceLogList_(), feed: feedFor_(),
     canPriceEdit: !!(CTX && (CTX.owner || (num_(CTX.level) > 0 && num_(CTX.level) <= 2))), isCeo: !!(CTX && (CTX.owner || num_(CTX.level) === 1)),
+    penalties: penaltyList_(), expenses: expenseList_(), cars: carList_(), salesRev: salesRev12_(), carRoles: CAR_ROLES, salesRoles: SALES_ROLES,
+    carMin: cfgNum_('XE_DOANH_SO_TOI_THIEU', 10000000000), phatLoai: PHAT_LOAI, chiKhoan: CHI_KHOAN, maStagePro: maStagePro_(), giam2: cfgNum_('GIAM_2_NGAY_%', 50),
     ST: ST, ST_LIST: ST_LIST, ST_COLOR: ST_COLOR, SHOW_ST: SHOW_ST, SHOW_HOLD: SHOW_HOLD, SHOW_TYPES: SHOW_TYPES,
     SHOW_COLORS: SHOW_COLORS, MAIN_TYPES: MAIN_TYPES, user: user_(), sheetUrl: ss_().getUrl(),
     today: Utilities.formatDate(new Date(), tz_(), 'yyyy-MM-dd'),
@@ -584,7 +593,8 @@ function showObj_(r) {
     days: num_(r['Số ngày tính tiền']), status: String(r['Trạng thái'] || 'Báo giá'), pic: String(r['Phụ trách'] || ''),
     total: num_(r['Tổng tiền']), note: String(r['Ghi chú'] || ''), color: String(r['Màu'] || ''),
     cust: String(r['Mã KH'] || ''), discount: num_(r['Chiết khấu %']), discStatus: String(r['Trạng thái CK'] || ''), creator: String(r['Người tạo'] || ''),
-    city: String(r['Thành phố'] || ''), wh: String(r['Kho xuất'] || WH.HN)
+    city: String(r['Thành phố'] || ''), wh: String(r['Kho xuất'] || WH.HN),
+    dayEnd: d2s_(r['Ngày diễn cuối']) || d2s_(r['Ngày diễn']), promo: String(r['Mã ưu đãi'] || '')
   };
 }
 function lineObj_(r) {
@@ -600,6 +610,7 @@ function lineObj_(r) {
 function apiSaveShow(payload) {
   return withLock_(function () {
     var s = payload.show, lines = payload.lines || [];
+    s.status = statusFor_(s);
     var catMap = catMap_();
     var showT = readTable_('SHOW'), lineT = readTable_('LINE'), assetT = readTable_('ASSET');
     var shows = live_(showT);
@@ -640,12 +651,15 @@ function apiSaveShow(payload) {
 
     var vat = num_(cfgGet_('VAT_%'));
     var disc = discountOnSave_(row, s);
+    var pol = policyOf_(s);
+    var promo = promoCheck_(s, row);
     Object.assign(row, {
       'Mã show': s.code, 'Tên show': s.name || '', 'Khách hàng': s.client || '', 'Địa điểm': s.venue || '', 'Loại': s.type || '',
       'Ngày xuất kho': s2d_(s.out), 'Ngày diễn': s2d_(s.day || s.out), 'Ngày nhập kho': s2d_(s.back || s.out), 'Số ngày tính tiền': days,
-      'Trạng thái': s.status || 'Báo giá', 'Phụ trách': s.pic || '', 'Tổng tiền': Math.round(total * (1 - disc.pct / 100) * (1 + vat / 100)), 'Ghi chú': s.note || '', 'Màu': color,
+      'Trạng thái': s.status || 'Báo giá', 'Phụ trách': s.pic || '', 'Tổng tiền': Math.round(total * (1 - effPct_(disc.pct, pol) / 100) * (1 + vat / 100)), 'Ghi chú': s.note || '', 'Màu': color,
       'Mã KH': s.cust || '', 'Chiết khấu %': disc.pct, 'Trạng thái CK': disc.status, 'Người tạo': row['Người tạo'] || (CTX ? CTX.username : user_()),
-      'Thành phố': s.city || '', 'Kho xuất': s.wh || WH.HN
+      'Thành phố': s.city || '', 'Kho xuất': s.wh || WH.HN,
+      'Ngày diễn cuối': s2d_(s.dayEnd || s.day), 'Mã ưu đãi': promo, 'Chính sách CK': pol.label
     });
     saveTable_(showT); saveTable_(lineT); if (released.length) saveTable_(assetT);
     appendRows_('LOG', logs.concat([{ 'Thời gian': new Date(), 'Mã show': s.code, 'Mã TB': '', 'Từ': '', 'Sang': s.status, 'Người': user_(), 'Ghi chú': (isNew ? 'Tạo show' : 'Cập nhật show') + ' – ' + newLines.length + ' dòng thiết bị' }]));
@@ -910,7 +924,7 @@ function apiSetPrice(model, price) {
 var WH = { HN: 'Kho Hà Nội', HCM: 'Kho TP.HCM' };
 var WH_CITY = {}; WH_CITY[WH.HN] = 'Hà Nội'; WH_CITY[WH.HCM] = 'TP.HCM';
 var DOMESTIC_CITY = ['Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Đà Lạt'];
-var STAFF_ROLES = ['Kỹ thuật âm thanh', 'Kỹ thuật ánh sáng', 'Setup âm thanh ánh sáng', 'Kỹ thuật kho', 'Khác'];
+var STAFF_ROLES = ['Kỹ thuật âm thanh', 'Kỹ thuật ánh sáng', 'Setup âm thanh ánh sáng', 'Kỹ thuật trưởng', 'Kỹ thuật hệ thống', 'Kỹ thuật kho', 'Khác'];
 var TRANS_METHODS = ['Xe tải', 'Máy bay', 'Tự mang'];
 var TRANS_ST = ['Chờ gửi', 'Đang vận chuyển', 'Đã đến', 'Hủy'];
 var FLIGHT_CUTOFF = '20:00';
@@ -1118,6 +1132,181 @@ function feedFor_() {
 }
 
 
+/* ===================== CHI PHÍ · TIỀN PHẠT · XE CÔNG TY · THỐNG KÊ · CHÍNH SÁCH GIÁ ===================== */
+var PHAT_LOAI = ['Lỗi kỹ thuật', 'Thiếu thiết bị', 'Lỗi nhân sự', 'Hư hỏng thiết bị', 'Khác'];
+var CHI_KHOAN = ['Vận chuyển', 'Nhân công', 'Ăn ở – đi lại', 'Thuê ngoài', 'Vật tư', 'Khác'];
+/** Cấp được xe công ty theo chức vụ; kinh doanh (Sales) được xe khi doanh số 12 tháng ≥ ngưỡng */
+var CAR_ROLES = ['CEO', 'Quản trị', 'Giám đốc', 'Phó tổng giám đốc', 'Giám đốc Kỹ Thuật', 'Phó giám đốc Kỹ Thuật', 'Giám đốc Sale'];
+var SALES_ROLES = ['Giám đốc Sale', 'Sales Manager'];
+var MA_STAGEPRO_MAC_DINH = 'STAGEPRO';
+
+function ymdOf_(d) { return Utilities.formatDate(d, tz_(), 'yyyy-MM-dd'); }
+function todayYmd_() { return ymdOf_(new Date()); }
+function dmy_(s) { s = String(s || ''); return s ? s.slice(8, 10) + '/' + s.slice(5, 7) + '/' + s.slice(0, 4) : ''; }
+/** Cấp Giám đốc trở lên (hoặc chủ sheet / trình chạy nội bộ) */
+function isTopCtx_() { return !CTX || !!CTX.owner || (num_(CTX.level) > 0 && num_(CTX.level) <= 2); }
+function isCeoCtx_() { return !CTX || !!CTX.owner || num_(CTX.level) === 1; }
+function cfgNum_(k, d) { var v = cfgGet_(k); return (v === '' || v === undefined || v === null) ? d : num_(v); }
+function maStagePro_() { return String(cfgGet_('MA_STAGEPRO') || MA_STAGEPRO_MAC_DINH).trim().toUpperCase(); }
+function isForeign_(city) { return !!city && DOMESTIC_CITY.indexOf(city) < 0; }
+
+/** Trạng thái: show ở nước ngoài luôn là On Hold (chờ quyết định) cho tới khi đổi trạng thái khác */
+function statusFor_(s) {
+  var st = s.status || 'Báo giá';
+  if (isForeign_(s.city) && ['Báo giá', 'Đã xác nhận', 'On Hold'].indexOf(st) >= 0) return 'On Hold';
+  return st;
+}
+/** Mã ưu đãi StagePro: chỉ CEO được nhập/đổi. Trả về mã đã chuẩn hóa ('' nếu không có). */
+function promoCheck_(s, row) {
+  var code = String(s.promo || '').trim().toUpperCase();
+  if (!code) return '';
+  if (code !== maStagePro_()) throw new Error('Mã ưu đãi không hợp lệ');
+  var was = String(row['Mã ưu đãi'] || '').trim().toUpperCase();
+  if (code !== was && !isCeoCtx_()) throw new Error('Chỉ CEO được nhập mã ưu đãi StagePro');
+  return code;
+}
+/** Chính sách giảm giá tự động: mã StagePro = 100%; show diễn từ 2 ngày liên tiếp trở lên = GIAM_2_NGAY_% (mặc định 50%) */
+function policyOf_(s) {
+  var promo = String(s.promo || '').trim().toUpperCase();
+  if (promo && promo === maStagePro_()) return { pct: 100, label: 'Mã ' + promo + ' (StagePro 100%)' };
+  var n = daysBetween_(s.day, s.dayEnd);
+  if (s.day && s.dayEnd && n >= 1) {
+    var pct = cfgNum_('GIAM_2_NGAY_%', 50);
+    return { pct: pct, label: 'Diễn ' + (n + 1) + ' ngày liên tiếp (giảm ' + pct + '%)' };
+  }
+  return { pct: 0, label: '' };
+}
+/** % giảm thực tế = lớn hơn giữa giảm thủ công đã duyệt và chính sách tự động */
+function effPct_(manual, pol) { return Math.max(num_(manual), pol ? num_(pol.pct) : 0); }
+
+/* ---------- chi phí & tiền phạt ---------- */
+function penaltyList_() {
+  return live_(readTable_('PHAT')).map(function (r) {
+    return { id: String(r['Mã phạt'] || ''), show: String(r['Mã show'] || ''), date: d2s_(r['Ngày']), type: String(r['Loại'] || ''), desc: String(r['Mô tả'] || ''),
+      amount: num_(r['Số tiền']), who: String(r['Người chịu'] || ''), by: String(r['Người ghi'] || ''), note: String(r['Ghi chú'] || '') };
+  }).filter(function (x) { return x.id; });
+}
+function expenseList_() {
+  return live_(readTable_('CHI')).map(function (r) {
+    return { id: String(r['Mã chi'] || ''), show: String(r['Mã show'] || ''), date: d2s_(r['Ngày']), type: String(r['Khoản chi'] || ''),
+      amount: num_(r['Số tiền']), by: String(r['Người ghi'] || ''), note: String(r['Ghi chú'] || '') };
+  }).filter(function (x) { return x.id; });
+}
+function saveFinRow_(key, idCol, prefix, rec, fill, cols) {
+  var t = readTable_(key);
+  var row = rec.id ? live_(t).filter(function (r) { return String(r[idCol]) === rec.id; })[0] : null;
+  if (!row) { row = {}; row[idCol] = nextId_(t, prefix, idCol); t.rows.push(row); }
+  Object.assign(row, fill);
+  saveTable_(t);
+  return { id: row[idCol] };
+}
+function apiSavePenalty(rec) {
+  return withLock_(function () {
+    rec = rec || {};
+    if (!rec.show) throw new Error('Chọn show');
+    if (!(num_(rec.amount) > 0)) throw new Error('Nhập số tiền phạt');
+    return saveFinRow_('PHAT', 'Mã phạt', 'PH-', rec, { 'Mã show': rec.show, 'Ngày': s2d_(rec.date || todayYmd_()), 'Loại': rec.type || PHAT_LOAI[0],
+      'Mô tả': rec.desc || '', 'Số tiền': num_(rec.amount), 'Người chịu': rec.who || '', 'Người ghi': user_(), 'Ghi chú': rec.note || '' });
+  });
+}
+function apiDeletePenalty(id) { return withLock_(function () { var t = readTable_('PHAT'); live_(t).forEach(function (r) { if (String(r['Mã phạt']) === id) r._deleted = true; }); saveTable_(t); return true; }); }
+function apiSaveExpense(rec) {
+  return withLock_(function () {
+    rec = rec || {};
+    if (!rec.show) throw new Error('Chọn show');
+    if (!(num_(rec.amount) > 0)) throw new Error('Nhập số tiền chi');
+    return saveFinRow_('CHI', 'Mã chi', 'CP-', rec, { 'Mã show': rec.show, 'Ngày': s2d_(rec.date || todayYmd_()), 'Khoản chi': rec.type || CHI_KHOAN[0],
+      'Số tiền': num_(rec.amount), 'Người ghi': user_(), 'Ghi chú': rec.note || '' });
+  });
+}
+function apiDeleteExpense(id) { return withLock_(function () { var t = readTable_('CHI'); live_(t).forEach(function (r) { if (String(r['Mã chi']) === id) r._deleted = true; }); saveTable_(t); return true; }); }
+
+/* ---------- xe công ty ---------- */
+function carList_() {
+  return live_(readTable_('XE')).map(function (r) {
+    return { id: String(r['Mã xe'] || ''), type: String(r['Loại xe'] || ''), plate: String(r['Biển số'] || ''), who: String(r['Người được cấp'] || ''),
+      from: d2s_(r['Ngày nhận']), to: d2s_(r['Ngày trả']), note: String(r['Ghi chú'] || ''), by: String(r['Người ghi'] || '') };
+  }).filter(function (x) { return x.id; });
+}
+function apiSaveCar(rec) {
+  return withLock_(function () {
+    if (!isTopCtx_()) throw new Error('Chỉ Giám đốc trở lên được cấp xe');
+    rec = rec || {};
+    if (!rec.type) throw new Error('Nhập loại xe');
+    return saveFinRow_('XE', 'Mã xe', 'XE-', rec, { 'Loại xe': rec.type, 'Biển số': rec.plate || '', 'Người được cấp': rec.who || '',
+      'Ngày nhận': rec.from ? s2d_(rec.from) : '', 'Ngày trả': rec.to ? s2d_(rec.to) : '', 'Ghi chú': rec.note || '', 'Người ghi': user_() });
+  });
+}
+function apiDeleteCar(id) { return withLock_(function () { if (!isTopCtx_()) throw new Error('Không có quyền'); var t = readTable_('XE'); live_(t).forEach(function (r) { if (String(r['Mã xe']) === id) r._deleted = true; }); saveTable_(t); return true; }); }
+/** Doanh số 12 tháng gần nhất theo người tạo show (đã chốt, không tính báo giá / On Hold / hủy) */
+function salesRev12_() {
+  var to = todayYmd_(), from = addDaysS_(to, -365), m = {};
+  live_(readTable_('SHOW')).forEach(function (r) {
+    var st = String(r['Trạng thái'] || '');
+    if (['Hủy', 'Báo giá', 'On Hold'].indexOf(st) >= 0) return;
+    var day = d2s_(r['Ngày diễn']);
+    if (!day || day < from || day > to) return;
+    var who = String(r['Người tạo'] || '');
+    m[who] = (m[who] || 0) + num_(r['Tổng tiền']);
+  });
+  return m;
+}
+
+/* ---------- thống kê: tuần / tháng / quý / nửa năm / năm / tùy chọn ---------- */
+function statsRange_(mode, ref, from, to) {
+  var r = s2d_(ref || todayYmd_()), y = r.getFullYear(), m = r.getMonth(), first, last, unit;
+  var ymd = ymdOf_;
+  if (mode === 'custom') {
+    first = from; last = to; var span = daysBetween_(from, to);
+    unit = span <= 31 ? 'day' : (span <= 120 ? 'week' : 'month');
+  } else if (mode === 'week') {
+    var w = (r.getDay() + 6) % 7; first = ymd(new Date(y, m, r.getDate() - w, 12)); last = addDaysS_(first, 6); unit = 'day';
+  } else if (mode === 'month') {
+    first = ymd(new Date(y, m, 1, 12)); last = ymd(new Date(y, m + 1, 0, 12)); unit = 'week';
+  } else if (mode === 'quarter') {
+    var q = Math.floor(m / 3) * 3; first = ymd(new Date(y, q, 1, 12)); last = ymd(new Date(y, q + 3, 0, 12)); unit = 'month';
+  } else if (mode === 'half') {
+    var h = m < 6 ? 0 : 6; first = ymd(new Date(y, h, 1, 12)); last = ymd(new Date(y, h + 6, 0, 12)); unit = 'month';
+  } else {
+    first = ymd(new Date(y, 0, 1, 12)); last = ymd(new Date(y, 11, 31, 12)); unit = 'month';
+  }
+  var buckets = [], cur = first;
+  while (first && last && cur <= last) {
+    var end;
+    if (unit === 'day') end = cur;
+    else if (unit === 'week') end = addDaysS_(cur, 6);
+    else { var d0 = s2d_(cur); end = ymd(new Date(d0.getFullYear(), d0.getMonth() + 1, 0, 12)); }
+    if (end > last) end = last;
+    var label = unit === 'month' ? ('Tháng ' + (s2d_(cur).getMonth() + 1) + '/' + s2d_(cur).getFullYear()) : (dmy_(cur) + (unit === 'week' ? ' – ' + dmy_(end) : ''));
+    buckets.push({ from: cur, to: end, label: label });
+    cur = addDaysS_(end, 1);
+  }
+  return { from: first, to: last, buckets: buckets };
+}
+function apiStats(mode, ref, from, to) {
+  if (!isTopCtx_()) throw new Error('Chỉ Giám đốc trở lên xem thống kê');
+  var R = statsRange_(mode || 'month', ref, from, to);
+  var sub = {};
+  live_(readTable_('LINE')).forEach(function (l) { var c = String(l['Mã show']); sub[c] = (sub[c] || 0) + num_(l['SL']) * num_(l['Đơn giá']) * num_(l['Số ngày']); });
+  var revs = [];
+  live_(readTable_('SHOW')).forEach(function (r) {
+    var st = String(r['Trạng thái'] || '');
+    if (['Hủy', 'Báo giá', 'On Hold'].indexOf(st) >= 0) return;
+    var day = d2s_(r['Ngày diễn']), pol = policyOf_({ promo: r['Mã ưu đãi'], day: day, dayEnd: d2s_(r['Ngày diễn cuối']) });
+    var pct = effPct_(r['Chiết khấu %'], pol);
+    revs.push({ day: day, v: (sub[String(r['Mã show'])] || 0) * (1 - pct / 100) });
+  });
+  var chis = expenseList_().map(function (x) { return { day: x.date, v: x.amount }; });
+  var phats = penaltyList_().map(function (x) { return { day: x.date, v: x.amount }; });
+  var sumIn = function (arr, a, b) { return arr.reduce(function (s, x) { return x.day >= a && x.day <= b ? s + x.v : s; }, 0); };
+  var rows = R.buckets.map(function (b) {
+    var rv = sumIn(revs, b.from, b.to), ex = sumIn(chis, b.from, b.to), pe = sumIn(phats, b.from, b.to);
+    return { label: b.label, from: b.from, to: b.to, revenue: Math.round(rv), expense: Math.round(ex), penalty: Math.round(pe), profit: Math.round(rv - ex - pe) };
+  });
+  var total = rows.reduce(function (t, x) { ['revenue', 'expense', 'penalty', 'profit'].forEach(function (k) { t[k] += x[k]; }); return t; }, { revenue: 0, expense: 0, penalty: 0, profit: 0 });
+  return { mode: mode || 'month', from: R.from, to: R.to, rows: rows, total: total };
+}
+
 /** Lưu ảnh PNG (phiếu xuất kho / báo giá) vào Drive, trả về link */
 function apiSavePng(dataUrl, fileName) {
   var m = String(dataUrl).match(/^data:image\/png;base64,(.+)$/);
@@ -1178,13 +1367,16 @@ function buildLines_(model, qty, params, choices, cat, rules) {
 /* ============================ DỮ LIỆU MẪU ================================ */
 function seedConfig_() {
   var rows = [
-    ['TEN_CONG_TY', 'AV RENTAL DEMO (giả định)', 'Hiện trên đầu popup và phiếu xuất kho'],
-    ['DIA_CHI_KHO', 'Kho thiết bị Q.7 – TP.HCM (giả định)', 'Vị trí mặc định của thiết bị'],
+    ['TEN_CONG_TY', 'FSL – Fantasies Show Light', 'Hiện trên đầu popup và phiếu xuất kho'],
+    ['DIA_CHI_KHO', 'Kho Hà Nội & Kho TP.HCM', 'Hai kho thiết bị'],
     ['NGUOI_PHU_TRACH', 'Hoàng', 'Người mặc định ghi vào nhật ký'],
     ['DON_VI_TIEN', 'đ', ''],
     ['VAT_%', 8, 'Thuế VAT cộng vào tổng tiền show'],
     ['GHI_CHU_GIA', 'Đơn giá thuê trong file là GIẢ ĐỊNH để chạy thử – thay bằng bảng giá thật', ''],
     ['NGUONG_SHOW_LON', NGUONG_MAC_DINH, 'Show có tổng tiền ≥ mức này là "show lớn": thiết bị không phù hợp (cũ tự sửa, đang cần sửa/bảo hành) bị loại khỏi soạn hàng và tô đỏ'],
+    ['MA_STAGEPRO', MA_STAGEPRO_MAC_DINH, 'Mã ưu đãi 100% cho công ty phân phối Stage Professional (StagePro). Chỉ CEO nhập.'],
+    ['GIAM_2_NGAY_%', 50, 'Show diễn từ 2 ngày liên tiếp trở lên được giảm % này (tự động)'],
+    ['XE_DOANH_SO_TOI_THIEU', 10000000000, 'Sales được cấp xe khi doanh số 12 tháng ≥ mức này (đồng)'],
     ['PHIEN_BAN', APP.VERSION, '']
   ];
   sh_('CFG').getRange(2, 1, rows.length, 3).setValues(rows);
@@ -1193,12 +1385,15 @@ function seedConfig_() {
 function ensureCfg_() {
   var sh = sh_('CFG'), have = cfgAll_(), add = [];
   if (!('NGUONG_SHOW_LON' in have)) add.push(['NGUONG_SHOW_LON', NGUONG_MAC_DINH, 'Show có tổng tiền ≥ mức này là "show lớn": thiết bị không phù hợp bị loại khỏi soạn hàng và tô đỏ']);
+  if (!('MA_STAGEPRO' in have)) add.push(['MA_STAGEPRO', MA_STAGEPRO_MAC_DINH, 'Mã ưu đãi 100% cho công ty phân phối Stage Professional (StagePro). Chỉ CEO nhập.']);
+  if (!('GIAM_2_NGAY_%' in have)) add.push(['GIAM_2_NGAY_%', 50, 'Show diễn từ 2 ngày liên tiếp trở lên được giảm % này (tự động)']);
+  if (!('XE_DOANH_SO_TOI_THIEU' in have)) add.push(['XE_DOANH_SO_TOI_THIEU', 10000000000, 'Sales được cấp xe khi doanh số 12 tháng ≥ mức này (đồng)']);
   if (add.length) sh.getRange(sh.getLastRow() + 1, 1, add.length, 3).setValues(add);
 }
 function nguongShowLon_() { var v = num_(cfgGet_('NGUONG_SHOW_LON')); return v > 0 ? v : NGUONG_MAC_DINH; }
 
 function seedDemo_() {
-  ['CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'CUST', 'DISC', 'STAFF', 'ASSIGN', 'TRANSPORT', 'PRICELOG'].forEach(function (k) {
+  ['CAT', 'ASSET', 'MAINT', 'RULE', 'SHOW', 'LINE', 'LOG', 'TEST', 'GUIDE', 'CUST', 'DISC', 'STAFF', 'ASSIGN', 'TRANSPORT', 'PRICELOG', 'PHAT', 'CHI', 'XE'].forEach(function (k) {
     var sh = sh_(k); if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, Math.max(sh.getLastColumn(), COLS[k].length)).clearContent();
   });
   if (sh_('CFG').getLastRow() < 2) seedConfig_();
@@ -1236,7 +1431,7 @@ function seedDemo_() {
 
   // 2) Anh Trai Vượt Ngàn Chông Gai – show chính, >500 triệu
   apiSaveShow({ show: { city: 'TP.HCM', wh: WH.HN, name: 'Anh Trai Vượt Ngàn Chông Gai (ATVNCG)', client: 'KH-001', venue: 'Global City, TP.HCM', type: 'Concert (cc)',
-    out: '2026-10-11', day: '2026-10-17', back: '2026-10-19', status: 'Đã xác nhận', pic: 'Hoàng',
+    out: '2026-10-11', day: '2026-10-17', dayEnd: '2026-10-18', back: '2026-10-19', status: 'Đã xác nhận', pic: 'Hoàng',
     note: 'Show hỗ trợ chính. Tuning 11/10. 15–16/10 Hoàng chỉ làm phần tối (ban ngày giao KTV đơn vị). Diễn 17–18/10.', color: '#0ea5e9' },
     lines: [].concat(
       L('GSL8', 24, { h: 2 }, { 'Khung treo': 'Treo Compression mode (GSL Flying frame set + Compression set)' }),
@@ -1260,24 +1455,24 @@ function seedDemo_() {
     out: '2026-11-03', day: '2026-11-04', back: '2026-11-05', status: 'Báo giá', pic: 'Hoàng', note: 'Bay VNA ra sáng 3/11, setup cùng ngày. Trùng ngày tuning Đà Lạt.', color: '#f97316' },
     lines: [].concat(L('Q225', 1, { r: 1 }, MADI)) });
   apiSaveShow({ show: { city: 'Đà Lạt', wh: WH.HCM, name: 'Jazz Festival Đà Lạt (diễn chung Andrea Bocelli 7/11)', client: '', venue: 'Chưa rõ venue, Đà Lạt', type: 'Concert (cc)',
-    out: '2026-11-03', day: '2026-11-07', back: '2026-11-09', status: 'Báo giá', pic: 'Hoàng', note: 'Tuning dời sang 5/11 gộp soundcheck. 7/11 diễn chung Bocelli, 8/11 show chính, về 9/11.', color: '#0ea5e9' },
+    out: '2026-11-03', day: '2026-11-07', dayEnd: '2026-11-08', back: '2026-11-09', status: 'Báo giá', pic: 'Hoàng', note: 'Tuning dời sang 5/11 gộp soundcheck. 7/11 diễn chung Bocelli, 8/11 show chính, về 9/11.', color: '#0ea5e9' },
     lines: [].concat(L('J12', 8), L('JSUB', 4), L('Q338', 1, { r: 1 }, MADI)) });
   apiSaveShow({ show: { city: 'Đà Nẵng', wh: WH.HN, name: 'ws Đà Nẵng', client: '', venue: 'Chốt sau khảo sát, Đà Nẵng', type: 'Workshop (ws)',
     out: '2026-11-17', day: '2026-11-18', back: '2026-11-19', status: 'Báo giá', pic: 'Hoàng', note: 'Ngày dự kiến 18/11 (tuần 16–22/11).', color: '#f97316' },
     lines: [].concat(L('Q225DS', 1, { r: 1 }, MADI)) });
 
-  // ---- nhân sự (giả định), phân công, vận chuyển ----
-  [['NV-001','Trần Minh Đức (giả định)','Kỹ thuật âm thanh',WH.HN],['NV-002','Lê Thu Hà (giả định)','Kỹ thuật ánh sáng',WH.HN],
-   ['NV-003','Phạm Quốc Bảo (giả định)','Setup âm thanh ánh sáng',WH.HN],['NV-004','Vũ Đức Long (giả định)','Kỹ thuật âm thanh',WH.HCM],
-   ['NV-005','Ngô Thị Mai (giả định)','Kỹ thuật kho',WH.HCM],['NV-006','Đặng Hữu Phúc (giả định)','Kỹ thuật kho',WH.HN]].forEach(function (x) {
-    apiSaveStaff({ name: x[1], role: x[2], wh: x[3], note: 'Dữ liệu mẫu – thay bằng nhân sự thật' });
+  // ---- nhân sự (theo danh sách FSL), phân công, vận chuyển ----
+  [['NV-001','Thiết','Kỹ thuật âm thanh',WH.HN,'PGĐ Kỹ thuật – Âm thanh'],['NV-002','Sơn','Kỹ thuật ánh sáng',WH.HN,'PGĐ Kỹ thuật – Ánh sáng'],
+   ['NV-003','Minh','Kỹ thuật trưởng',WH.HN,'Kỹ thuật trưởng'],['NV-004','Hoàng','Kỹ thuật hệ thống',WH.HN,'Kỹ thuật hệ thống'],
+   ['NV-005','Mạnh','Setup âm thanh ánh sáng',WH.HN,'Setup'],['NV-006','Hiếu','Setup âm thanh ánh sáng',WH.HN,'Setup']].forEach(function (x) {
+    apiSaveStaff({ name: x[1], role: x[2], wh: x[3], note: x[4] });
   });
-  apiSaveAssign({ show: 'SH-2610-001', staff: 'NV-004', date: '2026-10-09', from: '08:00', to: '18:00', task: 'Soundcheck / rehearsal', place: 'Nhà hát Hòa Bình' });
-  apiSaveAssign({ show: 'SH-2610-002', staff: 'NV-003', date: '2026-10-11', from: '08:00', to: '18:00', task: 'Tuning & setup', place: 'Global City' });
+  apiSaveAssign({ show: 'SH-2610-001', staff: 'NV-005', date: '2026-10-09', from: '08:00', to: '18:00', task: 'Soundcheck / rehearsal', place: 'Nhà hát Hòa Bình' });
+  apiSaveAssign({ show: 'SH-2610-002', staff: 'NV-005', date: '2026-10-11', from: '08:00', to: '18:00', task: 'Tuning & setup', place: 'Global City' });
   apiSaveAssign({ show: 'SH-2610-002', staff: 'NV-001', date: '2026-10-15', from: '16:00', to: '23:00', task: 'Mix chính (phần tối)', place: 'Global City' });
-  apiSaveAssign({ show: 'SH-2610-004', staff: 'NV-003', date: '2026-10-19', from: '09:00', to: '18:00', task: 'Setup tại Bangkok', place: 'Centerpoint Studio 1, Bangkok' });
-  apiSaveAssign({ show: 'SH-2611-002', staff: 'NV-005', date: '2026-11-03', from: '07:00', to: '17:00', task: 'Soạn hàng & xếp xe', place: 'Kho TP.HCM' });
-  apiSaveAssign({ show: 'SH-2611-002', staff: 'NV-004', date: '2026-11-05', from: '08:00', to: '20:00', task: 'Tuning', place: 'Đà Lạt' });
+  apiSaveAssign({ show: 'SH-2610-004', staff: 'NV-002', date: '2026-10-19', from: '09:00', to: '18:00', task: 'Setup tại Bangkok', place: 'Centerpoint Studio 1, Bangkok' });
+  apiSaveAssign({ show: 'SH-2611-002', staff: 'NV-003', date: '2026-11-03', from: '07:00', to: '17:00', task: 'Soạn hàng & xếp xe', place: 'Kho Hà Nội' });
+  apiSaveAssign({ show: 'SH-2611-002', staff: 'NV-001', date: '2026-11-05', from: '08:00', to: '20:00', task: 'Tuning', place: 'Đà Lạt' });
   apiSaveTransport({ show: 'SH-2610-002', from: WH.HN, method: 'Xe tải', send: '2026-10-08', status: 'Đang vận chuyển', pieces: 40, note: 'Xe tải từ Hà Nội vào TP.HCM (3 ngày)' });
   apiSaveTransport({ show: 'SH-2611-002', from: WH.HCM, method: 'Xe tải', send: '2026-10-31', status: 'Chờ gửi', pieces: 30, note: 'Xe tải từ TP.HCM lên Đà Lạt' });
   apiSaveTransport({ show: 'SH-2610-004', from: WH.HN, method: 'Máy bay', send: '2026-10-18', status: 'Chờ gửi', pieces: 12, note: 'Bay VNA; chốt vé trước 20:00 ngày 17/10' });
@@ -1308,6 +1503,9 @@ function demoCatalog_() {
     ['GSL8', DB, 'SL-Series', 'GSL', 'GSL8 loudspeaker', 'Loa line array', 'Z0750.000', '2-way active, 80°, 2×14" LF trước + 2×10" LF hông + 10" MF + 3×1.4" HF, NLT4 F, 45 Hz–18 kHz, 150 dB. Tối đa 2 loa/D80.', 80, 1800000, true, 'h=Số hang (cụm treo)=2', '', 'GSL8'],
     ['GSL12', DB, 'SL-Series', 'GSL', 'GSL12 loudspeaker', 'Loa line array', 'Z0751.000', 'Như GSL8 nhưng phủ ngang 120°, 149 dB. Tối đa 2 loa/D80.', 80, 1800000, true, 'h=Số hang (cụm treo)=2', '', 'GSL12'],
     ['SLSUB', DB, 'SL-Series', 'SL-SUB', 'SL-SUB subwoofer', 'Subwoofer', 'Z0760.000', 'Sub cardioid 3×21", 33–84 Hz, 144 dB, treo được tối đa 14 thùng. Tối đa 2 loa/D80.', 138, 1500000, true, 'h=Số cụm=2', '', 'SLSUB'],
+    ['KSL8', DB, 'K-Series', 'KSL', 'KSL8 loudspeaker', 'Loa line array', 'Z0800.000', 'KSL8 – GIÁ & THÔNG SỐ GIẢ ĐỊNH, thay bằng dữ liệu thật', 0, 1000000, true, '', '', 'KSL8'],
+    ['XSL8', DB, 'XSL-Series', 'XSL', 'XSL8 loudspeaker', 'Loa line array', 'Z0801.000', 'XSL8 – GIÁ & THÔNG SỐ GIẢ ĐỊNH, thay bằng dữ liệu thật', 0, 1100000, true, '', '', 'XSL8'],
+    ['V8', DB, 'V-Series', 'V', 'V8 loudspeaker', 'Loa line array', 'Z0802.000', 'V8 – GIÁ & THÔNG SỐ GIẢ ĐỊNH, thay bằng dữ liệu thật', 0, 800000, true, '', '', 'V8'],
     ['SLGSUB', DB, 'SL-Series', 'SL-GSUB', 'SL-GSUB subwoofer (ground stack)', 'Subwoofer', 'Z0761.000', 'Bản ground stack của SL-SUB (không phụ kiện treo), 3×21", 33–84 Hz. Tối đa 2 loa/D80.', 132, 1400000, true, '', '', 'SLGSUB'],
     ['Z5708', DB, 'SL-Series', 'SL-RIG', 'GSL Flying frame set', 'Khung treo', 'Z5708.000', 'Gồm Z5701 GSL Flying frame + Z5702 Load beam + Z5705 Safety chain 4t + Z5761 ArraySight sender.', '', 400000, false, '', '', 'Z5708'],
     ['Z5704', DB, 'SL-Series', 'SL-RIG', 'GSL Compression set', 'Khung treo', 'Z5704.000', 'Z5703 Compression frame + lever hoist + master link + grab link + Z5709 chain 2.5t. Lực nén tối đa 1 t.', '', 300000, false, '', '', 'Z5704'],
@@ -1488,7 +1686,7 @@ function demoRules_() {
 function demoAssets_(cat) {
   var stock = {
     J8: 24, J12: 12, JSUB: 12, JINFRA: 4, Z5300: 4, Z5305: 8, E7441: 4, E7919: 8, E7910: 12, E7920: 4,
-    GSL8: 28, GSL12: 8, SLSUB: 12, SLGSUB: 28, Z5708: 4, Z5704: 4, Z5706: 6, Z5707: 2, Z5762: 2,
+    GSL8: 72, GSL12: 8, SLSUB: 58, SLGSUB: 28, KSL8: 72, XSL8: 24, V8: 30, Z5708: 4, Z5704: 4, Z5706: 6, Z5707: 2, Z5762: 2,
     E7490: 10, E7491: 10, E7492: 14, E7493: 14, E7499: 14, E7494: 4, E7497: 4,
     RK6: 5, RK3: 2, RK1: 4,
     Z5328: 16, Z5325: 16, Z5343: 16, Z5340: 60, Z5348: 16, Z5347: 4,
@@ -1501,6 +1699,9 @@ function demoAssets_(cat) {
   var cfgMap = { Q338: 'Optics dual loop', Q338P: 'Optics dual loop', Q225: 'MADI only (không optics)', Q225P: 'Optics single loop', Q225DS: 'Optics single loop', Q225DSP: 'Optics dual loop', 'SDR-OP': 'Optics, 56 in/56 out', 'SDR-MADI': 'MADI BNC, 56 in/56 out', RK6: 'CEE 32A, DS10', RK3: 'CEE 32A, DS10' };
   var info = {}; cat.forEach(function (c) { info[c[0]] = c; });
   var curLoc = WH.HN, out = [], maint = [], d80 = 0, ds10 = 0, seq = 0;
+  /** Số lượng theo kho (theo yêu cầu FSL). Model không có ở đây: chia ~80% HN / 20% HCM */
+  var locSpec = { GSL8: { HN: 56, HCM: 16 }, GSL12: { HN: 8 }, SLSUB: { HN: 50, HCM: 8 }, KSL8: { HN: 72 }, XSL8: { HN: 24 }, V8: { HN: 30 } };
+  var locOf = function (m, i) { var sp = locSpec[m]; return sp ? (i <= (sp.HN || 0) ? WH.HN : WH.HCM) : null; };
   var pad = function (n, w) { return ('000' + n).slice(-(w || 3)); };
   var TT = TT_MUA, DATE = function (y, m, d) { return new Date(y, m, d, 9, 0, 0); };
   /** Giả định tình trạng thiết bị: 80% mới, 10% like-new, 10% mua cũ (trong đó 50/30/20) – chia đều theo số thứ tự, không ngẫu nhiên */
@@ -1520,10 +1721,10 @@ function demoAssets_(cat) {
     if (tag === 'J8-003') { r.cond = HT.CBH; r.maint = { type: 'Bảo hành', desc: 'Lỗi phát hiện khi kiểm tra, chờ bảo hành NSX', vendor: 'NSX d&b (chờ)', after: HT.CBH, cost: 0 }; }
     return r;
   };
-  var push = function (tag, model, serial, cfg, parent, withCond) {
+  var push = function (tag, model, serial, cfg, parent, withCond, forced) {
     var c = info[model], x = withCond ? condOf(seq, tag) : null;
     // kho: ~80% Hà Nội, ~20% TP.HCM (tính theo thiết bị gốc); thiết bị con đi theo bộ cha
-    if (!parent) curLoc = (seq % 10 < 8) ? WH.HN : WH.HCM;
+    if (!parent) curLoc = forced || ((seq % 10 < 8) ? WH.HN : WH.HCM);
     out.push([tag, model, c[4], c[5], serial, cfg || '', parent || '', ST.KHO, '', curLoc, false, DATE(2026, 9, 1), '',
       x ? x.mfg : '', x ? x.bought : '', x ? x.buyCond : '', x ? x.buyPct : '', x ? x.cond : '', x ? x.noBig : false, x ? x.lastOut : '', x ? x.lastIn : '']);
     if (x && x.maint) maint.push([tag, DATE(2025 + (seq % 2), (seq * 3) % 12, 5 + (seq % 20)), x.maint.type, x.maint.desc, x.maint.vendor, x.maint.after, x.maint.cost, 'Hoàng', '']);
@@ -1532,7 +1733,7 @@ function demoAssets_(cat) {
     for (var i = 1; i <= stock[m]; i++) {
       var tag = m + '-' + pad(i, stock[m] > 99 ? 3 : (stock[m] > 9 ? 3 : 2));
       seq++;
-      push(tag, m, (info[m][6] || m).replace(/\.xxx|\.\d{3}/, '') + '-' + (2400 + i * 7), cfgMap[m], '', true);
+      push(tag, m, (info[m][6] || m).replace(/\.xxx|\.\d{3}/, '') + '-' + (2400 + i * 7), cfgMap[m], '', true, locOf(m, i));
       var nD80 = m === 'RK6' ? 6 : m === 'RK3' ? 3 : m === 'RK1' ? 1 : 0;
       for (var k = 0; k < nD80; k++) { d80++; push('D80-' + pad(d80), 'D80', 'Z2710-' + (51000 + d80 * 13), '', tag, false); }
       if (m === 'RK6' || m === 'RK3') { ds10++; push('DS10-' + pad(ds10, 2), 'DS10', 'Z4010-' + (8800 + ds10 * 11), '', tag, false); }
