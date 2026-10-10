@@ -33,6 +33,7 @@ input,select,textarea{font-family:inherit;font-size:13px;color:var(--ink)}
 .tab:hover{background:var(--card);border-color:var(--line)}
 .tab.on{background:var(--card);color:var(--pri);border-color:#d9d0ff;box-shadow:inset 0 -3px 0 var(--pri),var(--sh)}
 .kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.kpi-click{cursor:pointer}.kpi-click:hover{border-color:var(--c)}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;gap:12px;align-items:center;box-shadow:var(--sh);position:relative;overflow:hidden}
 .kpi:after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--c,#6d28d9)}
 .kpi .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:18px;background:var(--cs,#ede9fe)}
@@ -454,7 +455,7 @@ function buildLines(model, qty, params, choices){
 
 /* ---------------------------- khung ---------------------------- */
 function tabsList(){
-  var t = [['org','🏢','Sơ đồ tổ chức'],['week','📅','Lịch thiết bị tuần'],['stock','📦','Kho thiết bị'],['show','🎪','Show & đặt thiết bị'],['ops','🚚','Xuất / Nhập kho'],['slip','🧾','Phiếu / Báo giá']];
+  var t = [['org','🏢','Sơ đồ tổ chức'],['week','📅','Lịch thiết bị tuần'],['stock','📦','Kho thiết bị'],['show','🎪','Show & đặt thiết bị'],['ops','📤','Xuất / Nhập kho'],['transport','🚚','Vận chuyển'],['staff','👷','Nhân sự'],['slip','🧾','Phiếu / Báo giá']];
   if (can('XEM_KHACH_HANG')) t.push(['cust','👥','Khách hàng']);
   var n = myPending().length; t.push(['disc','💸','Duyệt chiết khấu' + (n ? '<span class="tabbadge">'+n+'</span>' : '')]);
   t.push(['log','🕘','Nhật ký kho']);
@@ -474,22 +475,22 @@ function renderKpis(){
   var wkShows = B.shows.filter(function(s){ return B.SHOW_HOLD.indexOf(s.status) >= 0 && overlap(s.out, s.back, S.week, we); });
   var rev = wkShows.reduce(function(a,s){ return a + (s.total||0); }, 0);
   var K = [
-    ['📦', top.length, 'Tổng thiết bị (mã TB)', '#6d28d9', '#ede9fe'],
-    ['✅', c(B.ST.KHO), B.ST.KHO, '#16a34a', '#dcfce7'],
-    ['🧰', c(B.ST.CB), B.ST.CB, '#f59e0b', '#fef3c7'],
-    ['🎤', c(B.ST.SHOW), B.ST.SHOW, '#7c3aed', '#ede9fe'],
-    ['🛠️', c(B.ST.BT), B.ST.BT, '#ef4444', '#fee2e2'],
-    ['🎪', wkShows.length + ' show', 'Tuần ' + fds(S.week) + '–' + fds(we) + ' · ' + money(rev), '#0ea5e9', '#e0f2fe']
+    ['📦', top.length, 'Tổng thiết bị (mã TB)', '#6d28d9', '#ede9fe', "openAssetList('','')"],
+    ['✅', c(B.ST.KHO), B.ST.KHO, '#16a34a', '#dcfce7', "openAssetList('','"+B.ST.KHO+"')"],
+    ['🧰', c(B.ST.CB), B.ST.CB, '#f59e0b', '#fef3c7', "openAssetList('','"+B.ST.CB+"')"],
+    ['🎤', c(B.ST.SHOW), B.ST.SHOW, '#7c3aed', '#ede9fe', "openAssetList('','"+B.ST.SHOW+"')"],
+    ['🛠️', c(B.ST.BT), B.ST.BT, '#ef4444', '#fee2e2', "openAssetList('','"+B.ST.BT+"')"],
+    ['🎪', wkShows.length + ' show', 'Tuần ' + fds(S.week) + '–' + fds(we) + ' · ' + money(rev), '#0ea5e9', '#e0f2fe', 'openWeekShows()']
   ];
   if (MODE === 'sidebar') K = K.slice(1, 5);
-  $('#kpis').innerHTML = K.map(function(k){ return '<div class="kpi" style="--c:'+k[3]+';--cs:'+k[4]+'"><div class="ic">'+k[0]+'</div><div><b>'+k[1]+'</b><small>'+esc(k[2])+'</small></div></div>'; }).join('');
+  $('#kpis').innerHTML = K.map(function(k){ return '<div class="kpi'+(k[5]?' kpi-click':'')+'" style="--c:'+k[3]+';--cs:'+k[4]+'"'+(k[5]?' onclick="'+k[5]+'"':'')+'><div class="ic">'+k[0]+'</div><div><b>'+k[1]+'</b><small>'+esc(k[2])+'</small></div></div>'; }).join('');
 }
 function render(){
   if (!B) return;
   renderKpis();
   var v = $('#view');
   if (MODE === 'sidebar') { v.innerHTML = vSidebar(); return; }
-  v.innerHTML = ({org:vOrg, week:vWeek, stock:vStock, show:vShow, ops:vOps, slip:vSlip, log:vLog, cust:vCust, disc:vDisc, users:vUsers, sys:vSys}[S.tab] || vOrg)();
+  v.innerHTML = feedCard() + ({org:vOrg, week:vWeek, stock:vStock, show:vShow, ops:vOps, transport:vTransport, staff:vStaff, slip:vSlip, log:vLog, cust:vCust, disc:vDisc, users:vUsers, sys:vSys}[S.tab] || vOrg)();
 }
 function reload(keep){
   if (MODE === 'offline' && !window.ENGINE.session()) { showLogin(); return Promise.resolve(); }
@@ -616,7 +617,7 @@ function vStock(){
   });
   var h = '<div class="card"><div class="card-h"><h2>📦 KHO THIẾT BỊ</h2><span class="mute">' + B.catalog.length + ' model · ' + B.assets.length + ' mã thiết bị (kể cả D80/DS10 nằm trong rack)</span><div class="grow"></div>' +
     '<input class="inp" style="width:240px" placeholder="🔎 Tìm model, part no…" value="'+esc(S.kSearch)+'" oninput="S.kSearch=this.value;clearTimeout(window._t);window._t=setTimeout(render,250)"></div>' +
-    '<div class="card-b"><div class="row" style="justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap"><div class="chips">' +
+    '<div class="card-b">' + whSummary() + '<div class="row" style="justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap"><div class="chips">' +
     GROUPS.map(function(g){ return '<span class="chip '+(S.kGroup===g?'on':'')+'" onclick="S.kGroup=\''+g+'\';render()">'+esc(g)+'</span>'; }).join('') +
     '</div><label class="row mute" style="gap:6px"><input type="checkbox" '+(S.kMain?'checked':'')+' onchange="S.kMain=this.checked;render()"> Chỉ thiết bị chính</label></div>' +
     '<div class="chips" style="margin-bottom:12px">' + series.map(function(s){ return '<span class="chip '+(S.kSeries===s?'on':'')+'" onclick="S.kSeries=\''+esc(s)+'\';render()">'+esc(s)+'</span>'; }).join('') + '</div><div class="grid">';
@@ -674,6 +675,7 @@ function openAsset(tag){
     fld('Hiện trạng', sel('ai_cond', B.htList, a.cond)) +
     fld('Không đi show lớn','<label class="row" style="gap:6px;padding:8px 0"><input type="checkbox" id="ai_noBig" '+(a.noBig?'checked':'')+dis+'> loại khi show ≥ '+money(B.bigShow)+'</label>') +
     fld('Xuất / nhập kho gần nhất','<div class="inp" style="background:var(--soft)">'+(fd(a.lastOut)||'—')+' / '+(fd(a.lastIn)||'—')+'</div>') +
+    (a.parent ? '' : fld('Kho đang đặt', sel('ai_loc', B.whList.map(function(w){ return w.name; }), a.loc))) +
     '</div>' + (ed ? '<div style="text-align:right;margin-top:8px"><button class="btn pri sm" onclick="saveAssetInfo(\''+esc(a.tag)+'\')">💾 Lưu thông tin</button></div>' : '') +
     '<h4 style="margin:16px 0 8px">Lịch sử bảo trì / bảo hành ('+hist.length+')</h4>' +
     (hist.length ? '<div style="overflow:auto"><table class="t"><thead><tr><th>Ngày</th><th>Loại</th><th>Nội dung</th><th>Nơi thực hiện</th><th>Hiện trạng sau</th><th class="num">Chi phí</th><th>Người ghi</th></tr></thead><tbody>' + hist.map(function(m){ return '<tr><td>'+fd(m.date)+'</td><td>'+esc(m.type)+'</td><td>'+esc(m.desc)+'</td><td>'+esc(m.vendor)+'</td><td>'+esc(m.after)+'</td><td class="num">'+(m.cost?money(m.cost):'—')+'</td><td class="mute">'+esc(m.by)+'</td></tr>'; }).join('') + '</tbody></table></div>' : '<div class="mute">Chưa có lịch sử.</div>') +
@@ -692,7 +694,7 @@ function saveAssetInfo(tag){
   var v = function(id){ return document.getElementById(id).value; };
   busy(true);
   call('apiSetAssetInfo', tag, { serial: v('ai_serial'), mfg: v('ai_mfg'), bought: v('ai_bought'), buyCond: v('ai_buyCond'),
-    buyPct: Number(v('ai_buyPct')) || 0, cond: v('ai_cond'), noBig: document.getElementById('ai_noBig').checked })
+    buyPct: Number(v('ai_buyPct')) || 0, cond: v('ai_cond'), noBig: document.getElementById('ai_noBig').checked, loc: document.getElementById('ai_loc') ? v('ai_loc') : undefined })
     .then(function(){ toast('✅ Đã lưu '+esc(tag), 'ok'); return reload(); })
     .then(function(){ openAsset(tag); })
     .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
@@ -725,7 +727,7 @@ function closeModal(){ $('#modal').innerHTML = ''; }
 /* ======================= 🎪 SHOW & ĐẶT THIẾT BỊ ======================= */
 function newShow(){
   var out = addDays(B.today, 3);
-  S.ed = { show: { code:'', name:'', client:'', venue:'', type:B.SHOW_TYPES[0], out:out, day:addDays(out,2), back:addDays(out,3), days:4, status:'Báo giá', pic:(A().me && A().me.name)||B.cfg.NGUOI_PHU_TRACH||'', note:'', color:'', cust:'', discount:0 }, lines: [], dirty:false };
+  S.ed = { show: { code:'', name:'', client:'', venue:'', type:B.SHOW_TYPES[0], out:out, day:addDays(out,2), back:addDays(out,3), days:4, status:'Báo giá', pic:(A().me && A().me.name)||B.cfg.NGUOI_PHU_TRACH||'', note:'', color:'', cust:'', discount:0, city:'', wh: B.whList[0].name }, lines: [], dirty:false };
 }
 function openShow(code){
   var s = B._show[code]; if (!s) return;
@@ -739,7 +741,7 @@ function vShow(){
   var h = '<div class="two"><div class="card"><div class="card-h"><h2>🎪 DANH SÁCH SHOW</h2><div class="grow"></div><button class="btn pri sm" onclick="newShow();render()">＋ Tạo show mới</button></div><div class="card-b">' +
     '<input class="inp" style="width:100%;margin-bottom:8px" placeholder="🔎 Tìm show…" value="'+esc(S.sFilter)+'" oninput="S.sFilter=this.value;clearTimeout(window._t);window._t=setTimeout(render,250)"><div class="slist">';
   shows.forEach(function(s){
-    h += '<div class="sitem '+(S.ed.show.code===s.code?'on':'')+'" style="--c:'+s.color+'" onclick="openShow(\''+s.code+'\')"><div class="row" style="justify-content:space-between"><span class="code">'+esc(s.code)+'</span>'+showBadge(s.status)+'</div><b style="margin-top:5px">'+esc(s.name)+'</b><div class="mute" style="font-size:11.5px">📍 '+esc(s.venue)+'</div><div class="mute" style="font-size:11.5px">🚚 '+fds(s.out)+' → ★ '+fds(s.day)+' → 📥 '+fd(s.back)+'</div><div style="font-weight:700;font-size:12px;margin-top:3px">'+money(s.total)+'</div></div>';
+    h += '<div class="sitem '+(S.ed.show.code===s.code?'on':'')+'" style="--c:'+s.color+'" onclick="openShowPop(\''+s.code+'\')"><div class="row" style="justify-content:space-between"><span class="code">'+esc(s.code)+'</span>'+showBadge(s.status)+'</div><b style="margin-top:5px">'+esc(s.name)+'</b><div class="mute" style="font-size:11.5px">📍 '+esc(s.venue)+'</div><div class="mute" style="font-size:11.5px">🚚 '+fds(s.out)+' → ★ '+fds(s.day)+' → 📥 '+fd(s.back)+'</div><div style="font-weight:700;font-size:12px;margin-top:3px">'+money(s.total)+'</div></div>';
   });
   if (!shows.length) h += '<div class="empty">Chưa có show.</div>';
   h += '</div></div></div>' + vEditor() + '</div>';
@@ -757,7 +759,7 @@ function vEditor(){
     (s.code ? '<button class="btn sm" onclick="S.opsCode=\''+s.code+'\';go(\'ops\')">🚚 Xuất / nhập</button><button class="btn sm" onclick="S.slipCode=\''+s.code+'\';go(\'slip\')">🧾 Phiếu</button>' : '') +
     '<button class="btn pri" onclick="saveShow()">💾 Lưu show</button>' + (s.code ? '<button class="btn bad sm" onclick="delShow()">🗑</button>' : '') + '</div><div class="card-b"><div class="form">' +
     f('Tên show','name','text','s2') + custField(s) + f('Loại','type',null,'',B.SHOW_TYPES) +
-    f('Địa điểm','venue','text','s2') + f('Trạng thái','status',null,'',B.SHOW_ST) + f('Phụ trách','pic') +
+    f('Địa điểm','venue','text','s2') + f('Thành phố','city') + f('Kho xuất','wh',null,'',B.whList.map(function(w){ return w.name; })) + f('Trạng thái','status',null,'',B.SHOW_ST) + f('Phụ trách','pic') +
     f('🚚 Ngày xuất kho','out','date') + f('★ Ngày diễn','day','date') + f('📥 Ngày nhập kho','back','date') + f('Số ngày tính tiền','days','number') +
     f('Ghi chú','note','text','s4') + '</div>';
   if (B.SHOW_HOLD.indexOf(s.status) < 0) h += '<div class="note" style="margin-top:10px">ⓘ Trạng thái "'+esc(s.status)+'" chưa giữ hàng – các show khác vẫn đặt được thiết bị này. Chuyển sang "Đã xác nhận" để giữ hàng.</div>';
@@ -899,6 +901,7 @@ function vOps(){
   h += '<div class="card-b"><div class="row" style="justify-content:space-between"><div><b style="font-size:14px">'+esc(s.name)+'</b><div class="mute">📍 '+esc(s.venue)+' · 👤 '+esc(s.client)+' · 🚚 '+fd(s.out)+' → ★ '+fd(s.day)+' → 📥 '+fd(s.back)+'</div></div><div class="steps">' +
     flow.map(function(f,i){ return '<div class="step '+(i<cur?'done':(i===cur?'cur':''))+'"><i>'+(i<cur?'✓':i+1)+'</i>'+esc(f)+'</div>'; }).join('') + '</div></div>';
   if (s.note) h += '<div class="note i" style="margin-top:8px">📝 '+esc(s.note)+'</div>';
+  h += trNote(s);
   h += '</div>';
   if (S.checkin && S.checkin.code === s.code) return h + vCheckin(s) + '</div>';
   if (s.total >= B.bigShow) h += bigBanner(s.total) + badList(s.code);
@@ -1009,9 +1012,283 @@ function slipPng(toDrive){
 }
 
 /* ========================= 🕘 NHẬT KÝ ========================= */
-function vLog(){
+function vLog(){ return vLogMain() + priceLogCard(); }
+function vLogMain(){
   return '<div class="card"><div class="card-h"><h2>🕘 NHẬT KÝ XUẤT NHẬP (60 dòng gần nhất)</h2><div class="grow"></div><span class="mute">Đầy đủ ở sheet "Nhật ký"</span></div><div class="card-b"><div class="loglist" style="max-height:560px">' + (B.logs.length ? B.logs.map(function(g){ return logRow(g).replace('<span class="mute" style="width:110px">', '<span class="code">'+esc(g.show||'—')+'</span><span class="mute" style="width:110px">'); }).join('') : '<div class="empty">Chưa có.</div>') + '</div></div></div>';
 }
+
+/* ======================= 🚚 VẬN CHUYỂN · 👷 NHÂN SỰ · 💲 GIÁ · 📝 GHI CHÚ ======================= */
+var TR_ICON = { 'Xe tải': '🚚', 'Máy bay': '✈️', 'Tự mang': '🧳' };
+function whOf(s){ return (s && s.wh) || (B.whList[0] || {}).name || ''; }
+function trNote(s){
+  var t = s && s.transport; if (!t) return '';
+  return '<div class="note" style="margin-top:8px;'+(t.ok?'background:#f0fdf4;border-color:#86efac;color:#166534':'background:#fef2f2;border-color:#fca5a5;color:#991b1b')+'">'+(t.ok?'✓ ':'⚠ ')+esc(t.msg)+'</div>';
+}
+function showLinks(s){
+  return '<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="S.trShow=\''+esc(s.code)+'\';go(\'transport\')">🚚 Vận chuyển</button><button class="btn sm" onclick="S.stShow=\''+esc(s.code)+'\';go(\'staff\')">👷 Nhân sự</button><button class="btn sm" onclick="openShow(\''+esc(s.code)+'\')">✏️ Sửa show / chiết khấu</button><button class="btn sm" onclick="S.opsCode=\''+esc(s.code)+'\';go(\'ops\')">🧰 Soạn / xuất kho</button></div>';
+}
+
+/* ---------- popup theo từng show ---------- */
+function openShowPop(code){
+  var s = B._show[code]; if (!s) return;
+  var lines = B._linesBy[code] || [], canP = canPrice(), openP = ['Hủy','Đã nhập kho'].indexOf(s.status) < 0;
+  var cust = s.cust ? (A().customers || []).filter(function(c){ return c['Mã KH'] === s.cust; })[0] : null;
+  var staffBy = {}; B.staff.forEach(function(x){ staffBy[x.code] = x; });
+  var asg = B.assigns.filter(function(a){ return a.show === code; });
+  var big = s.total >= B.bigShow;
+  var h = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md" style="max-width:980px"><div class="md-h"><i style="width:8px;align-self:stretch;border-radius:4px;background:'+esc(s.color||'#7c3aed')+'"></i><div><h3>'+esc(s.name)+' <span class="code">'+esc(s.code)+'</span></h3><div class="row" style="gap:6px;margin-top:4px">'+showBadge(s.status)+(big?'<span class="st" style="background:#fee2e2;color:#991b1b">🔴 Show lớn</span>':'')+'</div></div><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div>' +
+    '<div class="md-b">' +
+    '<div class="form" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">' +
+    '<div><div class="mute" style="font-size:11.5px">👤 Khách hàng</div>' + (cust ? '<a style="cursor:pointer;font-weight:700;text-decoration:underline" onclick="closeModal();custForm(\''+esc(s.cust)+'\')">'+esc(cust['Họ tên'] || s.cust)+'</a>' : (s.client ? esc(s.client) : '<span class="mute">chưa gán KH</span>')) + '</div>' +
+    '<div><div class="mute" style="font-size:11.5px">📍 Địa điểm</div><b>'+esc(s.venue||'—')+'</b> <span class="mute">· '+esc(s.city||'chưa rõ TP')+'</span></div>' +
+    '<div><div class="mute" style="font-size:11.5px">🏭 Kho xuất</div><b>'+esc(whOf(s))+'</b></div>' +
+    '<div><div class="mute" style="font-size:11.5px">🗓️ Xuất / diễn / nhập</div><b>'+fd(s.out)+' → ★ '+fd(s.day)+' → '+fd(s.back)+'</b></div>' +
+    '<div><div class="mute" style="font-size:11.5px">💼 Phụ trách · người tạo</div><b>'+esc(s.pic||'—')+'</b> <span class="mute">· '+esc(s.creator||'—')+'</span></div>' +
+    '<div><div class="mute" style="font-size:11.5px">💸 Chiết khấu</div><b>'+(s.discount||0)+'%</b> <span class="mute">· '+esc(s.discStatus||'không')+'</span> <a style="cursor:pointer;font-size:11.5px" onclick="openShow(\''+esc(code)+'\')">mở mục chiết khấu →</a></div>' +
+    '<div><div class="mute" style="font-size:11.5px">💰 Tổng tiền (đã gồm CK, VAT)</div><b style="font-size:15px;'+(big?'color:#b91c1c':'')+'">'+money(s.total)+'</b></div>' +
+    '</div>' + (s.note ? '<div class="note i" style="margin-top:8px">📝 '+esc(s.note)+'</div>' : '') +
+    trNote(s) +
+
+    '<h4 style="margin:16px 0 8px">👷 Nhân sự phụ trách ('+asg.length+')</h4>' +
+    (asg.length ? '<div class="loglist">' + asg.map(function(a){ var p = staffBy[a.staff] || {}; return '<div class="lg"><b>'+esc(p.name||a.staff)+'</b><span class="pill" style="font-size:10.5px">'+esc(p.role||'')+'</span><span class="mute">'+fd(a.date)+' · '+esc(a.from)+'–'+esc(a.to)+'</span><span>'+esc(a.task)+'</span><span class="mute">📍 '+esc(a.place)+'</span>'+(a.tag?'<span class="code">'+esc(a.tag)+'</span>':'')+'</div>'; }).join('') + '</div>' : '<div class="mute">Chưa phân công nhân sự.</div>') +
+
+    '<h4 style="margin:16px 0 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">🧾 Thiết bị trong báo giá ('+lines.length+' dòng)' +
+      (canP && openP ? '<span class="grow"></span><button class="btn sm" onclick="priceUpdate(\''+esc(code)+'\', null)">💲 Cập nhật giá toàn bộ show</button><button class="btn sm pri" onclick="priceUpdatePicked(\''+esc(code)+'\')">💲 Cập nhật các dòng đã chọn</button>' : '') + '</h4>' +
+    '<div class="note i" style="margin-bottom:8px">Báo giá giữ đơn giá đã lập. Chỉ khi bấm cập nhật, dòng nào khác giá thuê mới nhất mới đổi (ghi vào Nhật ký giá).</div>' +
+    '<div style="overflow:auto"><table class="t"><thead><tr>'+(canP && openP?'<th style="width:34px"></th>':'')+'<th>Thiết bị</th><th class="num">SL</th><th class="num">Đơn giá trong báo giá</th><th class="num">Giá thuê mới nhất</th><th class="num">Thành tiền</th><th>Mã TB đã gán</th></tr></thead><tbody>';
+  lines.forEach(function(l){
+    var c = cat(l.model), differs = c.price !== l.price;
+    h += '<tr style="'+(differs?'background:#fffbeb':'')+'">'+(canP && openP ? '<td><input type="checkbox" class="pl" value="'+esc(l.model)+'" '+(differs?'checked':'')+'></td>' : '')+
+      '<td><b>'+esc(c.name)+'</b> <span class="code">'+esc(l.model)+'</span></td><td class="num">'+l.qty+'</td><td class="num">'+money(l.price)+'</td>' +
+      '<td class="num">'+(differs ? '<b style="color:#b45309">'+money(c.price)+'</b>' : '<span class="mute">'+money(c.price)+'</span>')+'</td><td class="num">'+money(l.amount)+'</td>' +
+      '<td>'+(l.tags.length ? l.tags.map(function(t){ return '<span class="code" style="cursor:pointer;text-decoration:underline;margin-right:4px" onclick="openAsset(\''+esc(t)+'\')">'+esc(t)+'</span>'; }).join('') : '<span class="mute">chưa gán</span>')+'</td></tr>';
+  });
+  if (!lines.length) h += '<tr><td colspan="7"><div class="empty">Chưa có thiết bị.</div></td></tr>';
+  h += '</tbody></table></div>' + showLinks(s) +
+    '</div><div class="md-f"><span class="mute grow">'+(canP ? 'Giá thuê chỉ đổi khi bấm cập nhật; mọi lần đổi được ghi nhật ký giá.' : 'Chỉ Giám đốc trở lên được cập nhật giá.')+'</span><button class="btn" onclick="closeModal()">Đóng</button></div></div></div>';
+  $('#modal').innerHTML = h;
+}
+function priceUpdate(code, models){
+  if (!canPrice()) return toast('Chỉ Giám đốc trở lên mới được cập nhật giá', 'bad');
+  busy(true);
+  call('apiUpdateShowPrices', code, models || [])
+    .then(function(r){ toast(r.updated ? '💲 Đã cập nhật giá '+r.updated+' dòng' : 'Các dòng đã đúng giá thuê mới nhất', 'ok'); return reload(); })
+    .then(function(){ openShowPop(code); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function priceUpdatePicked(code){
+  var picked = Array.prototype.map.call(document.querySelectorAll('#modal .pl:checked'), function(x){ return x.value; });
+  if (!picked.length) return toast('Chọn ít nhất một dòng', 'bad');
+  priceUpdate(code, picked);
+}
+
+/* ---------- popup: tất cả thiết bị theo kho / trạng thái ---------- */
+function openAssetList(wh, st){ S.al = { wh: wh || '', st: st || '', q: '' }; renderAssetList(); }
+function alSet(k, v){ S.al[k] = v; renderAssetList(); }
+function renderAssetList(){
+  var f = S.al || { wh:'', st:'', q:'' }, q = String(f.q || '').toLowerCase();
+  var rows = B._top.filter(function(a){
+    return (!f.wh || a.loc === f.wh) && (!f.st || a.status === f.st) &&
+      (!q || (a.tag + ' ' + a.model + ' ' + a.serial + ' ' + a.show).toLowerCase().indexOf(q) >= 0);
+  });
+  var h = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md" style="max-width:1080px"><div class="md-h"><div><h3>📦 Danh sách thiết bị</h3><div class="mute">'+rows.length+' / '+B._top.length+' mã · bấm mã để xem chi tiết, bấm show để mở popup</div></div><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div><div class="md-b">' +
+    '<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:10px"><select class="inp" onchange="alSet(\'wh\',this.value)"><option value="">Mọi kho</option>' + B.whList.map(function(w){ return '<option value="'+esc(w.name)+'" '+(f.wh===w.name?'selected':'')+'>'+esc(w.name)+'</option>'; }).join('') + '</select>' +
+    '<select class="inp" onchange="alSet(\'st\',this.value)"><option value="">Mọi trạng thái</option>' + B.ST_LIST.map(function(x){ return '<option value="'+esc(x)+'" '+(f.st===x?'selected':'')+'>'+esc(x)+'</option>'; }).join('') + '</select>' +
+    '<input class="inp" style="width:220px" placeholder="🔎 Mã, model, serial…" value="'+esc(f.q||'')+'" onchange="alSet(\'q\',this.value)"></div>' +
+    '<div style="overflow:auto;max-height:520px"><table class="t"><thead><tr><th>Mã TB</th><th>Thiết bị</th><th>Serial</th><th>Hiện trạng</th><th>Kho</th><th>Trạng thái</th><th>Show</th></tr></thead><tbody>' +
+    rows.slice(0, 400).map(function(a){
+      var c = cat(a.model);
+      return '<tr><td><span class="code" style="cursor:pointer;text-decoration:underline" onclick="openAsset(\''+esc(a.tag)+'\')">'+esc(a.tag)+'</span></td><td>'+esc(c.name)+' <span class="mute" style="font-size:11px">'+esc(a.model)+'</span></td><td class="mute">'+esc(a.serial)+'</td><td>'+condBadge(a)+'</td><td>'+esc(a.loc||'—')+'</td><td>'+stBadge(a.status)+'</td><td>'+(a.show?'<span class="code" style="cursor:pointer" onclick="openShowPop(\''+esc(a.show)+'\')">'+esc(a.show)+'</span>':'')+'</td></tr>';
+    }).join('') + (rows.length ? '' : '<tr><td colspan="7"><div class="empty">Không có mã nào.</div></td></tr>') +
+    '</tbody></table>' + (rows.length > 400 ? '<div class="mute" style="padding:8px">Chỉ hiện 400 mã đầu – lọc thêm để thu hẹp.</div>' : '') + '</div></div>' +
+    '<div class="md-f"><span class="mute grow">Đổi kho: mở mã TB → mục "Kho đang đặt".</span><button class="btn" onclick="closeModal()">Đóng</button></div></div></div>';
+  $('#modal').innerHTML = h;
+}
+function openWeekShows(){
+  var we = addDays(S.week, 6);
+  var list = B.shows.filter(function(s){ return B.SHOW_HOLD.indexOf(s.status) >= 0 && overlap(s.out, s.back, S.week, we); });
+  $('#modal').innerHTML = '<div class="ov" onclick="if(event.target===this)closeModal()"><div class="md" style="max-width:720px"><div class="md-h"><div><h3>🎪 Show trong tuần '+fds(S.week)+' – '+fd(we)+'</h3><div class="mute">'+list.length+' show đang giữ hàng · bấm để mở chi tiết</div></div><div class="grow"></div><button class="x" onclick="closeModal()">✕</button></div><div class="md-b">' +
+    (list.length ? list.map(function(s){ return '<div class="sitem" style="--c:'+esc(s.color)+';margin-bottom:8px" onclick="openShowPop(\''+esc(s.code)+'\')"><div class="row" style="justify-content:space-between"><span class="code">'+esc(s.code)+'</span>'+showBadge(s.status)+'</div><b>'+esc(s.name)+'</b><div class="mute" style="font-size:11.5px">📍 '+esc(s.venue)+' · 🚚 '+fds(s.out)+' → ★ '+fds(s.day)+' → 📥 '+fd(s.back)+'</div>'+trNote(s)+'</div>'; }).join('') : '<div class="empty">Không có show trong tuần.</div>') +
+    '</div><div class="md-f"><span class="grow"></span><button class="btn" onclick="closeModal()">Đóng</button></div></div></div>';
+}
+/** Thẻ kho: số lượng và tỷ lệ theo từng kho, trạng thái từng kho */
+function whSummary(){
+  var top = B._top, tot = top.length || 1;
+  return '<div class="row" style="gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:stretch">' + B.whList.map(function(w){
+    var rows = top.filter(function(a){ return a.loc === w.name; }), n = rows.length, pct = Math.round(n / tot * 100);
+    return '<div style="flex:1;min-width:280px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card)"><div class="row" style="justify-content:space-between"><b style="font-size:14px">🏭 '+esc(w.name)+'</b><span class="pill"><b>'+n+'</b> mã · '+pct+'%</span></div>' +
+      '<div class="chips" style="margin-top:8px">' + B.ST_LIST.map(function(st){ var v = rows.filter(function(a){ return a.status === st; }).length;
+        return '<span class="chip" style="cursor:pointer" onclick="openAssetList(\''+esc(w.name)+'\',\''+esc(st)+'\')"><i style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+stColor(st).dot+';margin-right:4px"></i>'+esc(st)+' <b>'+v+'</b></span>'; }).join('') +
+      '</div><div class="mute" style="font-size:11.5px;margin-top:6px">Bấm một trạng thái để xem danh sách mã ở kho này</div></div>';
+  }).join('') + '</div>';
+}
+
+/* ---------- ghi chú thay đổi (chỉ cấp Giám đốc trở lên – server đã lọc) ---------- */
+function feedCard(){
+  if (!B || !B.feed || !B.feed.length) return '';
+  return '<details class="card" style="margin-bottom:12px"><summary style="cursor:pointer;padding:10px 14px;font-weight:700">📝 Ghi chú thay đổi (Giám đốc trở lên) <span class="mute" style="font-weight:400;font-size:12px">· '+B.feed.length+' mục gần nhất</span></summary><div class="card-b loglist" style="max-height:260px;overflow:auto">' +
+    B.feed.map(function(x){ return '<div class="lg"><span class="mute" style="width:120px">'+esc(x.t)+'</span><b>'+esc(x.who)+'</b><span class="mute">'+esc(x.role)+'</span><span style="font-weight:600">'+esc(x.act)+'</span><span class="mute">'+esc(x.det)+'</span></div>'; }).join('') +
+    '</div></details>';
+}
+
+/* ---------- 🚚 VẬN CHUYỂN ---------- */
+function trSet(k, v){
+  S.trForm = S.trForm || {}; S.trForm[k] = v;
+  if (k === 'show') { var s = B._show[v]; if (s) { S.trForm.from = whOf(s); S.trForm.to = s.city || ''; S.trForm.send = s.transport && s.transport.latest ? s.transport.latest : addDays(s.out, -3); } }
+  render();
+}
+function vTransport(){
+  var shows = B.shows.filter(function(s){ return s.status !== 'Hủy'; }).sort(function(a, b){ return a.out < b.out ? -1 : 1; });
+  var canE = can('XUAT_NHAP_KHO'), f = S.trForm || {};
+  var pick = S.trShow && B._show[S.trShow] ? S.trShow : ((shows[0] || {}).code || '');
+  if (!f.show) f = { show: pick, from: whOf(B._show[pick]), to: (B._show[pick] || {}).city || '', method: 'Xe tải', status: 'Chờ gửi', pieces: 0, send: (B._show[pick] && B._show[pick].transport && B._show[pick].transport.latest) || '' };
+  var bad = shows.filter(function(s){ return s.transport && !s.transport.ok; }).length;
+  var h = '<div class="card"><div class="card-h"><h2>🚚 VẬN CHUYỂN GẮN VỚI SHOW</h2><span class="mute">Khác thành phố với kho: xe tải cần '+3+' ngày · máy bay cần 1 ngày, phải <b>xác nhận vé trước 20:00 ngày hôm trước</b></span><div class="grow"></div>' +
+    (bad ? '<span class="st" style="background:#fee2e2;color:#991b1b">⚠ '+bad+' show thiếu vận chuyển</span>' : '<span class="st" style="background:#dcfce7;color:#166534">✓ Các show đều đủ thời gian</span>') + '</div><div class="card-b">';
+  h += '<div style="overflow:auto"><table class="t"><thead><tr><th>Show</th><th>Thành phố</th><th>Kho xuất</th><th>Ngày xuất kho</th><th>Cần</th><th>Gửi muộn nhất</th><th>Tình trạng</th></tr></thead><tbody>';
+  shows.forEach(function(s){
+    var t = s.transport || {};
+    h += '<tr style="cursor:pointer" onclick="S.trShow=\''+esc(s.code)+'\';S.trForm=null;render()"><td><span class="code">'+esc(s.code)+'</span> <b>'+esc(s.name)+'</b></td><td>'+esc(s.city||'—')+'</td><td>'+esc(whOf(s))+'</td><td>'+fd(s.out)+'</td><td>'+(t.need ? t.need+' ngày' : 'không cần')+'</td><td>'+(t.latest?fd(t.latest):'—')+'</td>' +
+      '<td>'+(t.ok ? '<span class="st" style="background:#dcfce7;color:#166534">✓ Đủ</span>' : '<span class="st" style="background:#fee2e2;color:#991b1b">⚠ Thiếu</span>')+' <span class="mute" style="font-size:11.5px">'+esc(t.msg||'')+'</span></td></tr>';
+  });
+  h += '</tbody></table></div>';
+  var list = B.transports.slice().sort(function(a, b){ return a.send < b.send ? -1 : 1; });
+  h += '<h4 style="margin:18px 0 8px">Các chuyến đã lên lịch ('+list.length+')</h4><div style="overflow:auto"><table class="t"><thead><tr><th>Mã</th><th>Show</th><th>Từ → đến</th><th>Phương thức</th><th>Gửi</th><th>Dự kiến đến</th><th>Hạn chốt</th><th>Trạng thái</th><th class="num">Kiện</th><th></th></tr></thead><tbody>';
+  list.forEach(function(t){
+    h += '<tr><td class="code">'+esc(t.id)+'</td><td><span class="code" style="cursor:pointer;text-decoration:underline" onclick="openShowPop(\''+esc(t.show)+'\')">'+esc(t.show)+'</span></td><td>'+esc(t.from)+' → '+esc(t.to)+'</td>' +
+      '<td>'+(TR_ICON[t.method]||'')+' '+esc(t.method)+'</td><td>'+fd(t.send)+'</td><td>'+fd(t.arrive)+'</td><td class="mute" style="font-size:11.5px;white-space:nowrap">'+esc(t.cutoff||'')+'</td><td>'+esc(t.status)+'</td><td class="num">'+t.pieces+'</td>' +
+      '<td>'+(canE ? '<button class="btn sm" onclick="trEdit(\''+esc(t.id)+'\')">Sửa</button> <button class="btn sm bad" onclick="trDel(\''+esc(t.id)+'\')">Xóa</button>' : '')+'</td></tr>';
+  });
+  if (!list.length) h += '<tr><td colspan="10"><div class="empty">Chưa có chuyến nào.</div></td></tr>';
+  h += '</tbody></table></div>';
+  if (canE) {
+    var sh = B._show[f.show] || {}, need = sh.transport ? sh.transport.need : 0;
+    h += '<h4 style="margin:18px 0 8px">'+(f.id ? '✏️ Sửa chuyến '+esc(f.id) : '➕ Thêm chuyến vận chuyển')+'</h4><div class="form">' +
+      '<label>Show<select class="inp" onchange="trSet(\'show\',this.value)">'+shows.map(function(s){ return '<option value="'+esc(s.code)+'" '+(s.code===f.show?'selected':'')+'>'+esc(s.code+' · '+s.name)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Từ kho<select class="inp" onchange="trSet(\'from\',this.value)">'+B.whList.map(function(w){ return '<option '+(w.name===f.from?'selected':'')+'>'+esc(w.name)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Phương thức<select class="inp" onchange="trSet(\'method\',this.value)">'+B.transMethods.map(function(m){ return '<option '+(m===f.method?'selected':'')+'>'+esc(m)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Ngày gửi<input class="inp" type="date" value="'+esc(f.send||'')+'" onchange="trSet(\'send\',this.value)"></label>' +
+      '<label>Trạng thái<select class="inp" onchange="trSet(\'status\',this.value)">'+B.transStatus.map(function(x){ return '<option '+(x===(f.status||'Chờ gửi')?'selected':'')+'>'+esc(x)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Số kiện<input class="inp" type="number" min="0" value="'+(f.pieces||0)+'" onchange="trSet(\'pieces\',Number(this.value))"></label>' +
+      '<label class="s2">Ghi chú<input class="inp" value="'+esc(f.note||'')+'" onchange="trSet(\'note\',this.value)"></label></div>' +
+      '<div class="note i" style="margin-top:8px">'+(f.method==='Máy bay' ? '✈️ Máy bay: dự kiến đến sau 1 ngày. Hạn chốt vé: 20:00 ngày '+(f.send ? fd(addDays(f.send,-1)) : '…')+'.' : (f.method==='Xe tải' ? '🚚 Xe tải: 3 ngày, gửi trước ngày xuất kho ít nhất 3 ngày' + (sh.out ? ' (gửi muộn nhất '+fd(addDays(sh.out,-3))+')' : '') + '.' : 'Tự mang: không cần thời gian chờ.'))+'</div>' +
+      '<div class="row" style="justify-content:flex-end;margin-top:10px;gap:8px"><button class="btn" onclick="S.trForm=null;render()">Làm mới</button><button class="btn pri" onclick="trSave()">💾 Lưu chuyến</button></div>';
+  }
+  return h + '</div></div>';
+}
+function trEdit(id){
+  var t = B.transports.filter(function(x){ return x.id === id; })[0]; if (!t) return;
+  S.trForm = { id: t.id, show: t.show, from: t.from, to: t.to, method: t.method, send: t.send, status: t.status, pieces: t.pieces, note: t.note, tags: t.tags };
+  render();
+}
+function trSave(){
+  var f = S.trForm || {};
+  if (!f.show || !f.send) return toast('Chọn show và ngày gửi', 'bad');
+  busy(true);
+  call('apiSaveTransport', { id: f.id || '', show: f.show, from: f.from, to: f.to, method: f.method, send: f.send, status: f.status || 'Chờ gửi', pieces: f.pieces || 0, tags: f.tags || '', note: f.note || '' })
+    .then(function(){ S.trForm = null; toast('✅ Đã lưu chuyến vận chuyển', 'ok'); return reload(); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function trDel(id){
+  if (!confirm('Xóa chuyến '+id+'?')) return;
+  busy(true);
+  call('apiDeleteTransport', id).then(function(){ toast('Đã xóa '+id, 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+
+/* ---------- 👷 NHÂN SỰ ---------- */
+function vStaff(){
+  var canS = can('SUA_DANH_MUC'), canA = can('XUAT_NHAP_KHO');
+  var shows = B.shows.filter(function(s){ return s.status !== 'Hủy'; }).sort(function(a, b){ return a.out < b.out ? -1 : 1; });
+  var filt = S.stShow || '';
+  var asg = B.assigns.filter(function(a){ return !filt || a.show === filt; });
+  var staffBy = {}; B.staff.forEach(function(x){ staffBy[x.code] = x; });
+  var sf = S.stForm || {}, af = S.asForm || {};
+  var h = '<div class="two"><div class="card"><div class="card-h"><h2>👷 NHÂN SỰ</h2><span class="mute">Kỹ thuật âm thanh · ánh sáng · setup AV · kho</span></div><div class="card-b">' +
+    '<div class="chips" style="margin-bottom:10px">' + B.whList.map(function(w){ return '<span class="pill">'+esc(w.name)+': <b>'+B.staff.filter(function(x){ return x.wh === w.name; }).length+'</b> người</span>'; }).join(' ') + '</div>' +
+    '<div style="overflow:auto"><table class="t"><thead><tr><th>Mã</th><th>Họ tên</th><th>Vai trò</th><th>Kho làm việc</th><th class="num">Số lần phân công</th><th></th></tr></thead><tbody>' +
+    B.staff.map(function(x){ return '<tr><td class="code">'+esc(x.code)+'</td><td><b>'+esc(x.name)+'</b>'+(x.phone?'<div class="mute" style="font-size:11px">'+esc(x.phone)+'</div>':'')+'</td><td>'+esc(x.role)+'</td><td>'+esc(x.wh)+'</td><td class="num">'+B.assigns.filter(function(a){ return a.staff === x.code; }).length+'</td><td>'+(canS?'<button class="btn sm" onclick="S.stForm={code:\''+esc(x.code)+'\',name:\''+esc(x.name)+'\',role:\''+esc(x.role)+'\',wh:\''+esc(x.wh)+'\',phone:\''+esc(x.phone)+'\',note:\''+esc(x.note)+'\'};render()">Sửa</button> <button class="btn sm bad" onclick="stDel(\''+esc(x.code)+'\')">Xóa</button>':'')+'</td></tr>'; }).join('') +
+    (B.staff.length ? '' : '<tr><td colspan="6"><div class="empty">Chưa có nhân sự.</div></td></tr>') + '</tbody></table></div>';
+  if (canS) {
+    var r = sf.role || (B.staffRoles[0] || ''), w = sf.wh || (B.whList[0] || {}).name;
+    h += '<h4 style="margin:16px 0 8px">'+(sf.code?'✏️ Sửa '+esc(sf.code):'➕ Thêm nhân sự')+'</h4><div class="form">' +
+      '<label>Họ tên<input class="inp" id="st_name" value="'+esc(sf.name||'')+'"></label>' +
+      '<label>Vai trò<select class="inp" id="st_role">'+B.staffRoles.map(function(x){ return '<option '+(x===r?'selected':'')+'>'+esc(x)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Kho làm việc<select class="inp" id="st_wh">'+B.whList.map(function(x){ return '<option '+(x.name===w?'selected':'')+'>'+esc(x.name)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Điện thoại<input class="inp" id="st_phone" value="'+esc(sf.phone||'')+'"></label>' +
+      '<label class="s2">Ghi chú<input class="inp" id="st_note" value="'+esc(sf.note||'')+'"></label></div>' +
+      '<div class="row" style="justify-content:flex-end;gap:8px;margin-top:8px"><button class="btn" onclick="S.stForm=null;render()">Làm mới</button><button class="btn pri" onclick="stSave()">💾 Lưu nhân sự</button></div>';
+  }
+  h += '</div></div>';
+  // phân công
+  h += '<div class="card"><div class="card-h"><h2>🗓️ PHÂN CÔNG</h2><div class="grow"></div><select class="inp" onchange="S.stShow=this.value;render()"><option value="">Tất cả show</option>'+shows.map(function(s){ return '<option value="'+esc(s.code)+'" '+(s.code===filt?'selected':'')+'>'+esc(s.code+' · '+s.name)+'</option>'; }).join('')+'</select></div><div class="card-b">';
+  h += '<div class="loglist" style="max-height:340px;overflow:auto">' + (asg.length ? asg.map(function(a){ var p = staffBy[a.staff] || {}; return '<div class="lg"><span class="mute" style="width:86px">'+fd(a.date)+'</span><span class="mute">'+esc(a.from)+'–'+esc(a.to)+'</span><span class="code" style="cursor:pointer" onclick="openShowPop(\''+esc(a.show)+'\')">'+esc(a.show)+'</span><b>'+esc(p.name||a.staff)+'</b><span class="pill" style="font-size:10.5px">'+esc(p.role||'')+'</span><span>'+esc(a.task)+'</span><span class="mute">📍 '+esc(a.place)+'</span>'+(a.tag?'<span class="code" style="cursor:pointer" onclick="openAsset(\''+esc(a.tag)+'\')">'+esc(a.tag)+'</span>':'')+(canA?'<button class="btn sm bad" style="margin-left:auto" onclick="asDel(\''+esc(a.id)+'\')">Xóa</button>':'')+'</div>'; }).join('') : '<div class="empty">Chưa có phân công'+(filt?' cho show này':'')+'.</div>') + '</div>';
+  if (canA && B.staff.length) {
+    var selShow = af.show || filt || ((shows[0] || {}).code || ''), sShow = B._show[selShow] || {};
+    h += '<h4 style="margin:16px 0 8px">➕ Phân công nhân sự</h4><div class="form">' +
+      '<label>Show<select class="inp" id="as_show">'+shows.map(function(s){ return '<option value="'+esc(s.code)+'" '+(s.code===selShow?'selected':'')+'>'+esc(s.code+' · '+s.name)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Nhân sự<select class="inp" id="as_staff">'+B.staff.map(function(x){ return '<option value="'+esc(x.code)+'">'+esc(x.name+' · '+x.role)+'</option>'; }).join('')+'</select></label>' +
+      '<label>Ngày<input class="inp" type="date" id="as_date" value="'+esc(af.date || sShow.day || sShow.out || '')+'"></label>' +
+      '<label>Từ giờ<input class="inp" id="as_from" value="08:00"></label><label>Đến giờ<input class="inp" id="as_to" value="18:00"></label>' +
+      '<label>Việc làm<input class="inp" id="as_task" placeholder="vd. tuning, mix, setup…"></label>' +
+      '<label>Địa điểm<input class="inp" id="as_place" value="'+esc(sShow.venue||'')+'"></label>' +
+      '<label>Mã TB liên quan (tùy chọn)<input class="inp" id="as_tag" placeholder="vd. J8-001"></label>' +
+      '<label class="s2">Ghi chú<input class="inp" id="as_note"></label></div>' +
+      '<div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn pri" onclick="asSave()">💾 Lưu phân công</button></div>';
+  }
+  h += '</div></div></div>';
+  return h;
+}
+function stSave(){
+  var v = function(id){ return document.getElementById(id).value; }, sf = S.stForm || {};
+  busy(true);
+  call('apiSaveStaff', { code: sf.code || '', name: v('st_name'), role: v('st_role'), wh: v('st_wh'), phone: v('st_phone'), note: v('st_note') })
+    .then(function(){ S.stForm = null; toast('✅ Đã lưu nhân sự', 'ok'); return reload(); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function stDel(code){
+  if (!confirm('Xóa nhân sự '+code+'? Phân công cũ vẫn giữ mã.')) return;
+  busy(true);
+  call('apiDeleteStaff', code).then(function(){ toast('Đã xóa '+code, 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function asSave(){
+  var v = function(id){ return document.getElementById(id).value; };
+  busy(true);
+  call('apiSaveAssign', { show: v('as_show'), staff: v('as_staff'), date: v('as_date'), from: v('as_from'), to: v('as_to'), task: v('as_task'), place: v('as_place'), tag: v('as_tag'), note: v('as_note') })
+    .then(function(){ S.asForm = null; toast('✅ Đã lưu phân công', 'ok'); return reload(); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+function asDel(id){
+  if (!confirm('Xóa phân công '+id+'?')) return;
+  busy(true);
+  call('apiDeleteAssign', id).then(function(){ toast('Đã xóa '+id, 'ok'); return reload(); }).catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+
+/* ---------- 💲 CEO: cập nhật giá hàng loạt ---------- */
+function bulkCard(){
+  if (!B.isCeo) return '';
+  return '<div class="card" style="margin-bottom:12px"><div class="card-h"><h2>💲 CẬP NHẬT GIÁ HÀNG LOẠT (CEO)</h2><span class="mute">Áp giá thuê mới nhất vào các dòng thiết bị. Các show trong danh sách giữ lại sẽ không đổi.</span></div><div class="card-b"><div class="form">' +
+    '<label>Phạm vi<select class="inp" id="bk_scope"><option value="quote">Chỉ báo giá (chưa giữ hàng)</option><option value="show">Chỉ show đã chốt (chưa nhập kho)</option><option value="all">Tất cả (trừ đã nhập kho / hủy)</option></select></label>' +
+    '<label class="s2">Giữ nguyên các show (mã cách nhau bằng dấu phẩy)<input class="inp" id="bk_keep" placeholder="vd. SH-2610-002, SH-2611-001"></label></div>' +
+    '<div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn pri" onclick="bulkPrices()">💲 Cập nhật giá</button></div></div></div>';
+}
+function bulkPrices(){
+  var scope = document.getElementById('bk_scope').value;
+  var keep = document.getElementById('bk_keep').value.split(/[,\s]+/).filter(Boolean);
+  if (!confirm('Cập nhật giá theo phạm vi "' + scope + '"? Mọi thay đổi được ghi vào nhật ký giá.')) return;
+  busy(true);
+  call('apiBulkUpdatePrices', scope, keep)
+    .then(function(r){ toast('✅ Đã cập nhật '+r.lines+' dòng ở '+r.shows+' show · giữ lại '+r.kept+' show', 'ok'); return reload(); })
+    .catch(function(e){ busy(false); toast(errMsg(e), 'bad'); });
+}
+
+/* ---------- 💲 nhật ký giá (trong tab Nhật ký kho) ---------- */
+function priceLogCard(){
+  var L = B.priceLog || [];
+  return '<div class="card" style="margin-top:12px"><div class="card-h"><h2>💲 NHẬT KÝ GIÁ</h2><span class="mute">ai · lúc nào · từ IP nào · đổi từ → sang (300 dòng gần nhất)</span></div><div class="card-b"><div style="overflow:auto;max-height:460px"><table class="t"><thead><tr><th>Thời gian</th><th>Người</th><th>IP</th><th>Loại thay đổi</th><th>Mã</th><th class="num">Giá cũ → mới</th><th>Ghi chú</th></tr></thead><tbody>' +
+    (L.length ? L.map(function(x){ return '<tr><td class="mute" style="white-space:nowrap;font-size:11.5px">'+esc(x.t)+'</td><td><b>'+esc(x.who)+'</b></td><td><span class="code">'+esc(x.ip||'—')+'</span></td><td>'+esc(x.loai)+'</td><td><span class="code">'+esc(x.ma)+'</span></td><td class="num">'+money(x.old)+' → <b>'+money(x.now)+'</b></td><td class="mute" style="font-size:12px">'+esc(x.note)+'</td></tr>'; }).join('') : '<tr><td colspan="7"><div class="empty">Chưa có thay đổi giá.</div></td></tr>') +
+    '</tbody></table></div></div></div>';
+}
+
 
 /* ========================= 📌 SIDEBAR ========================= */
 function vSidebar(){
@@ -1324,6 +1601,7 @@ function vSys(){
   var h = '<div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">' + [['👁️', st.total, 'Lượt truy cập'], ['🌐', st.uniqueIp, 'Địa chỉ IP khác nhau'], ['📅', st.today, 'Truy cập hôm nay'], ['👤', st.users, 'User đã đăng nhập']].map(function(k){ return '<div class="kpi"><div class="ic">'+k[0]+'</div><div><b>'+k[1]+'</b><small>'+k[2]+'</small></div></div>'; }).join('') + '</div>';
   if (can('KHOA_HE_THONG')) h += '<div class="card" style="margin-bottom:12px"><div class="card-h"><h2>🔒 KHÓA HỆ THỐNG</h2>' + (a.locked ? '<span class="st" style="background:#fee2e2;color:#991b1b">ĐANG KHÓA</span><span class="mute">'+esc(a.lockBy)+'</span>' : '<span class="st" style="background:#dcfce7;color:#166534">Đang mở</span>') + '</div><div class="card-b"><div class="mute" style="font-size:12.5px;margin-bottom:8px">Khi khóa: chỉ CEO/Quản trị vào được. Người khác phải nhập thêm mật khẩu mở khóa khi đăng nhập; phiên đang mở của họ bị chặn.</div><div class="row">' +
     (a.locked ? '<button class="btn ok" onclick="lockSys(false)">🔓 Mở khóa hệ thống</button>' : '<input class="inp" id="lkP" type="password" placeholder="Mật khẩu khóa (≥ 4 ký tự)"><button class="btn bad" onclick="lockSys(true)">🔒 Khóa hệ thống</button>') + '</div></div></div>';
+  h += bulkCard();
   if (E && E.server) {
     var q = E.outbox().length;
     h += '<div class="card" style="margin-bottom:12px"><div class="card-h"><h2>🔄 ĐỒNG BỘ</h2><span class="mute">'+(E.server() ? 'Máy chủ Google Sheet' : 'Chỉ trên máy này (chưa cài máy chủ)')+' · '+(q?'<b style="color:#b45309">'+q+' thao tác chờ gửi</b>':'không có thao tác chờ')+' · lần cuối: '+esc(E.lastSync()||'—')+'</span><div class="grow"></div>' + (E.server() ? '<button class="btn sm pri" onclick="syncNow()">⟳ Đồng bộ ngay</button>' : '') + '</div></div>';

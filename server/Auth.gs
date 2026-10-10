@@ -217,6 +217,11 @@ var ACTIONS = {
   apiSetAssetStatus: { p: 'XUAT_NHAP_KHO', w: true }, apiSavePng: { w: false },
   apiSetAssetInfo: { p: 'SUA_DANH_MUC', w: true }, apiMaintAdd: { p: 'SUA_DANH_MUC', w: true },
   apiSetPrice: { w: true },  // kiểm tra cấp Giám đốc trở lên bên trong hàm
+  apiUpdateShowPrices: { w: true },  // Giám đốc trở lên, kiểm tra bên trong
+  apiBulkUpdatePrices: { w: true },  // chỉ CEO, kiểm tra bên trong
+  apiSaveTransport: { p: 'XUAT_NHAP_KHO', w: true }, apiDeleteTransport: { p: 'XUAT_NHAP_KHO', w: true },
+  apiSaveStaff: { p: 'SUA_DANH_MUC', w: true }, apiDeleteStaff: { p: 'SUA_DANH_MUC', w: true },
+  apiSaveAssign: { p: 'XUAT_NHAP_KHO', w: true }, apiDeleteAssign: { p: 'XUAT_NHAP_KHO', w: true },
   apiSaveCustomer: { p: 'SUA_KHACH_HANG', w: true }, apiDeleteCustomer: { p: 'SUA_KHACH_HANG', w: true },
   apiDiscountRequest: { p: 'TAO_SHOW', w: true }, apiDiscountDecide: { w: true }, apiDiscountCancel: { w: true },
   apiUserSave: { p: 'QUAN_TRI_USER', w: true }, apiUserDelete: { p: 'QUAN_TRI_USER', w: true },
@@ -304,6 +309,9 @@ function audit_(action, detail) {
 var ACTION_LABEL = {
   apiSaveShow: 'Lưu show', apiDeleteShow: 'Xóa show', apiAssign: 'Soạn hàng', apiCheckout: 'Xuất kho', apiCheckin: 'Nhập kho', apiSetAssetStatus: 'Đổi trạng thái thiết bị',
   apiSetAssetInfo: 'Sửa thông tin thiết bị', apiMaintAdd: 'Ghi lịch sử bảo trì', apiSetPrice: 'Sửa giá thuê',
+  apiUpdateShowPrices: 'Cập nhật giá show', apiBulkUpdatePrices: 'Cập nhật giá hàng loạt (CEO)',
+  apiSaveTransport: 'Lưu vận chuyển', apiDeleteTransport: 'Xóa vận chuyển', apiSaveStaff: 'Lưu nhân sự', apiDeleteStaff: 'Xóa nhân sự',
+  apiSaveAssign: 'Lưu phân công nhân sự', apiDeleteAssign: 'Xóa phân công nhân sự',
   apiSaveCustomer: 'Lưu khách hàng', apiDeleteCustomer: 'Xóa khách hàng', apiDiscountRequest: 'Xin chiết khấu', apiDiscountDecide: 'Duyệt chiết khấu', apiDiscountCancel: 'Hủy xin chiết khấu',
   apiUserSave: 'Lưu user', apiUserDelete: 'Xóa user', apiUserResetPw: 'Reset mật khẩu', apiUserStatus: 'Khóa/ban/mở user', apiChangeMyPassword: 'Đổi mật khẩu của mình',
   apiUpdateMyProfile: 'Sửa hồ sơ của mình', apiLockSystem: 'Khóa/mở hệ thống', apiLogout: 'Đăng xuất'
