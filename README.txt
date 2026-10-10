@@ -8,6 +8,9 @@ Thư mục server/ (Google Apps Script – KHÔNG chạy trên GitHub Pages):
   Triển khai → Ứng dụng web (Thực thi: Tôi; Truy cập: Bất kỳ ai) → lấy URL /exec.
   Dán URL /exec vào biến window.QLTB_SERVER trong index.html (hoặc trong app: ⚙ Máy chủ).
 
+Bản 7: show chưa chốt (báo giá, On Hold, đã xác nhận, đang soạn) có mục 🧩 Tối ưu thiết bị: tích chọn, ▲▼ hoặc lăn chuột để đổi số lượng,
+xem còn trống / chưa ai đặt / đang giữ bởi show nào / hỏng-bảo trì; thống kê có mục thiết bị đi nhiều show và thiết bị ế (Giám đốc trở lên);
+nút 'Dữ liệu mẫu' đổi tên thành 'Đồng bộ với máy chủ' (chức năng cũ, sẽ đổi sau); tự đồng bộ sau đăng nhập và trước khi mở báo giá; viền avatar theo cấp.
 Bản 6: tài khoản nhân sự (tên không dấu, mật khẩu mặc định 123456, đều hoạt động) đúng sơ đồ tổ chức; nhân sự có Phương Anh & Thuý;
 phân công giả định kỹ thuật cho mỗi show; giá thuê cập nhật; bộ lọc nhân sự theo bộ phận / kho; popup show có khối chiết khấu & chính sách;
 tab Tiến độ show (mọi người xem, cấp Sales trở lên cập nhật %/việc tiếp theo); biểu đồ thống kê; nút EN/VI (phủ tab, menu đầu trang, thống kê, tiến độ – phần còn lại tiếng Việt);
@@ -22,7 +25,7 @@ từ 2 kho (Hà Nội ~80%, TP.HCM ~20%), popup chi tiết theo show có cập n
 
 Cách dùng trên iPhone: mở link bằng Safari → Chia sẻ → Thêm vào MH chính. Đăng nhập lần đầu khi có mạng.
 
-Cập nhật: mỗi lần sửa index.html đổi số phiên bản trong sw.js (hiện là qltb-pro-v6; bản sau dùng v7) để điện thoại tải bản mới.
+Cập nhật: mỗi lần sửa index.html đổi số phiên bản trong sw.js (hiện là qltb-pro-v7; bản sau dùng v8) để điện thoại tải bản mới.
 
 Lưu ý: các đơn giá, số serial, ngày tháng, tình trạng thiết bị trong dữ liệu mẫu là GIẢ ĐỊNH để chạy thử.
 Mật khẩu chỉ lưu dạng băm. Đổi mật khẩu mặc định sau lần đăng nhập đầu tiên.

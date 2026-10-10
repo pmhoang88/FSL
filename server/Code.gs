@@ -1326,6 +1326,33 @@ function apiStats(mode, ref, from, to) {
   return { mode: mode || 'month', from: R.from, to: R.to, rows: rows, total: total };
 }
 
+/** Thống kê thiết bị: đi nhiều show / ế trong kỳ (chỉ Giám đốc trở lên) */
+function apiStatsEquip(mode, ref, from, to) {
+  if (!isTopCtx_()) throw new Error('Chỉ Giám đốc trở lên xem thống kê');
+  var R = statsRange_(mode || 'month', ref, from, to);
+  var inShow = {};
+  live_(readTable_('SHOW')).forEach(function (r) {
+    var st = String(r['Trạng thái'] || ''), day = d2s_(r['Ngày diễn']);
+    if (['Hủy', 'Báo giá', 'On Hold'].indexOf(st) >= 0) return;
+    if (day && day >= R.from && day <= R.to) inShow[String(r['Mã show'])] = true;
+  });
+  var use = {};
+  live_(readTable_('LINE')).forEach(function (l) {
+    var sh = String(l['Mã show']), m = String(l['Mã model'] || '');
+    if (!inShow[sh] || !m) return;
+    var u = use[m] = use[m] || { shows: {}, units: 0, unitDays: 0, revenue: 0 };
+    var sl = num_(l['SL']), days = num_(l['Số ngày']) || 1;
+    u.shows[sh] = true; u.units += sl; u.unitDays += sl * days; u.revenue += sl * num_(l['Đơn giá']) * days;
+  });
+  var rows = live_(readTable_('CAT')).filter(function (c) { return bool_(c['Cho thuê riêng']); }).map(function (c) {
+    var code = String(c['Mã model']), u = use[code] || { shows: {}, units: 0, unitDays: 0, revenue: 0 };
+    var n = Object.keys(u.shows).length;
+    return { code: code, name: String(c['Tên thiết bị'] || code), series: String(c['Dòng'] || ''), shows: n, units: u.units, unitDays: u.unitDays, revenue: Math.round(u.revenue), idle: n === 0 };
+  });
+  rows.sort(function (a, b) { return b.shows - a.shows || b.unitDays - a.unitDays || (a.code < b.code ? -1 : 1); });
+  return { from: R.from, to: R.to, rows: rows, idle: rows.filter(function (x) { return x.idle; }).length };
+}
+
 /** Lưu ảnh PNG (phiếu xuất kho / báo giá) vào Drive, trả về link */
 function apiSavePng(dataUrl, fileName) {
   var m = String(dataUrl).match(/^data:image\/png;base64,(.+)$/);

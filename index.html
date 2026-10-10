@@ -323,6 +323,11 @@ html[data-theme="dark"] .ov{background:rgba(2,6,23,.7)}
 .orow{display:flex;align-items:center;gap:10px}
 .otx{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left}
 #langBtn{min-width:44px;font-weight:800}
+.rk-av.tA{box-shadow:0 0 0 2px var(--card),0 0 0 3.5px #f59e0b,0 0 0 5px var(--card),0 0 0 6.5px #fde68a}
+.rk-av.tB{box-shadow:0 0 0 2px var(--card),0 0 0 3.5px #7c3aed,0 0 0 5px var(--card),0 0 0 6px #c4b5fd}
+.rk-av.tC{box-shadow:0 0 0 2px var(--card),0 0 0 4px #0d9488}
+.rk-av.tD{box-shadow:0 0 0 2px var(--card),0 0 0 3px #94a3b8}
+.opt-row input[type=number]::-webkit-inner-spin-button{opacity:.4}
 </style>
 </head>
 <body class="mode-offline">
@@ -339,7 +344,7 @@ html[data-theme="dark"] .ov{background:rgba(2,6,23,.7)}
     <span id="mePill" class="noprint"></span>
     <span class="pill noprint" id="syncPill" onclick="if(window.ENGINE&&window.ENGINE.server())syncNow()" style="cursor:pointer">🔗 Đang kết nối…</span>
     <button class="btn sm noprint" onclick="reload()">⟳ Làm mới</button>
-    <div class="offbar noprint"><button class="btn sm" onclick="offBackup()">💾 Sao lưu</button><button class="btn sm" onclick="offRestorePick()">📂 Khôi phục</button><button class="btn sm" onclick="offResetAsk()">↺ Dữ liệu mẫu</button><input type="file" id="offFile" accept=".json,application/json" style="display:none" onchange="offRestore(this)"></div>
+    <div class="offbar noprint"><button class="btn sm" onclick="offBackup()">💾 Sao lưu</button><button class="btn sm" onclick="offRestorePick()">📂 Khôi phục</button><button class="btn sm" onclick="offResetAsk()">↺ Đồng bộ với máy chủ</button><input type="file" id="offFile" accept=".json,application/json" style="display:none" onchange="offRestore(this)"></div>
     <button class="btn sm noprint" onclick="cycleZoom()" title="Đổi cỡ chữ (cho người khó nhìn)">Aa</button>
     <button class="btn sm noprint" id="langBtn" onclick="toggleLang()" title="Ngôn ngữ / Language">EN</button>
     <button class="btn sm noprint" id="themeBtn" onclick="toggleTheme()" title="Đổi giao diện sáng / tối">🌙 Tối</button>
@@ -1812,6 +1817,33 @@ function apiStats(mode, ref, from, to) {
   return { mode: mode || 'month', from: R.from, to: R.to, rows: rows, total: total };
 }
 
+/** Thống kê thiết bị: đi nhiều show / ế trong kỳ (chỉ Giám đốc trở lên) */
+function apiStatsEquip(mode, ref, from, to) {
+  if (!isTopCtx_()) throw new Error('Chỉ Giám đốc trở lên xem thống kê');
+  var R = statsRange_(mode || 'month', ref, from, to);
+  var inShow = {};
+  live_(readTable_('SHOW')).forEach(function (r) {
+    var st = String(r['Trạng thái'] || ''), day = d2s_(r['Ngày diễn']);
+    if (['Hủy', 'Báo giá', 'On Hold'].indexOf(st) >= 0) return;
+    if (day && day >= R.from && day <= R.to) inShow[String(r['Mã show'])] = true;
+  });
+  var use = {};
+  live_(readTable_('LINE')).forEach(function (l) {
+    var sh = String(l['Mã show']), m = String(l['Mã model'] || '');
+    if (!inShow[sh] || !m) return;
+    var u = use[m] = use[m] || { shows: {}, units: 0, unitDays: 0, revenue: 0 };
+    var sl = num_(l['SL']), days = num_(l['Số ngày']) || 1;
+    u.shows[sh] = true; u.units += sl; u.unitDays += sl * days; u.revenue += sl * num_(l['Đơn giá']) * days;
+  });
+  var rows = live_(readTable_('CAT')).filter(function (c) { return bool_(c['Cho thuê riêng']); }).map(function (c) {
+    var code = String(c['Mã model']), u = use[code] || { shows: {}, units: 0, unitDays: 0, revenue: 0 };
+    var n = Object.keys(u.shows).length;
+    return { code: code, name: String(c['Tên thiết bị'] || code), series: String(c['Dòng'] || ''), shows: n, units: u.units, unitDays: u.unitDays, revenue: Math.round(u.revenue), idle: n === 0 };
+  });
+  rows.sort(function (a, b) { return b.shows - a.shows || b.unitDays - a.unitDays || (a.code < b.code ? -1 : 1); });
+  return { from: R.from, to: R.to, rows: rows, idle: rows.filter(function (x) { return x.idle; }).length };
+}
+
 /** Lưu ảnh PNG (phiếu xuất kho / báo giá) vào Drive, trả về link */
 function apiSavePng(dataUrl, fileName) {
   var m = String(dataUrl).match(/^data:image\/png;base64,(.+)$/);
@@ -2543,7 +2575,7 @@ var ACTIONS = {
   apiSavePenalty: { p: 'XEM_TAI_CHINH', w: true }, apiDeletePenalty: { p: 'XEM_TAI_CHINH', w: true },
   apiSaveExpense: { p: 'XEM_TAI_CHINH', w: true }, apiDeleteExpense: { p: 'XEM_TAI_CHINH', w: true },
   apiSaveCar: { w: true }, apiDeleteCar: { w: true },  // Giám đốc trở lên, kiểm tra bên trong
-  apiStats: { w: false },  // Giám đốc trở lên, kiểm tra bên trong
+  apiStats: { w: false }, apiStatsEquip: { w: false },  // Giám đốc trở lên, kiểm tra bên trong
   apiBulkUpdatePrices: { w: true },  // chỉ CEO, kiểm tra bên trong
   apiSaveTransport: { p: 'XUAT_NHAP_KHO', w: true }, apiDeleteTransport: { p: 'XUAT_NHAP_KHO', w: true },
   apiSaveStaff: { p: 'SUA_DANH_MUC', w: true }, apiDeleteStaff: { p: 'SUA_DANH_MUC', w: true },
@@ -3668,6 +3700,7 @@ function vEditor(){
     }).join('') + '</div></div>';
   });
   h += '</div></div>';
+  h += optPanel(s);
   // bảng dòng thiết bị
   var need = {}; L.forEach(function(l){ need[l.model] = (need[l.model]||0) + Number(l.qty||0); });
   var short = [];
@@ -3862,7 +3895,7 @@ function vSlip(){
   if (!S.slipCode || !B._show[S.slipCode]) S.slipCode = (list.filter(function(s){ return B.SHOW_HOLD.indexOf(s.status) >= 0; })[0] || list[0] || {}).code;
   var s = B._show[S.slipCode];
   var h = '<div class="card noprint"><div class="card-h"><h2>🧾 PHIẾU</h2><select class="inp" style="min-width:360px" onchange="S.slipCode=this.value;render()">' + list.map(function(x){ return '<option value="'+x.code+'" '+(x.code===S.slipCode?'selected':'')+'>'+esc(x.code+' · '+x.name)+'</option>'; }).join('') + '</select>' +
-    '<div class="chips"><span class="chip '+(S.slipType==='xuat'?'on':'')+'" onclick="S.slipType=\'xuat\';render()">Phiếu xuất kho</span><span class="chip '+(S.slipType==='bao'?'on':'')+'" onclick="S.slipType=\'bao\';render()">Báo giá</span></div><div class="grow"></div>' +
+    '<div class="chips"><span class="chip '+(S.slipType==='xuat'?'on':'')+'" onclick="S.slipType=\'xuat\';render()">Phiếu xuất kho</span><span class="chip '+(S.slipType==='bao'?'on':'')+'" onclick="setSlipType(\'bao\')">Báo giá</span></div><div class="grow"></div>' +
     '<button class="btn" onclick="slipPng(false)">⬇ Tải PNG</button><button class="btn" onclick="slipPng(true)">☁ Lưu PNG vào Drive</button><button class="btn pri" onclick="window.print()">🖨 In / PDF</button></div></div><div style="height:12px"></div>';
   if (!s) return h + '<div class="empty">Chưa có show.</div>';
   var lines = B._linesBy[s.code] || [], xuat = S.slipType === 'xuat';
@@ -4263,7 +4296,7 @@ function doLogin(){
   var u = $('#lgU').value.trim(), p = $('#lgP').value, l = document.getElementById('lgL') ? $('#lgL').value : '';
   if (!u || !p) return showLogin('Nhập username và mật khẩu');
   busy(true);
-  window.ENGINE.login(u, p, l).then(function(r){ busy(false); hideLogin(); S.tab = 'org'; toast('👋 Xin chào ' + esc(r.me.name) + (r.offline ? ' – đăng nhập offline' : ''), 'ok'); return reload(); })
+  window.ENGINE.login(u, p, l).then(function(r){ busy(false); hideLogin(); S.tab = 'org'; toast('👋 Xin chào ' + esc(r.me.name) + (r.offline ? ' – đăng nhập offline' : ''), 'ok'); return reload().then(autoSyncAfterLogin); })
     .catch(function(e){ busy(false); S.lgLock = e.code === 'LOCKED' || S.lgLock; showLogin(e.message || String(e), e.code === 'LOCKED'); });
 }
 function doRegister(){
@@ -4543,9 +4576,9 @@ function finDel(kind, id){
 S.stat = { mode: 'month', ref: null, from: '', to: '', res: null, busy: false, err: '' };
 function loadStats(){
   var st = S.stat; st.busy = true; st.err = '';
-  var ref = st.ref || B.today;
-  call('apiStats', st.mode, ref, st.mode === 'custom' ? st.from : '', st.mode === 'custom' ? st.to : '')
-    .then(function(r){ st.res = r; st.busy = false; render(); })
+  var ref = st.ref || B.today, fr = st.mode === 'custom' ? st.from : '', to = st.mode === 'custom' ? st.to : '';
+  Promise.all([call('apiStats', st.mode, ref, fr, to), call('apiStatsEquip', st.mode, ref, fr, to)])
+    .then(function(r){ st.res = r[0]; st.eq = r[1]; st.busy = false; render(); })
     .catch(function(e){ st.busy = false; st.err = (e && e.message) || String(e); render(); });
 }
 function statSet(k, v){ S.stat[k] = v; S.stat.res = null; S.stat.err = ''; render(); }
@@ -4570,7 +4603,7 @@ function vStats(){
     h += statChart(r.rows) + '<div style="overflow:auto"><table class="t"><thead><tr><th>Kỳ</th><th class="num">Doanh thu</th><th class="num">Chi phí</th><th class="num">Tiền phạt</th><th class="num">Lợi nhuận</th></tr></thead><tbody>' +
       r.rows.map(function(x){ return '<tr><td><b>' + esc(x.label) + '</b></td><td class="num">' + money(x.revenue) + '</td><td class="num">' + money(x.expense) + '</td><td class="num">' + money(x.penalty) + '</td><td class="num"><b style="color:' + (x.profit < 0 ? '#b91c1c' : '#166534') + '">' + money(x.profit) + '</b></td></tr>'; }).join('') + '</tbody></table></div>';
   }
-  return h + '</div></div>';
+  return h + equipCard(st.eq) + '</div></div>';
 }
 
 /* ======================== 🚗 XE CÔNG TY ======================== */
@@ -4634,7 +4667,7 @@ function rankSvg(t, c){
 }
 function rankAv(u, big){
   var c = lvColor(u.level), t = rankTier(u);
-  return '<span class="rk-av'+(big?' big':'')+'" style="background:'+c+'" title="Cấp '+t+'">' + esc(initials2(u.name)) + '<span class="rk-ic">' + rankSvg(t, c) + '</span></span>';
+  return '<span class="rk-av t'+t+(big?' big':'')+'" style="background:'+c+'" title="Cấp '+t+'">' + esc(initials2(u.name)) + '<span class="rk-ic">' + rankSvg(t, c) + '</span></span>';
 }
 
 
@@ -4644,7 +4677,7 @@ var DICT_EN = {
   'Sơ đồ tổ chức':'Org chart', 'Lịch thiết bị tuần':'Weekly calendar', 'Kho thiết bị':'Equipment stock', 'Show & đặt thiết bị':'Shows & booking',
   'Xuất / Nhập kho':'Stock out / in', 'Vận chuyển':'Transport', 'Nhân sự':'Staff', 'Phiếu / Báo giá':'Slips / quotes', 'Khách hàng':'Customers',
   'Duyệt chiết khấu':'Discount approval', 'Nhật ký kho':'Stock log', 'Người dùng':'Users', 'Hệ thống':'System', 'Thống kê':'Statistics',
-  'Tiến độ show':'Show progress', 'Làm mới':'Refresh', 'Sao lưu':'Backup', 'Khôi phục':'Restore', 'Dữ liệu mẫu':'Sample data', 'Đóng':'Close',
+  'Tiến độ show':'Show progress', 'Làm mới':'Refresh', 'Sao lưu':'Backup', 'Khôi phục':'Restore', 'Dữ liệu mẫu':'Sample data', 'Đồng bộ với máy chủ':'Sync with server', 'Đóng':'Close',
   'Lưu':'Save', 'Tổng tiền':'Total', 'Doanh thu':'Revenue', 'Chi phí':'Expenses', 'Tiền phạt':'Penalties', 'Lợi nhuận':'Profit',
   'Tuần':'Week', 'Tháng':'Month', 'Quý':'Quarter', 'Nửa năm':'Half-year', 'Năm':'Year', 'Tùy chọn':'Custom', 'Tính lại':'Recalculate'
 };
@@ -4761,6 +4794,90 @@ function staffFilterBar(){
     '<select class="inp" onchange="S.stF.dept=this.value;render()"><option value="">Mọi bộ phận</option>'+depts.map(function(d){ return '<option '+(F.dept===d?'selected':'')+' value="'+esc(d)+'">'+esc(d)+'</option>'; }).join('')+'</select>' +
     '<select class="inp" onchange="S.stF.wh=this.value;render()"><option value="">Mọi kho / địa điểm</option>'+B.whList.map(function(w){ return '<option '+(F.wh===w.name?'selected':'')+' value="'+esc(w.name)+'">'+esc(w.name)+'</option>'; }).join('')+'</select>' +
     '<span class="mute" style="font-size:12px">'+staffFilt().length+' / '+B.staff.length+' người</span></div>';
+}
+
+/* ======================== 🧩 TỐI ƯU THIẾT BỊ CHO SHOW CHƯA CHỐT ======================== */
+var OPT_ST = ['Báo giá', 'On Hold', 'Đã xác nhận', 'Đang soạn hàng'];
+S.opt = { q: '' };
+function optCur(code){
+  var m = S.ed.lines.filter(function(l){ return l.source === 'Chính' && l.model === code; })[0];
+  return m ? Number(m.qty || 0) : 0;
+}
+/** Đặt số lượng thiết bị chính cho show đang soạn (0 = bỏ chọn, kèm theo cũng bỏ) */
+function optSet(code, qty){
+  qty = Math.max(0, Math.round(Number(qty) || 0));
+  var L = S.ed.lines;
+  if (qty === 0) {
+    S.ed.lines = L.filter(function(l){ return !(l.model === code && l.source === 'Chính') && l.source !== 'Kèm ' + code; });
+  } else {
+    var m = L.filter(function(l){ return l.source === 'Chính' && l.model === code; })[0];
+    if (m) m.qty = qty;
+    else L.push({ model: code, qty: qty, source: 'Chính', group: '', req: '', price: undefined, note: '', tags: [] });
+  }
+  S.ed.dirty = true; setTimeout(render, 0);
+}
+/** Lăn chuột trên ô số lượng: lên = +1, xuống = −1 */
+function optWheel(e, code){
+  e.preventDefault();
+  optSet(code, optCur(code) + (e.deltaY < 0 ? 1 : -1));
+}
+function optPanel(s){
+  if (!s.code || OPT_ST.indexOf(s.status) < 0) return '';
+  var q = (S.opt.q || '').toLowerCase();
+  var items = B.catalog.filter(function(c){ return c.rentable && (!q || (c.name + ' ' + c.code + ' ' + c.series).toLowerCase().indexOf(q) >= 0); });
+  var h = '<div class="card-b" style="border-top:1px solid var(--line);background:var(--soft)"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><b>🧩 Tối ưu thiết bị cho show này</b>' +
+    '<span class="mute" style="font-size:12px">Tích chọn · lăn chuột trên ô số lượng hoặc bấm ▲▼ · lưu show để ghi nhận</span></div>' +
+    '<div class="row" style="margin-top:8px;flex-wrap:wrap;gap:8px"><input class="inp" style="width:220px" placeholder="🔎 Lọc thiết bị…" value="'+esc(S.opt.q||'')+'" oninput="S.opt.q=this.value;clearTimeout(window._to);window._to=setTimeout(render,250)">' +
+    '<a style="cursor:pointer;font-size:12px;text-decoration:underline" onclick="go(\'stock\')">📦 Xem kho thiết bị →</a></div>' +
+    '<div style="max-height:380px;overflow:auto;margin-top:8px;border:1px solid var(--line);border-radius:10px;background:var(--card)">';
+  items.forEach(function(c){
+    var a = avail(c.code, s.out, s.back, s.code), n = optCur(c.code), dmg = ((B._cnt[c.code] || {})[ST.BT]) || 0;
+    var free = a.by.length === 0;
+    var st = free ? '<span class="st" style="background:#dcfce7;color:#166534">chưa ai đặt</span>' : '<span class="mute" style="font-size:11px">đang giữ: '+esc(uniq(a.by).join(', '))+'</span>';
+    h += '<div style="display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">' +
+      '<input type="checkbox" '+(n>0?'checked':'')+' onchange="optSet(\''+esc(c.code)+'\', this.checked ? 1 : 0)" style="width:18px;height:18px">' +
+      '<div style="min-width:0"><b style="font-size:12.5px">'+esc(c.name)+'</b> <span class="code">'+esc(c.code)+'</span>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px"><span class="av '+(a.avail>0?'g':'r')+'" style="font-size:11px">còn trống '+a.avail+'/'+a.total+'</span>'+st +
+      (dmg>0 ? '<span class="st" style="background:#fee2e2;color:#991b1b">⚠ hỏng/bảo trì '+dmg+'</span>' : '') +
+      (n>a.avail && n>0 ? '<span class="av r" style="font-size:11px">⚠ vượt tồn</span>' : '') + '</div></div>' +
+      '<div style="display:flex;align-items:center;gap:4px;white-space:nowrap"><button class="btn sm" onclick="optSet(\''+esc(c.code)+'\','+(n-1)+')">▼</button>' +
+      '<input class="inp" type="number" min="0" value="'+n+'" style="width:58px;text-align:center" onwheel="optWheel(event,\''+esc(c.code)+'\')" onchange="optSet(\''+esc(c.code)+'\', this.value)">' +
+      '<button class="btn sm" onclick="optSet(\''+esc(c.code)+'\','+(n+1)+')">▲</button></div></div>';
+  });
+  if (!items.length) h += '<div class="empty">Không có thiết bị khớp.</div>';
+  return h + '</div></div>';
+}
+
+/* ======================== 🔄 ĐỒNG BỘ: sau đăng nhập & trước khi tạo báo giá ======================== */
+function autoSyncAfterLogin(){
+  var E = window.ENGINE; if (!E || !E.server || !E.server()) return Promise.resolve();
+  return E.sync(true).then(function(r){ toast(r && r.msg ? esc(r.msg) : '🔄 Đã đồng bộ với máy chủ', r && r.bad ? 'bad' : 'ok'); return reload(); }).catch(function(){ });
+}
+function syncBeforeQuote(fn){
+  var E = window.ENGINE;
+  if (!E || !E.server || !E.server()) return fn();
+  busy(true);
+  E.sync(true).then(function(r){ busy(false); if (r && r.msg) toast(esc(r.msg), r.bad ? 'bad' : 'ok'); return reload(); })
+    .then(function(){ fn(); })
+    .catch(function(e){ busy(false); toast('⚠️ Đồng bộ lỗi, vẫn mở báo giá: ' + errMsg(e), 'bad'); fn(); });
+}
+function setSlipType(t){ syncBeforeQuote(function(){ S.slipType = t; render(); }); }
+
+/* ======================== 🎛️ THIẾT BỊ ĐI SHOW / Ế (trong Thống kê) ======================== */
+function equipCard(eq){
+  if (!eq || !eq.rows) return '';
+  var max = Math.max.apply(null, [1].concat(eq.rows.map(function(r){ return r.shows; })));
+  var top = eq.rows.filter(function(r){ return !r.idle; }).slice(0, 12), idle = eq.rows.filter(function(r){ return r.idle; });
+  var bar = function(r){
+    return '<div style="display:grid;grid-template-columns:minmax(120px,1.2fr) 2fr auto;gap:8px;align-items:center;padding:4px 0">' +
+      '<div style="min-width:0"><b style="font-size:12.5px">'+esc(r.name)+'</b><div class="code">'+esc(r.code)+'</div></div>' +
+      '<div style="background:var(--line);border-radius:6px;height:12px;overflow:hidden"><div style="width:'+(r.shows/max*100)+'%;height:100%;background:linear-gradient(90deg,#7c3aed,#0ea5e9)"></div></div>' +
+      '<div class="mute" style="font-size:11.5px;white-space:nowrap;text-align:right"><b>'+r.shows+'</b> show · '+r.unitDays+' ngày-máy · '+money(r.revenue)+'</div></div>';
+  };
+  return '<div class="card" style="margin-top:12px"><div class="card-h"><h2>🎛️ THIẾT BỊ ĐI SHOW & THIẾT BỊ Ế</h2><span class="mute">Kỳ '+fd(eq.from)+' → '+fd(eq.to)+' · '+idle.length+' thiết bị không đi show nào</span></div><div class="card-b">' +
+    '<h4 style="margin:4px 0">🔥 Đi nhiều show nhất</h4>' + (top.length ? top.map(bar).join('') : '<div class="empty">Chưa có show nào trong kỳ.</div>') +
+    '<h4 style="margin:14px 0 6px">🧊 Thiết bị ế trong kỳ</h4>' + (idle.length ? '<div class="chips">' + idle.map(function(r){ return '<span class="pill" title="'+esc(r.name)+'">'+esc(r.code)+' · '+esc(r.name)+'</span>'; }).join(' ') + '</div>' : '<div class="mute" style="font-size:12px">Không có thiết bị ế.</div>') +
+    '</div></div>';
 }
 
 /* ---------- 🛡️ hệ thống: truy cập, IP, nhật ký, khóa ---------- */

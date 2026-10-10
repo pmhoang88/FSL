@@ -227,7 +227,7 @@ var ACTIONS = {
   apiSavePenalty: { p: 'XEM_TAI_CHINH', w: true }, apiDeletePenalty: { p: 'XEM_TAI_CHINH', w: true },
   apiSaveExpense: { p: 'XEM_TAI_CHINH', w: true }, apiDeleteExpense: { p: 'XEM_TAI_CHINH', w: true },
   apiSaveCar: { w: true }, apiDeleteCar: { w: true },  // Giám đốc trở lên, kiểm tra bên trong
-  apiStats: { w: false },  // Giám đốc trở lên, kiểm tra bên trong
+  apiStats: { w: false }, apiStatsEquip: { w: false },  // Giám đốc trở lên, kiểm tra bên trong
   apiBulkUpdatePrices: { w: true },  // chỉ CEO, kiểm tra bên trong
   apiSaveTransport: { p: 'XUAT_NHAP_KHO', w: true }, apiDeleteTransport: { p: 'XUAT_NHAP_KHO', w: true },
   apiSaveStaff: { p: 'SUA_DANH_MUC', w: true }, apiDeleteStaff: { p: 'SUA_DANH_MUC', w: true },
